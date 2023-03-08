@@ -2,7 +2,7 @@ import { Context } from 'koa';
 import { container } from 'tsyringe';
 import { SessionUseCase } from './SessionUseCase';
 
-/* test */
+/* test 2 */
 
 export class SessionController {
   async handle(ctx: Context) {
