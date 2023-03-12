@@ -2,7 +2,6 @@ import { IUserRepository } from '@/modules/users/infra/repository/IUserRepositor
 import { IAuthProvider } from '@/shared/providers/AuthProvider/IAuthProvider';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { inject, injectable } from 'tsyringe';
-import { compare } from 'bcrypt';
 import auth from '@/config/auth';
 import { DecodedMethods } from '@/utils/DecodedMethods';
 
@@ -56,7 +55,10 @@ export class SessionUseCase extends DecodedMethods {
       password_user_db = user[key];
     });
 
-    const passwordMatch = await compare(password, password_user_db);
+    const passwordMatch = await this.JwtAuthProvider.CompareBcrypt(
+      password,
+      password_user_db
+    );
 
     if (!passwordMatch) {
       throw new AppError('Email or password Is Incorrect!');

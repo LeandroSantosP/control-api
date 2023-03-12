@@ -1,4 +1,5 @@
 import Router from '@koa/router';
+
 import { AuthRoutes } from './AuthenticationRoutes';
 import { userRouter } from './userRoutes';
 

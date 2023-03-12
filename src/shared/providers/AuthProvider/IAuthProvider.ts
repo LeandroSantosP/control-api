@@ -19,6 +19,11 @@ abstract class IAuthProvider {
     secretToken,
     complement,
   }: CreateTokenRequest): string;
+
+  abstract CompareBcrypt(
+    currentPass: string,
+    dbPassword: string
+  ): Promise<boolean>;
 }
 
 export { IAuthProvider };

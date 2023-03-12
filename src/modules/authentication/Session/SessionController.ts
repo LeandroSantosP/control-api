@@ -2,8 +2,6 @@ import { Context } from 'koa';
 import { container } from 'tsyringe';
 import { SessionUseCase } from './SessionUseCase';
 
-/* test 2 */
-
 export class SessionController {
   async handle(ctx: Context) {
     const authenticationBase64 = ctx.request.headers.authorization;
