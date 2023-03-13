@@ -1,24 +1,29 @@
 import { verify } from 'jsonwebtoken';
 import auth from '@/config/auth';
-import { Next } from 'koa';
-import { Context } from 'vm';
 import { AppError } from './AppError';
+import { NextFunction, Request, Response } from 'express';
 
 interface IJwtPayload {
   sub: string;
   email: string;
 }
 
-export async function UserAuthentication(ctx: Context, next: Next) {
-  const { authorization } = ctx.request.headers;
+export async function UserAuthentication(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { authorization } = req.headers;
 
-  const tokenValid = authorization.split(' ') as string[];
-
-  if (tokenValid.length !== 2) {
+  if (!authorization) {
     throw new AppError('Token Missing!');
   }
 
-  console.log(authorization);
+  const tokenValid = authorization.split(' ') as string[];
+
+  if (tokenValid[0] !== 'Bearer' || tokenValid.length !== 2) {
+    throw new AppError('Not Authorization or invalid Credentials!', 401);
+  }
 
   const token = authorization.split(' ')[1];
   const { secretToken } = auth;
@@ -26,15 +31,12 @@ export async function UserAuthentication(ctx: Context, next: Next) {
   try {
     const { sub: client_id, email } = verify(token, secretToken) as IJwtPayload;
 
-    ctx.request.client = {
+    req.client = {
       id: client_id,
       email,
     };
-
-    await next();
-  } catch (err) {
-    console.log(err);
-
-    throw new AppError('Invalid Token!', 401);
+    next();
+  } catch (err: any) {
+    throw new AppError('Invalid Token');
   }
 }

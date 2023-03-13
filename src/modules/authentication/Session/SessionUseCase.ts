@@ -70,7 +70,7 @@ export class SessionUseCase extends DecodedMethods {
       payload: { email: user.email },
       secretToken,
       complement: {
-        expiresIn: '1d',
+        expiresIn: '1h',
         subject: user.id!,
       },
     });

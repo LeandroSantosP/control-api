@@ -1,4 +1,4 @@
-import { Context, Next } from 'koa';
+import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { CreateUserUseCase } from './CreateUserUseCase';
 
@@ -9,13 +9,12 @@ interface CreateUserRequest {
 }
 
 export class CreateUserController {
-  async handle(ctx: Context, next: Next) {
-    const { name, email, password } = ctx.request.body as CreateUserRequest;
+  async handle(request: Request, response: Response): Promise<Response> {
+    const { name, email, password } = request.body as CreateUserRequest;
 
     const newUser = container.resolve(CreateUserUseCase);
     const result = await newUser.execute({ email, name, password });
 
-    ctx.status = 200;
-    return (ctx.response.body = result);
+    return response.status(200).json(result);
   }
 }

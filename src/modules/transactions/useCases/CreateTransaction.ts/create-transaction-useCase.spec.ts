@@ -4,6 +4,7 @@ import { AppError } from '@/shared/infra/middleware/AppError';
 import { UserRepositoryTestDB } from '../../../users/infra/repository/test-db/UserRepositoryTestDB';
 import { CreateTransaction } from './CreateTransactionUseCase';
 import { TransactionsTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
+import { CreateTransactionsController } from './CreateTransactionsController';
 
 let transactionRepositoryTestDB: TransactionsTestDB;
 let userRepositoryTestDB: UserRepositoryTestDB;
@@ -44,13 +45,13 @@ describe('Create Transaction', () => {
     });
 
     expect(newTransaction).toHaveProperty('id');
-    expect(newTransaction.description).toEqual('Desc');
-    expect(newTransaction.value).toEqual(11);
-    expect(newTransaction.recurrence).toBeNull();
-    expect(newTransaction.installments).toBeNull();
-    expect(newTransaction.isSubscription).toBeNull();
-    expect(newTransaction.due_date).toBeNull();
-    expect(newTransaction.resolved).toBe(false);
-    expect(newTransaction.userId).toEqual(newUser.id);
+    expect(newTransaction?.description).toEqual('Desc');
+    expect(newTransaction?.value).toEqual(11);
+    expect(newTransaction?.recurrence).toBeNull();
+    expect(newTransaction?.installments).toBeNull();
+    expect(newTransaction?.isSubscription).toBeNull();
+    expect(newTransaction?.due_date).toBeNull();
+    expect(newTransaction?.resolved).toBe(false);
+    expect(newTransaction?.userId).toEqual(newUser.id);
   });
 });

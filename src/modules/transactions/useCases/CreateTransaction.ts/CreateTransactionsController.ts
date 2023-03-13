@@ -1,4 +1,4 @@
-import { Context } from 'koa';
+import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { CreateTransaction } from './CreateTransactionUseCase';
 
@@ -8,14 +8,13 @@ interface ControllerRequest {
 }
 
 export class CreateTransactionsController {
-  async handle(ctx: Context) {
-    const { description, value } = ctx.request.body as ControllerRequest;
-    const { email } = ctx.request.client;
+  async handle(request: Request, response: Response): Promise<Response> {
+    const { description, value } = request.body;
+    const { email } = request.client;
 
     const useCase = container.resolve(CreateTransaction);
     const result = await useCase.execute({ description, value, email });
 
-    ctx.status = 200;
-    return (ctx.response.body = result);
+    return response.status(200).json(result);
   }
 }

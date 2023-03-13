@@ -1,7 +1,7 @@
 import { SessionController } from '@/modules/authentication/Session/SessionController';
-import Router from '@koa/router';
+import { Router } from 'express';
 
-const AuthRoutes = new Router();
+const AuthRoutes = Router();
 
 const sessionController = new SessionController();
 
