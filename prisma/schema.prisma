@@ -25,12 +25,12 @@ model User {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
-  transactions Transactions[]
+  transactions Transaction[]
 
   @@map("users")
 }
 
-model Transactions {
+model Transaction {
   id             String      @id @default(uuid())
   description    String
   value          Float

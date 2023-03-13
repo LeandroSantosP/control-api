@@ -1,15 +1,15 @@
 import { v4 as uuidV4 } from 'uuid';
 
-export class UserEntity {
+export class TransactionsEntity {
   id?: string;
-  name!: string;
-  email!: string;
-  password!: string;
-  admin?: boolean;
-
+  description!: string;
+  value!: number;
+  installments?: number | null;
+  isSubscription?: boolean | null;
+  due_date?: Date | null;
+  resolved!: boolean;
   created_at?: Date;
   updated_at?: Date;
-  deleted_at?: Date | null;
 
   constructor() {
     if (!this.id) {
@@ -22,8 +22,11 @@ export class UserEntity {
       this.updated_at = new Date();
     }
 
-    if (!this.admin) {
-      this.admin = false;
+    if (!this.isSubscription) {
+      this.installments = 0;
+    }
+    if (!this.resolved) {
+      this.resolved = false;
     }
   }
 }

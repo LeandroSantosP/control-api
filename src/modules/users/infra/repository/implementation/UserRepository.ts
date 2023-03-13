@@ -31,6 +31,7 @@ export class UserRepository implements IUserRepository {
         email,
       },
     });
+
     return user;
   }
 }

@@ -1,6 +1,5 @@
-import { Next } from 'koa';
+import { Context, Next } from 'koa';
 import { container } from 'tsyringe';
-import { ctxType } from '../../../../types/koaTypes';
 import { CreateUserUseCase } from './CreateUserUseCase';
 
 interface CreateUserRequest {
@@ -10,7 +9,7 @@ interface CreateUserRequest {
 }
 
 export class CreateUserController {
-  async handle(ctx: ctxType, next: Next) {
+  async handle(ctx: Context, next: Next) {
     const { name, email, password } = ctx.request.body as CreateUserRequest;
 
     const newUser = container.resolve(CreateUserUseCase);

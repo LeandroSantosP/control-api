@@ -1,10 +1,3 @@
-import 'dotenv/config';
-import { exec } from 'child_process';
-process.env.DATABASE_URL = `${process.env.DATABASE_URL}_testdb?schema=test_schema`;
-
-/* @TODO transform in async to avoid race condition */
-exec('yarn prisma migrate dev');
-
 import { prisma } from '@/database/prisma';
 import { IUserDTO } from '../../dtos/IUserDTO';
 import { UserEntity } from '../../Entity/UserEntity';
@@ -45,6 +38,7 @@ export class UserRepositoryTestDB implements IUserRepository {
         email,
       },
     });
+
     return user;
   }
 }

@@ -5,7 +5,7 @@
   "repository": "https://github.com/LeandroSantosP/puf.git",
   "author": "LeandroSantosP <skp.tridimensional@gmail.com>",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --transpile-only --exit-child --ignore-watch node_modules -r tsconfig-paths/register -r dotenv-safe/config src/shared/https/index.ts",
     "test": "jest",
