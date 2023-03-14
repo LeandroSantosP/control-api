@@ -2,11 +2,6 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { CreateTransaction } from './CreateTransactionUseCase';
 
-interface ControllerRequest {
-  description: string;
-  value: number;
-}
-
 export class CreateTransactionsController {
   async handle(request: Request, response: Response): Promise<Response> {
     const { description, value } = request.body;

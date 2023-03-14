@@ -30,4 +30,19 @@ export class TransactionsRepository implements ITransactionsRepository {
     });
     return newTransaction;
   }
+
+  async GetUserTransactionsById(
+    user_id: string
+  ): Promise<Transaction[] | null> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        userId: user_id,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+
+    return transactions;
+  }
 }

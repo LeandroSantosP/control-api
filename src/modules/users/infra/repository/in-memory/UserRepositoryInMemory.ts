@@ -1,3 +1,4 @@
+import { User } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { IUserDTO } from '../../dtos/IUserDTO';
 import { UserEntity } from '../../Entity/UserEntity';
@@ -22,8 +23,14 @@ export class UserRepositoryInMemory implements IUserRepository {
   async list(): Promise<UserEntity[]> {
     return this.users;
   }
-  async GetUserByEmail(email: string): Promise<UserEntity | null> {
+  async GetUserByEmail(email: string): Promise<UserEntity | User | null> {
     const user = this.users.find((us) => us.email === email);
     return user || null;
+  }
+
+  async GetUserById(user_id: string): Promise<User | UserEntity | null> {
+    const user = this.users.find((us) => us.id === user_id);
+
+    return user ?? null;
   }
 }

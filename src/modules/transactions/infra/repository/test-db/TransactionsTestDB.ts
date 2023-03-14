@@ -1,11 +1,11 @@
 import { prisma } from '@/database/prisma';
-import { Transaction } from '@prisma/client';
+import { Transaction, User } from '@prisma/client';
 import {
   ITransactionsRepository,
   ITransactionsRepositoryProps,
 } from '../ITransactionsRepository';
 
-export class TransactionsTestDB implements ITransactionsRepository {
+export class TransactionsRepositoryTestDB implements ITransactionsRepository {
   private prisma;
 
   constructor() {
@@ -32,5 +32,20 @@ export class TransactionsTestDB implements ITransactionsRepository {
       },
     });
     return newTransaction;
+  }
+
+  async GetUserTransactionsById(
+    user_id: string
+  ): Promise<Transaction[] | null> {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        userId: user_id,
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+
+    return transactions;
   }
 }

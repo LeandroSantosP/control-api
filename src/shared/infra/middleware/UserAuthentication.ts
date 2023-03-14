@@ -2,6 +2,7 @@ import { verify } from 'jsonwebtoken';
 import auth from '@/config/auth';
 import { AppError } from './AppError';
 import { NextFunction, Request, Response } from 'express';
+import { UserRepository } from '@/modules/users/infra/repository/implementation/UserRepository';
 
 interface IJwtPayload {
   sub: string;
@@ -30,6 +31,14 @@ export async function UserAuthentication(
 
   try {
     const { sub: client_id, email } = verify(token, secretToken) as IJwtPayload;
+
+    const repository = new UserRepository();
+
+    const user = await repository.GetUserById(client_id);
+
+    if (!user) {
+      throw new AppError('User Not Found!', 404);
+    }
 
     req.client = {
       id: client_id,

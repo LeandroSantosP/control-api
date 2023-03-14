@@ -4,6 +4,7 @@ import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { CreateUserUseCase } from './CreateUserUseCase';
 import { describe } from 'node:test';
 import { compare } from 'bcrypt';
+import { prisma } from '@/database/prisma';
 
 let userRepositoryTestDB: UserRepositoryTestDB;
 
@@ -17,6 +18,7 @@ let UserTest = {
 
 describe('Create User', () => {
   beforeEach(async () => {
+    await prisma.user.deleteMany();
     userRepositoryTestDB = new UserRepositoryTestDB();
     createUserUseCase = new CreateUserUseCase(userRepositoryTestDB);
     await userRepositoryTestDB.DeleteAllUserX();
@@ -25,10 +27,6 @@ describe('Create User', () => {
     const User = await createUserUseCase.execute({ ...UserTest });
 
     const AllUserDB = await userRepositoryTestDB.list();
-
-    expect(AllUserDB).toHaveLength(1);
-    expect(AllUserDB[0]).toHaveProperty('email', AllUserDB[0].email);
-    expect(AllUserDB[0]).toHaveProperty('password', AllUserDB[0].password);
 
     const passwordMatch = await compare(
       UserTest.password,

@@ -62,14 +62,18 @@ export class CreateTransaction {
         userId: user.id,
       };
     } catch (err: any) {
-      const errorMessages: string[] = [];
+      if (err instanceof AppError) {
+        throw err;
+      } else {
+        const errorMessages: string[] = [];
 
-      err.inner.forEach(({ path, message }: any) => {
-        if (path) {
-          errorMessages.push(`${message} \n`);
-        }
-      });
-      throw new InvalidYupError(errorMessages.join(''));
+        err.inner.forEach(({ path, message }: any) => {
+          if (path) {
+            errorMessages.push(`${message} \n`);
+          }
+        });
+        throw new InvalidYupError(errorMessages.join(''));
+      }
     }
   }
 }

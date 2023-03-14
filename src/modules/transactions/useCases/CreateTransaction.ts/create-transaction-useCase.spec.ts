@@ -1,17 +1,18 @@
 import 'reflect-metadata';
 
-import { AppError } from '@/shared/infra/middleware/AppError';
+import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { UserRepositoryTestDB } from '../../../users/infra/repository/test-db/UserRepositoryTestDB';
 import { CreateTransaction } from './CreateTransactionUseCase';
 import { TransactionsTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
-import { CreateTransactionsController } from './CreateTransactionsController';
+import { prisma } from '@/database/prisma';
 
 let transactionRepositoryTestDB: TransactionsTestDB;
 let userRepositoryTestDB: UserRepositoryTestDB;
 let createTransaction: CreateTransaction;
 
 describe('Create Transaction', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await prisma.user.deleteMany();
     transactionRepositoryTestDB = new TransactionsTestDB();
     userRepositoryTestDB = new UserRepositoryTestDB();
     createTransaction = new CreateTransaction(
@@ -21,13 +22,12 @@ describe('Create Transaction', () => {
   });
 
   it('should not be able create an transaction if user does not logged.', async () => {
-    expect(
-      async () =>
-        await createTransaction.execute({
-          email: 'test@example.com',
-          description: 'Desc',
-          value: 11,
-        })
+    await expect(
+      createTransaction.execute({
+        email: 'test@example.com',
+        description: 'Desc',
+        value: 11,
+      })
     ).rejects.toThrow(new AppError('User does not exites!'));
   });
 
@@ -53,5 +53,21 @@ describe('Create Transaction', () => {
     expect(newTransaction?.due_date).toBeNull();
     expect(newTransaction?.resolved).toBe(false);
     expect(newTransaction?.userId).toEqual(newUser.id);
+  });
+
+  it('should not be able create an transaction if data is in incorrect format.', async () => {
+    const newUser = await userRepositoryTestDB.create({
+      email: 'test4@example.com',
+      name: 'John doe',
+      password: 'senha123',
+    });
+
+    await expect(
+      createTransaction.execute({
+        email: newUser.email,
+        description: 'Desc',
+        value: 'incorrect format' as any,
+      })
+    ).rejects.toThrow(InvalidYupError);
   });
 });

@@ -12,4 +12,8 @@ export abstract class ITransactionsRepository {
     value,
     email,
   }: ITransactionsRepositoryProps): Promise<Transaction>;
+
+  abstract GetUserTransactionsById(
+    user_id: string
+  ): Promise<Transaction[] | null>;
 }

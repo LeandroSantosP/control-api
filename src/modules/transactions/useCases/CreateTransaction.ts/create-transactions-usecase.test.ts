@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 import { app } from '@/shared/https/server';
 import auth from '@/config/auth';
 import { prisma } from '@/database/prisma';
-import { AppError } from '@/shared/infra/middleware/AppError';
 
 const email = 'test@example.com';
 const password = 'test123ABS33223324';
