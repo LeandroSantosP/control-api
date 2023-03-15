@@ -3,17 +3,17 @@ import 'reflect-metadata';
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { UserRepositoryTestDB } from '../../../users/infra/repository/test-db/UserRepositoryTestDB';
 import { CreateTransaction } from './CreateTransactionUseCase';
-import { TransactionsTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
+import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
 import { prisma } from '@/database/prisma';
 
-let transactionRepositoryTestDB: TransactionsTestDB;
+let transactionRepositoryTestDB: TransactionsRepositoryTestDB;
 let userRepositoryTestDB: UserRepositoryTestDB;
 let createTransaction: CreateTransaction;
 
 describe('Create Transaction', () => {
   beforeEach(async () => {
     await prisma.user.deleteMany();
-    transactionRepositoryTestDB = new TransactionsTestDB();
+    transactionRepositoryTestDB = new TransactionsRepositoryTestDB();
     userRepositoryTestDB = new UserRepositoryTestDB();
     createTransaction = new CreateTransaction(
       userRepositoryTestDB,
@@ -24,7 +24,7 @@ describe('Create Transaction', () => {
   it('should not be able create an transaction if user does not logged.', async () => {
     await expect(
       createTransaction.execute({
-        email: 'test@example.com',
+        email: 'test11@example.com',
         description: 'Desc',
         value: 11,
       })
@@ -33,13 +33,13 @@ describe('Create Transaction', () => {
 
   it('should be able to create a transaction', async () => {
     const newUser = await userRepositoryTestDB.create({
-      email: 'test2@example.com',
+      email: 'mariatest@example.com',
       name: 'John doe',
       password: 'senha123',
     });
 
     const newTransaction = await createTransaction.execute({
-      email: 'test2@example.com',
+      email: 'mariatest@example.com',
       description: 'Desc',
       value: 11,
     });
@@ -57,7 +57,7 @@ describe('Create Transaction', () => {
 
   it('should not be able create an transaction if data is in incorrect format.', async () => {
     const newUser = await userRepositoryTestDB.create({
-      email: 'test4@example.com',
+      email: 'test14@example.com',
       name: 'John doe',
       password: 'senha123',
     });

@@ -31,7 +31,7 @@ export class TransactionsRepository implements ITransactionsRepository {
     return newTransaction;
   }
 
-  async GetUserTransactionsById(
+  async ListUserTransactionsById(
     user_id: string
   ): Promise<Transaction[] | null> {
     const transactions = await this.prisma.transaction.findMany({
@@ -44,5 +44,39 @@ export class TransactionsRepository implements ITransactionsRepository {
     });
 
     return transactions;
+  }
+  async remove(transaction_id: string): Promise<string> {
+    const transaction = await this.prisma.transaction.delete({
+      where: {
+        id: transaction_id,
+      },
+    });
+    return transaction.id;
+  }
+
+  async GetTransactionById(
+    transaction_id: string
+  ): Promise<Transaction | null> {
+    const transaction = await this.prisma.transaction.findUnique({
+      where: {
+        id: transaction_id,
+      },
+    });
+
+    return transaction;
+  }
+
+  async ListAllADM(user_id: string): Promise<Transaction[]> {
+    if (user_id) {
+      const UserTransactions = await this.prisma.transaction.findMany({
+        where: {
+          userId: user_id,
+        },
+      });
+
+      return UserTransactions;
+    }
+    const allTransaction = await this.prisma.transaction.findMany();
+    return allTransaction;
   }
 }

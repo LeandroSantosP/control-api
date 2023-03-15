@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import request from 'supertest';
-import { sign, TokenExpiredError } from 'jsonwebtoken';
+import { sign } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { app } from '@/shared/https/server';
 import auth from '@/config/auth';

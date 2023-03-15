@@ -1,4 +1,4 @@
-import { Transaction } from '@prisma/client';
+import { Transaction, User } from '@prisma/client';
 
 export interface ITransactionsRepositoryProps {
   value: number;
@@ -13,7 +13,15 @@ export abstract class ITransactionsRepository {
     email,
   }: ITransactionsRepositoryProps): Promise<Transaction>;
 
-  abstract GetUserTransactionsById(
+  abstract ListUserTransactionsById(
     user_id: string
   ): Promise<Transaction[] | null>;
+
+  abstract ListAllADM(user_id?: string): Promise<Transaction[]>;
+
+  abstract remove(transaction_id: string): Promise<string>;
+
+  abstract GetTransactionById(
+    transaction_id: string
+  ): Promise<Transaction | null>;
 }
