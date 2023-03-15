@@ -2,7 +2,7 @@ import { User } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { IUserDTO } from '../../dtos/IUserDTO';
 import { UserEntity } from '../../Entity/UserEntity';
-import { IUserRepository } from '../IUserRepository';
+import { IUserRepository, RemoveProps } from '../IUserRepository';
 
 export class UserRepositoryInMemory implements IUserRepository {
   private users: UserEntity[] = [];
@@ -32,5 +32,15 @@ export class UserRepositoryInMemory implements IUserRepository {
     const user = this.users.find((us) => us.id === user_id);
 
     return user ?? null;
+  }
+
+  async remove({ email, id }: RemoveProps): Promise<void> {
+    const index = this.users.findIndex(
+      (user) => user.id === id && user.email === email
+    );
+    if (index !== -1) {
+      this.users.splice(index, 1);
+    }
+    return;
   }
 }

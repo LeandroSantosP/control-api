@@ -42,7 +42,7 @@ describe('Transactions', () => {
       userTest.id
     );
 
-    const interSection = UserTransaction?.reduce((acc, crr) => {
+    const interSection = UserTransaction?.reduce((storage, crr) => {
       if (
         transactionsExemplo.some(
           (transaction) =>
@@ -50,9 +50,9 @@ describe('Transactions', () => {
             transaction.value === crr.value
         )
       ) {
-        acc.push(crr);
+        storage.push(crr);
       }
-      return acc;
+      return storage;
     }, [] as Transaction[]);
 
     const transaction = interSection!.map((transaction) => ({
@@ -67,7 +67,7 @@ describe('Transactions', () => {
       const propsEqual = secondArray.map((item) => {
         const filteredItem = {} as any;
         Object.keys(item)
-          /* Pegando as keys do primeiro array, que ao comparar com as keys do segundo array retorna o resultado e diferente de undefiled */
+          /* Pegando as keys do primeiro array, que ao comparar com as keys do segundo array retorna o resultado que sao diferentes de undefiled */
           .filter((key) => firstArray[0][key] !== undefined)
           .forEach((key: string) => {
             filteredItem[key] = item[key];

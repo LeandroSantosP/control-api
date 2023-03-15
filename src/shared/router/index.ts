@@ -6,7 +6,7 @@ import { userRouter } from './userRoutes';
 
 const allRoutes = Router();
 
-allRoutes.use('/users', userRouter);
+allRoutes.use('/user', userRouter);
 allRoutes.use('/auth', AuthRoutes);
 allRoutes.use('/transaction', transactionRoutes);
 
