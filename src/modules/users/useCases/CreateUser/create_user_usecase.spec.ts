@@ -17,6 +17,9 @@ let UserTest = {
 };
 
 describe('Create User', () => {
+  beforeAll(async () => {
+    await prisma.user.deleteMany();
+  });
   beforeEach(async () => {
     await prisma.user.deleteMany();
     userRepositoryTestDB = new UserRepositoryTestDB();

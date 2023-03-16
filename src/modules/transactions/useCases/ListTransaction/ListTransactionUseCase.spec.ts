@@ -28,7 +28,7 @@ describe('List Transactions', () => {
     await TransactionsRepository.create({
       email: user.email,
       description: 'desc',
-      value: 12,
+      value: '12',
     });
 
     const list = await listTransactionUseCase.execute(newUser.id);

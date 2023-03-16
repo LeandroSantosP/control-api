@@ -7,6 +7,12 @@ export interface RemoveProps {
   id: string;
 }
 
+export interface UpdatedProps {
+  name?: string;
+  email?: string;
+  password?: string;
+}
+
 abstract class IUserRepository {
   abstract create({
     email,
@@ -17,6 +23,7 @@ abstract class IUserRepository {
   abstract GetUserByEmail(email: string): Promise<User | UserEntity | null>;
   abstract GetUserById(user_id: string): Promise<User | UserEntity | null>;
   abstract remove({ email, id }: RemoveProps): Promise<void>;
+  abstract update(data: UpdatedProps, user_id: string): Promise<User>;
 }
 
 export { IUserRepository };

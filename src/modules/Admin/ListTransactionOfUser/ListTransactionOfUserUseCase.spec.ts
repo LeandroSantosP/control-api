@@ -43,12 +43,15 @@ function GenerateTransactionDataExample({
     return {
       email: user.email,
       description: `Desc${index}`,
-      value: 12 + index,
+      value: (12 + index).toString(),
     };
   });
 }
 
 describe('Transactions', () => {
+  beforeAll(async () => {
+    await prisma.user.deleteMany();
+  });
   beforeEach(async () => {
     await prisma.user.deleteMany();
     userRepository = new UserRepositoryTestDB();
@@ -64,7 +67,7 @@ describe('Transactions', () => {
     await transactionsRepositoryTestDB.create({
       description: 'test',
       email: userTest1.email,
-      value: 12,
+      value: '12',
     });
 
     const userTest2 = await createUser({ email: 'test@test.com' });
@@ -72,7 +75,7 @@ describe('Transactions', () => {
     await transactionsRepositoryTestDB.create({
       description: 'test',
       email: userTest2.email,
-      value: 12,
+      value: '12',
     });
 
     const result = await listTransactionsOfUserUseCase.execute();
@@ -139,7 +142,7 @@ describe('Transactions', () => {
         transactionsExemplo.some(
           (transaction) =>
             transaction.description === crr.description &&
-            transaction.value === crr.value
+            transaction.value === crr.value.toString()
         )
       ) {
         storage.push(crr);

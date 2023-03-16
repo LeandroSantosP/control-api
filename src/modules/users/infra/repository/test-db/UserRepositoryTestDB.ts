@@ -1,7 +1,7 @@
 import { prisma } from '@/database/prisma';
 import { User } from '@prisma/client';
 import { IUserDTO } from '../../dtos/IUserDTO';
-import { IUserRepository, RemoveProps } from '../IUserRepository';
+import { IUserRepository, RemoveProps, UpdatedProps } from '../IUserRepository';
 
 export class UserRepositoryTestDB implements IUserRepository {
   private prisma;
@@ -56,5 +56,16 @@ export class UserRepositoryTestDB implements IUserRepository {
         id,
       },
     });
+  }
+
+  async update(data: UpdatedProps, user_id: string): Promise<User> {
+    const dataUpdated = await this.prisma.user.update({
+      where: {
+        id: user_id,
+      },
+      data,
+    });
+
+    return dataUpdated;
   }
 }

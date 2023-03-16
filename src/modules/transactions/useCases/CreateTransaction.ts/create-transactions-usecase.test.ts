@@ -10,12 +10,21 @@ const email = 'test@example.com';
 const password = 'test123ABS33223324';
 const name = 'John Doe';
 
-const server = app.listen();
+let server = app.listen(3333);
 
 describe('Server', () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await prisma.user.deleteMany();
   });
+
+  afterEach(async () => {
+    await prisma.$disconnect();
+  });
+
+  afterAll((done) => {
+    server.close(done);
+  });
+
   it('should be able create a transaction', async () => {
     const { secretToken, saltRounds } = auth;
     const passwordHash = await bcrypt.hash(password, saltRounds);
@@ -35,36 +44,11 @@ describe('Server', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({
         description: 'Desc',
-        value: 10,
+        value: '10',
       });
 
     expect(result.body.id).toBeTruthy();
     expect(result.body.description).toBeTruthy();
     expect(result.body.userId).toEqual(user.id);
   });
-
-  // it('should not be able create a new transaction if the data is in a wrong format', async () => {
-  //   const { secretToken, saltRounds } = auth;
-  //   const passwordHash = await bcrypt.hash(password, saltRounds);
-
-  //   const user = await prisma.user.create({
-  //     data: {
-  //       email: 'test2@example.com',
-  //       password: passwordHash,
-  //       name,
-  //     },
-  //   });
-
-  //   const token = sign({ sub: user.id, email: user.email }, secretToken);
-
-  //   const result = await request(server)
-  //     .post('/transaction')
-  //     .set('Authorization', `Bearer ${token}`)
-  //     .send({
-  //       description: 'Desc',
-  //       value: 'invalid format',
-  //     });
-
-  //   console.log(result, 'leandro');
-  // });
 });

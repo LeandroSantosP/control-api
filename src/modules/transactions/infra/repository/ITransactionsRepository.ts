@@ -1,7 +1,7 @@
 import { Transaction, User } from '@prisma/client';
 
 export interface ITransactionsRepositoryProps {
-  value: number;
+  value: string;
   description: string;
   email: string;
 }

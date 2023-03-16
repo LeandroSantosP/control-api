@@ -11,9 +11,19 @@ interface IRequest extends TransactionsDTO {
   email: string;
 }
 
+const decimalValidate = () => {
+  return yup.string().test('decimal', 'Deve ser um numero decimal', (value) => {
+    if (!value) {
+      return true;
+    }
+
+    return /^\d*\.?\d*$/.test(value);
+  });
+};
+
 const TransactionSchema = yup.object().shape({
   description: yup.string().required(),
-  value: yup.number().required(),
+  value: decimalValidate().required(),
   email: yup.string().email().required(),
 });
 

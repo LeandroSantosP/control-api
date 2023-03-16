@@ -3,7 +3,7 @@ import { v4 as uuidV4 } from 'uuid';
 export class TransactionsEntity {
   id?: string;
   description!: string;
-  value!: number;
+  value!: string;
   installments?: number | null;
   isSubscription?: boolean | null;
   due_date?: Date | null;

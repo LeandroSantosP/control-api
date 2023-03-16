@@ -35,10 +35,9 @@ export class CreateUserUseCase {
   async CreateUser(validateData: IRequest) {
     let { saltRounds } = auth;
 
-    const newUser = new UserEntity();
-
     const passwordHash = await hash(validateData.password, saltRounds);
 
+    const newUser = new UserEntity();
     Object.assign(newUser, {
       name: validateData.name,
       email: validateData.email,

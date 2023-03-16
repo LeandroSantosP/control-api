@@ -2,7 +2,7 @@ import { User } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { IUserDTO } from '../../dtos/IUserDTO';
 import { UserEntity } from '../../Entity/UserEntity';
-import { IUserRepository, RemoveProps } from '../IUserRepository';
+import { IUserRepository, RemoveProps, UpdatedProps } from '../IUserRepository';
 
 export class UserRepositoryInMemory implements IUserRepository {
   private users: UserEntity[] = [];
@@ -42,5 +42,8 @@ export class UserRepositoryInMemory implements IUserRepository {
       this.users.splice(index, 1);
     }
     return;
+  }
+  async update(data: UpdatedProps, user_id: string): Promise<User> {
+    throw new Error('Method not implemented.');
   }
 }

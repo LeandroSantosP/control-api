@@ -1,5 +1,5 @@
 import { prisma } from '@/database/prisma';
-import { Transaction } from '@prisma/client';
+import { Prisma, Transaction } from '@prisma/client';
 import {
   ITransactionsRepository,
   ITransactionsRepositoryProps,
@@ -20,7 +20,7 @@ export class TransactionsRepository implements ITransactionsRepository {
     const newTransaction = await this.prisma.transaction.create({
       data: {
         description,
-        value,
+        value: new Prisma.Decimal(value),
         author: {
           connect: {
             email,
