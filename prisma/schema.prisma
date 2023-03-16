@@ -33,7 +33,7 @@ model User {
 model Transaction {
   id             String      @id @default(uuid())
   description    String
-  value          Float
+  value          Decimal
   recurrence     Recurrence?
   installments   Int?
   isSubscription Boolean?

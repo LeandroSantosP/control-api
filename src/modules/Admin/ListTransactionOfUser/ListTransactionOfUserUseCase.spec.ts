@@ -59,8 +59,6 @@ describe('Transactions', () => {
     );
   });
 
-  it('ADM should delete all users', async () => {});
-
   it('ADM should be able get all transactions of all users.', async () => {
     const userTest1 = await createUser({});
     await transactionsRepositoryTestDB.create({
@@ -99,7 +97,6 @@ describe('Transactions', () => {
     const allTransactionsOfUser1 =
       await transactionsRepositoryTestDB.ListAllADM(userTest1.id);
 
-    console.log(allTransactionsOfUser1);
     expect(allTransactionsOfUser1).toHaveLength(2);
 
     /* USer 2 */

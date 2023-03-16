@@ -16,7 +16,7 @@ describe('List Transactions', () => {
     listTransactionUseCase = new ListTransactionUseCase(TransactionsRepository);
   });
 
-  it.only('should be able list all user transactions.', async () => {
+  it('should be able list all user transactions.', async () => {
     const user = {
       email: 'exemplo222@gmail.com',
       name: 'test',
