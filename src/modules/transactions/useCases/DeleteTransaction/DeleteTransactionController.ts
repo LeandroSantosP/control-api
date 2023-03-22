@@ -6,7 +6,6 @@ export class DeleteTransactionController {
   async handle(req: Request, res: Response) {
     const { transaction_id } = req.params;
     const { id: user_id } = req.client;
-    console.log(user_id);
 
     const useCase = container.resolve(DeleteTransactionUseCase);
     const id = await useCase.execute({ transaction_id, user_id });

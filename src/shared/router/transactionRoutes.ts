@@ -11,21 +11,21 @@ const listTransactionController = new ListTransactionController();
 const deleteTransactionController = new DeleteTransactionController();
 
 transactionRoutes.get(
-  '/',
-  UserAuthentication,
-  listTransactionController.handle
+   '/',
+   UserAuthentication,
+   listTransactionController.handle
 );
 
 transactionRoutes.post(
-  '/',
-  UserAuthentication,
-  createTransactionController.handle
+   '/',
+   UserAuthentication,
+   createTransactionController.handle
 );
 
 transactionRoutes.delete(
-  '/:transaction_id',
-  UserAuthentication,
-  deleteTransactionController.handle
+   '/:transaction_id',
+   UserAuthentication,
+   deleteTransactionController.handle
 );
 
 export { transactionRoutes };

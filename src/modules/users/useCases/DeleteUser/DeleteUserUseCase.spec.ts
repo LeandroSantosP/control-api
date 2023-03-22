@@ -4,12 +4,16 @@ import { IAuthProvider } from '@/shared/providers/AuthProvider/IAuthProvider';
 import { JwtAuthProvider } from '@/shared/providers/AuthProvider/implementation/JwtAuthProvider';
 import { UserRepositoryInMemory } from '../../infra/repository/in-memory/UserRepositoryInMemory';
 import { DeleteUserUseCase } from './DeleteUserUseCase';
+import { prisma } from '@/database/prisma';
 
 let userRepositoryInMemory: UserRepositoryInMemory;
 let jwtAuthProvider: IAuthProvider;
 let deleteUserUseCase: DeleteUserUseCase;
 
 describe('Delete User', () => {
+  beforeAll(async () => {
+    await prisma.user.deleteMany();
+  });
   beforeEach(() => {
     userRepositoryInMemory = new UserRepositoryInMemory();
     jwtAuthProvider = new JwtAuthProvider();
@@ -20,7 +24,7 @@ describe('Delete User', () => {
     );
   });
 
-  it.only('should be able authentication user delete hes own account', async () => {
+  it('should be able authentication user delete hes own account', async () => {
     const userInfos = {
       email: 'test@example.com',
       password: 'senha123',

@@ -1,43 +1,43 @@
 generator client {
-  provider = "prisma-client-js"
+   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  name         String
-  password     String
-  admin        Boolean       @default(false)
-  created_at   DateTime      @default(now())
-  updated_at   DateTime      @updatedAt
-  deleted_at   DateTime?
-  transactions Transaction[]
-
-  @@map("users")
-}
-
-model Transaction {
-  id             String      @id @default(uuid())
-  description    String
-  value          Decimal
-  recurrence     Recurrence?
-  installments   Int?
-  isSubscription Boolean?
-  due_date       DateTime?
-  resolved       Boolean     @default(false)
-  created_at     DateTime    @default(now())
-  updated_at     DateTime    @updatedAt
-  userId         String
-  author         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("transactions")
+   provider = "postgresql"
+   url      = env("DATABASE_URL")
 }
 
 enum Recurrence {
-  monthly
+   monthly
+}
+
+model User {
+   id           String        @id @default(uuid())
+   email        String        @unique
+   name         String
+   password     String
+   admin        Boolean       @default(false)
+   created_at   DateTime      @default(now())
+   updated_at   DateTime      @updatedAt
+   deleted_at   DateTime?
+   transactions Transaction[]
+
+   @@map("users")
+}
+
+model Transaction {
+   id             String      @id @default(uuid())
+   description    String
+   value          Decimal
+   recurrence     Recurrence?
+   installments   Int?
+   isSubscription Boolean?
+   due_date       DateTime?
+   resolved       Boolean     @default(false)
+   created_at     DateTime    @default(now())
+   updated_at     DateTime    @updatedAt
+   userId         String
+   author         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+   @@map("transactions")
 }

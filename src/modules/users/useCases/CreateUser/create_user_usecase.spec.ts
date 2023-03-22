@@ -58,10 +58,10 @@ describe('Create User', () => {
   });
 
   it('should not to be able create a new user if password or password is invalid', async () => {
-    const UserTwo = () =>
+    const User = () =>
       createUserUseCase.execute({ ...UserTest, password: 'invalid_pass' });
 
-    await expect(UserTwo).rejects.toEqual(
+    await expect(User).rejects.toEqual(
       new InvalidYupError(
         'Password should have minimum eight characters, at least one latter and ono number! \n'
       )

@@ -4,14 +4,17 @@ import { ListUserController } from '@/modules/users/useCases/ListUser/ListUserCo
 import { CreateUserController } from '@/modules/users/useCases/CreateUser/CreateUserController';
 import { UserAuthentication } from '../infra/middleware/UserAuthentication';
 import { DeleteUserController } from '@/modules/users/useCases/DeleteUser/DeleteUserController';
+import { UpdatedUserController } from '@/modules/users/useCases/UpdatedUser/UpdatedUserController';
 
 const userRouter = Router();
 
 const createUserController = new CreateUserController();
 const listUserController = new ListUserController();
 const deleteUserController = new DeleteUserController();
+const updatedUserController = new UpdatedUserController();
 
-userRouter.post('/', createUserController.handle);
+userRouter.post('/create', createUserController.handle);
+userRouter.put('/updated', UserAuthentication, updatedUserController.handle);
 userRouter.get('/', UserAuthentication, listUserController.handle);
 userRouter.delete('/:pass', UserAuthentication, deleteUserController.handle);
 

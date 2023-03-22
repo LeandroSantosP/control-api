@@ -2,7 +2,6 @@ import 'dotenv/config';
 import { execSync } from 'child_process';
 process.env.DATABASE_URL = `${process.env.DATABASE_URL}_testdb02?schema=test_schema`;
 
-/* @TODO transform in async to avoid race condition */
 execSync('yarn prisma migrate deploy');
 
 module.exports = {
