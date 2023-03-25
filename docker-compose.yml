@@ -19,4 +19,5 @@ services:
    environment:
       - CRONTAB_FILE=./.crontab
    volumes:
-      - ./src/jobs:/usr/src/app
+      - ./src/jobs/.crontab:/usr/src/app/.crontab
+      - ./dist:/usr/src/app

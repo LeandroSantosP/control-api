@@ -33,4 +33,9 @@ export abstract class ITransactionsRepository {
       user_id: string;
       month: number;
    }): Promise<Transaction[]>;
+   abstract GetDailyTransactions(user_id: string): Promise<
+      (Transaction & {
+         author: User;
+      })[]
+   >;
 }

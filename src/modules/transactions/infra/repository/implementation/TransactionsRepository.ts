@@ -1,6 +1,6 @@
 import { prisma } from '@/database/prisma';
-import { Prisma, Transaction } from '@prisma/client';
-import { endOfMonth, startOfMonth } from 'date-fns';
+import { Prisma, Transaction, User } from '@prisma/client';
+import { addDays, endOfMonth, startOfMonth } from 'date-fns';
 import {
    ITransactionsRepository,
    ITransactionsRepositoryProps,
@@ -98,17 +98,39 @@ export class TransactionsRepository implements ITransactionsRepository {
       const transactions = await prisma.transaction.findMany({
          where: {
             userId: user_id,
-            AND: [
-               {
-                  due_date: {
-                     gte: new Date(startOfTheMount),
-                     lt: new Date(endOfTheMount),
-                  },
-               },
-            ],
+            due_date: {
+               gte: new Date(startOfTheMount),
+               lt: new Date(endOfTheMount),
+            },
          },
       });
 
       return transactions;
+   }
+
+   async GetDailyTransactions(user_id: string): Promise<
+      (Transaction & {
+         author: User;
+      })[]
+   > {
+      const today = new Date();
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth();
+      const day = today.getDate();
+
+      const transaction = await this.prisma.transaction.findMany({
+         where: {
+            userId: user_id,
+            due_date: {
+               gte: new Date(year, month, day, 0, 0),
+               lt: addDays(new Date(year, month, day, 0, 0), 1),
+            },
+         },
+         include: {
+            author: true,
+         },
+      });
+
+      return transaction;
    }
 }
