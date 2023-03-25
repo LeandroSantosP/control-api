@@ -24,6 +24,7 @@ export class TransactionsRepository implements ITransactionsRepository {
             description,
             value: new Prisma.Decimal(value),
             due_date: dueDate,
+            type: Number(value) < 0 ? 'expense' : 'revenue',
             author: {
                connect: {
                   email,
@@ -99,7 +100,7 @@ export class TransactionsRepository implements ITransactionsRepository {
             userId: user_id,
             AND: [
                {
-                  created_at: {
+                  due_date: {
                      gte: new Date(startOfTheMount),
                      lt: new Date(endOfTheMount),
                   },

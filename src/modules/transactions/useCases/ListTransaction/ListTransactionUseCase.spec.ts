@@ -3,10 +3,28 @@ import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/U
 import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
 import { ListTransactionUseCase } from './ListTransactionUseCase';
 import { prisma } from '@/database/prisma';
+import { AppError } from '@/shared/infra/middleware/AppError';
 
 let userRepository: UserRepositoryTestDB;
 let TransactionsRepository: TransactionsRepositoryTestDB;
 let listTransactionUseCase: ListTransactionUseCase;
+
+interface createNewTransactionProps {
+   email?: string;
+   description?: string;
+   value?: string;
+}
+
+const createNewTransaction = async ({
+   description = 'desc',
+   email = 'email@exemple.com',
+   value = '12',
+}: createNewTransactionProps) =>
+   await TransactionsRepository.create({
+      email,
+      description,
+      value,
+   });
 
 describe('List Transactions', () => {
    beforeAll(async () => {
@@ -29,11 +47,7 @@ describe('List Transactions', () => {
 
       const newUser = await userRepository.create({ ...user });
 
-      await TransactionsRepository.create({
-         email: user.email,
-         description: 'desc',
-         value: '12',
-      });
+      await createNewTransaction({ email: user.email });
 
       const list = await listTransactionUseCase.execute(newUser.id);
 
@@ -49,17 +63,8 @@ describe('List Transactions', () => {
 
       const newUser = await userRepository.create({ ...user });
 
-      await TransactionsRepository.create({
-         email: user.email,
-         description: 'desc',
-         value: '21',
-      });
-
-      await TransactionsRepository.create({
-         email: user.email,
-         description: 'desc2',
-         value: '21',
-      });
+      await createNewTransaction({ email: user.email });
+      await createNewTransaction({ email: user.email });
 
       const transactionByMount = await listTransactionUseCase.execute(
          newUser.id,
@@ -67,5 +72,23 @@ describe('List Transactions', () => {
       );
 
       expect(transactionByMount.transactions).toHaveLength(2);
+   });
+
+   it('should be able get transaction with invalid data', async () => {
+      const user = {
+         email: 'exemplo@gmail.com',
+         name: 'test',
+         password: 'senha123',
+      };
+
+      const newUser = await userRepository.create({ ...user });
+
+      try {
+         const month = 'invalid format' as any;
+         await listTransactionUseCase.execute(newUser.id, month);
+      } catch (err: any) {
+         expect(err).toBeInstanceOf(AppError);
+         expect(err.message).toBe('Invalid format, must be a number!');
+      }
    });
 });

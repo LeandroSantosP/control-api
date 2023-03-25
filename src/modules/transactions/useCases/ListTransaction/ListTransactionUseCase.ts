@@ -6,6 +6,7 @@ import { ITransactionsRepository } from '../../infra/repository/ITransactionsRep
 interface IResponse {
    expense: number;
    revenue: number;
+   total: number;
 }
 
 @injectable()
@@ -33,14 +34,23 @@ export class ListTransactionUseCase {
          (storage, transaction) => {
             const transactionValue = Number(transaction.value);
 
+            let expense = 0;
+            let revenue = 0;
+
             if (transactionValue < 0) {
-               storage.expense = storage.expense + transactionValue;
+               expense = transactionValue;
             } else {
-               storage.revenue = storage.revenue + transactionValue;
+               revenue = transactionValue;
             }
+
+            storage.expense = storage.expense + expense;
+            storage.revenue = storage.revenue + revenue;
+
+            storage.total = storage.revenue + storage.expense;
+
             return storage;
          },
-         { expense: 0, revenue: 0 }
+         { expense: 0, revenue: 0, total: 0 }
       );
 
       if (balense) {
@@ -63,15 +73,16 @@ export class ListTransactionUseCase {
          return { transactions, balense };
       }
       if (isNaN(month) || !month) {
-         throw new AppError('Invalid format must be a number!');
+         throw new AppError('Invalid format, must be a number!');
       }
 
-      if (month < 1 || month > 12)
+      if (month < 1 || month > 12) {
          throw new AppError(
             'Just Filter By Month between 1 and 12 ' +
                month +
                ' IsInvalid Mount'
          );
+      }
 
       const transactionByMonth = await this.TransactionRepository.ListByMonth({
          user_id,
@@ -82,6 +93,10 @@ export class ListTransactionUseCase {
 
       const balense = this.GetMonthBalenseList(transactionByMonth);
 
-      return { monthBalense: balense, transactions: transactionByMonth };
+      return {
+         monthBalense: balense,
+         transactions: transactionByMonth,
+         total: balense?.total,
+      };
    }
 }

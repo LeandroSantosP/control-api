@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import '@/shared/infra/tsyringe';
 
-import { allRoutes } from '../router';
+import { allRoutes } from '../routes';
 
 const app = express();
 

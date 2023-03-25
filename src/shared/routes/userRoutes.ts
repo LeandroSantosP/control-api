@@ -13,9 +13,9 @@ const listUserController = new ListUserController();
 const deleteUserController = new DeleteUserController();
 const updatedUserController = new UpdatedUserController();
 
+userRouter.get('/', UserAuthentication, listUserController.handle);
 userRouter.post('/create', createUserController.handle);
 userRouter.put('/updated', UserAuthentication, updatedUserController.handle);
-userRouter.get('/', UserAuthentication, listUserController.handle);
 userRouter.delete('/:pass', UserAuthentication, deleteUserController.handle);
 
 export { userRouter };

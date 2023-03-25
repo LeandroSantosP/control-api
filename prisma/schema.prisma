@@ -36,6 +36,7 @@ model Transaction {
    resolved       Boolean     @default(false)
    created_at     DateTime    @default(now())
    updated_at     DateTime    @updatedAt
+   type           String?
    userId         String
    author         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 

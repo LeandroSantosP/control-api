@@ -10,6 +10,6 @@ import { ITransactionsRepository } from '@/modules/transactions/infra/repository
 container.registerSingleton<IUserRepository>('UserRepository', UserRepository);
 
 container.registerSingleton<ITransactionsRepository>(
-  'TransactionsRepository',
-  TransactionsRepository
+   'TransactionsRepository',
+   TransactionsRepository
 );

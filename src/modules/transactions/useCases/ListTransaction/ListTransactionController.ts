@@ -14,8 +14,6 @@ export class ListTransactionController {
          month
       );
 
-      console.log(monthBalense);
-
       return res.status(200).json({ monthBalense, balense, transactions });
    }
 }
