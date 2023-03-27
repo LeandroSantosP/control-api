@@ -6,6 +6,8 @@ const envExemploKeys = Object.keys(
       path: '.env.example',
    }).parsed
 );
+
+/*  */
 const env = envExemploKeys.reduce((storage, currentKey) => {
    return `${storage}${currentKey}=${process.env[currentKey]}\n`;
 }, '');
