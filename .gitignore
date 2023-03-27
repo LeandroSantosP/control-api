@@ -10,4 +10,5 @@ coverage
 *.docker-volumes
 dist
 .volumes
+.env.backup
 

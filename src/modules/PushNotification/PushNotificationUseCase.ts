@@ -19,10 +19,12 @@ export class PushNotificationUseCase {
          token: transaction.author.fireBaseToken!,
       }));
 
-      admin
+      await admin
          .messaging()
          .sendAll(messages)
          .then((response) => {
+            console.log({ response });
+
             console.log(
                'Successfully sent message ' + JSON.stringify(response)
             );
@@ -30,6 +32,7 @@ export class PushNotificationUseCase {
          .catch((err) => {
             console.log(err);
          });
+
       return;
    }
 }

@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "ts-node-dev --transpile-only --exit-child --ignore-watch node_modules -r tsconfig-paths/register -r dotenv-safe/config src/shared/https/index.ts",
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "yarn && yarn dev"
   },
   "dependencies": {
     "@prisma/client": "^4.11.0",

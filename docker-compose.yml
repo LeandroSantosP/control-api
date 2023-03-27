@@ -1,23 +1,39 @@
 version: '3'
 
 services:
-  db:
-    container_name: db
-    image: postgres:15.2
-    restart: always
-    ports:
-      - ${DB_PORT}:5432
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${BD_USER}
-      - POSTGRES_PASSWORD=${DB_PASS}
+   db:
+      container_name: db
+      image: postgres:15.2
+      restart: always
+      ports:
+         - ${DB_PORT}:5432
+      environment:
+         - POSTGRES_USER=puf_admin
+         - POSTGRES_PASSWORD=puf_pass
+         - POSTGRES_DB=puf
+
+   cronjobs:
+      container_name: cron
+      image: brunobertolini/node-cron:0.1.0
+      environment:
+         - CRONTAB_FILE=./.crontab
+      volumes:
+         - ./src/jobs/.crontab:/usr/src/app/.crontab
+         - ./dist:/usr/src/app
+
+   api:
+      container_name: api
+      image: node:18.15.0
+      env_file:
+         - .env
+      ports:
+         - ${SERVER_PORT}:${SERVER_PORT}
+      working_dir: /usr/src/app
+      volumes:
+         - .:/usr/src/app
+         - /usr/src/app/node_modules
+      depends_on:
+         - db
+      command: yarn start
 
 
-  cronjobs:
-   container_name: cron
-   image: brunobertolini/node-cron:0.1.0
-   environment:
-      - CRONTAB_FILE=./.crontab
-   volumes:
-      - ./src/jobs/.crontab:/usr/src/app/.crontab
-      - ./dist:/usr/src/app
