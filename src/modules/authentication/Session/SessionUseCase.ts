@@ -12,6 +12,7 @@ export interface IResponse {
       email: string;
    };
    token: string;
+   PushNotificationToken: string;
 }
 
 interface IRequest {
@@ -49,6 +50,7 @@ export class SessionUseCase extends DecodedMethods {
       }
 
       let password_user_db: string = '';
+
       Object.keys(user).forEach((key) => {
          if (key !== 'password') {
             return;
@@ -65,11 +67,20 @@ export class SessionUseCase extends DecodedMethods {
          throw new AppError('Email or password Is Incorrect!');
       }
 
-      const { secretToken } = auth;
+      const { secretToken, secretTokenPushNotification } = auth;
 
       const token = this.JwtAuthProvider.CreateToken({
          payload: { email: user.email },
          secretToken,
+         complement: {
+            expiresIn: '1h',
+            subject: user.id!,
+         },
+      });
+
+      const PushNotificationToken = this.JwtAuthProvider.CreateToken({
+         payload: {},
+         secretToken: secretTokenPushNotification,
          complement: {
             expiresIn: '1h',
             subject: user.id!,
@@ -82,6 +93,7 @@ export class SessionUseCase extends DecodedMethods {
             email: user.email,
          },
          token: token,
+         PushNotificationToken,
       };
    }
 }

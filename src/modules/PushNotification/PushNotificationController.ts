@@ -4,11 +4,12 @@ import { PushNotificationUseCase } from './PushNotificationUseCase';
 
 export class PushNotificationController {
    async handle(req?: Request, res?: Response) {
-      const useCase = container.resolve(PushNotificationUseCase);
-      const response = await useCase.execute(
-         '49dbb0d1-50cc-4999-90d0-03b7a857d60b'
-      );
+      const token = req?.headers.authorization as any;
 
-      return response;
+      const useCase = container.resolve(PushNotificationUseCase);
+
+      const response = await useCase.execute(token);
+
+      return res?.status(200).json(response);
    }
 }

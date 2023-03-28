@@ -1,38 +1,71 @@
-import { inject } from 'tsyringe';
-import { admin } from '@/interfaces/firebase';
+import auth from '@/config/auth';
+import { AppError } from '@/shared/infra/middleware/AppError';
+import { IAuthProvider } from '@/shared/providers/AuthProvider/IAuthProvider';
 import { ITransactionsRepository } from '../transactions/infra/repository/ITransactionsRepository';
+import { inject, injectable } from 'tsyringe';
 
+@injectable()
 export class PushNotificationUseCase {
    constructor(
       @inject('TransactionsRepository')
-      private TransactionsRepository: ITransactionsRepository
+      private TransactionsRepository: ITransactionsRepository,
+      @inject('JwtAuthProvider')
+      private JwtAuthProvider: IAuthProvider
    ) {}
-   async execute(user_id: string) {
+   async execute(token: string): Promise<any> {
+      const { secretTokenPushNotification } = auth;
+
+      if (!token) {
+         throw new AppError('Token must be provided!');
+      }
+      const [type, PushNotificationToken] = token.split(' ');
+
+      if (type !== 'Bearer') {
+         throw new AppError('Invalid Format');
+      }
+
+      const { sub: client_id } = this.JwtAuthProvider.VerifyToken(
+         PushNotificationToken,
+         secretTokenPushNotification
+      ) as { sub: string };
+
+      if (!client_id) {
+         throw new AppError('Not authenticated');
+      }
+
       const transactions =
-         await this.TransactionsRepository.GetDailyTransactions(user_id);
+         await this.TransactionsRepository.GetDailyTransactions(client_id);
 
-      const messages = transactions.map((transaction) => ({
-         data: {
-            title: 'Uma conta vence Hoje',
-            body: `Sua conta ${transaction.description} Vence Hoje!`,
+      transactions.forEach((transaction) => {
+         if (transaction.userId !== client_id)
+            throw new AppError('Not authorized!');
+      });
+
+      const result = transactions.reduce(
+         (
+            storage: {
+               author: string;
+               due_date: Date | null;
+               type: string | null;
+               resolved: boolean;
+               isSubscription: boolean | null;
+               createdAt: Date;
+            }[],
+            current
+         ) => {
+            storage.push({
+               author: current.author.name,
+               due_date: current.due_date,
+               type: current.type,
+               resolved: current.resolved,
+               isSubscription: current.isSubscription,
+               createdAt: current.created_at,
+            });
+            return storage;
          },
-         token: transaction.author.fireBaseToken!,
-      }));
+         []
+      );
 
-      await admin
-         .messaging()
-         .sendAll(messages)
-         .then((response) => {
-            console.log({ response });
-
-            console.log(
-               'Successfully sent message ' + JSON.stringify(response)
-            );
-         })
-         .catch((err) => {
-            console.log(err);
-         });
-
-      return;
+      return result;
    }
 }

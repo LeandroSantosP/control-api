@@ -1,3 +1,0 @@
-
-* * * * *  /usr/bin/curl root node $WORKDIR/jobs/notifications/index.ts >> $WORKDIR/jobs/.log 2>&1
-

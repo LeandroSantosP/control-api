@@ -1,6 +1,6 @@
 import { CreateTokenRequest, IAuthProvider } from '../IAuthProvider';
 import { compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import { JwtPayload, sign, verify } from 'jsonwebtoken';
 
 export class JwtAuthProvider implements IAuthProvider {
    CreateToken({
@@ -18,5 +18,10 @@ export class JwtAuthProvider implements IAuthProvider {
    ): Promise<boolean> {
       const result = compare(currentPass, dbPassword);
       return result;
+   }
+
+   VerifyToken(token: string, secretKey: string): string | JwtPayload {
+      const params = verify(token, secretKey);
+      return params;
    }
 }
