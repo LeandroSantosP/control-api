@@ -57,7 +57,9 @@ describe('PushNotification', () => {
          authenticationBase64: 'Basic dGVzdDIyMjJAZXhhbXBsZS5jb206c2VuaGExMjM=',
       });
 
-      const push = await pushNotificationUseCase.execute(PushNotificationToken);
+      const push = await pushNotificationUseCase.execute(
+         'Bearer ' + PushNotificationToken
+      );
 
       expect(push).toHaveLength(2);
       expect(push[0]).toHaveProperty('due_date', new Date(currentDate));

@@ -1,12 +1,16 @@
 -- CreateEnum
 CREATE TYPE "Recurrence" AS ENUM ('monthly');
 
+-- CreateEnum
+CREATE TYPE "Category" AS ENUM ('transport', 'food', 'habitation', 'education', 'health', 'leisure', 'products', 'debts', 'Taxes', 'Investments', 'unknown');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "fireBaseToken" TEXT,
     "admin" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -24,9 +28,11 @@ CREATE TABLE "transactions" (
     "installments" INTEGER,
     "isSubscription" BOOLEAN,
     "due_date" TIMESTAMP(3),
+    "Category" "Category" NOT NULL,
     "resolved" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "type" TEXT,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "transactions_pkey" PRIMARY KEY ("id")

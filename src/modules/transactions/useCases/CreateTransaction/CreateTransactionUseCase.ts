@@ -11,6 +11,7 @@ import { ITransactionsRepository } from '../../infra/repository/ITransactionsRep
 interface IRequest extends TransactionsDTO {
    email: string;
    dueDate?: string;
+   categoryType?: string;
 }
 
 const decimalValidate = () => {
@@ -24,7 +25,7 @@ const decimalValidate = () => {
       });
 };
 
-const TransactionSchema = yup.object().shape({
+export const TransactionSchema = yup.object().shape({
    description: yup.string().required(),
    value: decimalValidate().required(),
    email: yup.string().email().required(),
@@ -35,6 +36,21 @@ const TransactionSchema = yup.object().shape({
          /^\d{4}-\d{2}-\d{2}$/,
          'Data inválida. O formato deve ser yyyy-MM-dd'
       ),
+   categoryType: yup
+      .string()
+      .oneOf([
+         'transport',
+         'food',
+         'habitation',
+         'education',
+         'health',
+         'leisure',
+         'products',
+         'debts',
+         'Taxes',
+         'Investments',
+         'unknown',
+      ]),
 });
 
 @injectable()
@@ -46,17 +62,39 @@ export class CreateTransaction {
       private transactionRepository: ITransactionsRepository
    ) {}
 
-   async execute({ description, value, email, dueDate }: IRequest) {
+   async execute({
+      description,
+      value,
+      email,
+      categoryType,
+      dueDate,
+   }: IRequest) {
       if (!description || !value || !email) {
          throw new AppError('Invalid Data', 400);
       }
 
       try {
-         const dados = { description, email, value, dueDate };
+         const dados = {
+            description,
+            email,
+            value,
+            dueDate,
+            categoryType,
+         };
 
          const validadeData = await TransactionSchema.validate(dados, {
             abortEarly: false,
          });
+
+         const isRevenue = Number(value) > 0;
+
+         if (isRevenue && validadeData.dueDate) {
+            throw new AppError('Revenue does not have due date!');
+         }
+
+         if (Number(validadeData.value) < 0 && !validadeData.dueDate) {
+            throw new AppError('Expense should have due date!');
+         }
 
          const user = await this.userRepository.GetUserByEmail(
             validadeData.email
@@ -80,6 +118,7 @@ export class CreateTransaction {
             description: validadeData.description,
             value: validadeData.value,
             due_date: DataFormate,
+            Category: validadeData.categoryType,
          });
 
          const newTransaction = await this.transactionRepository.create({
@@ -87,6 +126,7 @@ export class CreateTransaction {
             description: transactionModel.description,
             value: transactionModel.value,
             dueDate: transactionModel.due_date,
+            Category: transactionModel.Category,
          });
 
          return {

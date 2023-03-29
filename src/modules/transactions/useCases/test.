@@ -1,0 +1,11 @@
+# Deve ser possível cadastra uma transação onde ela poder ser uma inscrição ou nao,
+**Caso ela seja uma escrivão o usuário deve dizer a recorrência dela(Nao deve conter parcelas)**
+**Caso ela nao seja uma inscrição deve ser fornecido a recorreria juntamente com o numero de parcelas.**
+
+O Usuário deve dizer qual a recorrência dessa transação(mensal, anual, diria),
+O Usuário deve dizer o numero de parcelas(10, 20 ,2, 3),
+
+
+(Caso ela seja uma inscrição o usuário nao deve dizer quando parcelas ela tem, apenas a recorreria dela)
+
+

@@ -1,7 +1,9 @@
 import { prisma } from '@/database/prisma';
+import { AppError } from '@/shared/infra/middleware/AppError';
 import { Prisma, Transaction, User } from '@prisma/client';
-import { addDays, endOfMonth, startOfMonth } from 'date-fns';
+import { addDays, endOfMonth, startOfMonth, isAfter, isBefore } from 'date-fns';
 import {
+   ICreateTransactionInstallments,
    ITransactionsRepository,
    ITransactionsRepositoryProps,
 } from '../ITransactionsRepository';
@@ -18,13 +20,19 @@ export class TransactionsRepository implements ITransactionsRepository {
       value,
       email,
       dueDate,
+      Category,
    }: ITransactionsRepositoryProps): Promise<Transaction> {
+      if (isBefore(new Date(dueDate!), addDays(new Date(), 1))) {
+         throw new AppError('Due date must be at least one day in the future!');
+      }
+
       const newTransaction = await this.prisma.transaction.create({
          data: {
             description,
             value: new Prisma.Decimal(value),
             due_date: dueDate,
             type: Number(value) < 0 ? 'expense' : 'revenue',
+            Category,
             author: {
                connect: {
                   email,
@@ -32,6 +40,44 @@ export class TransactionsRepository implements ITransactionsRepository {
             },
          },
       });
+      return newTransaction;
+   }
+
+   async CreateTransactionInstallments({
+      categoryType,
+      description,
+      email,
+      recurrence,
+      value,
+      dueDate,
+      installments,
+      isSubscription,
+   }: ICreateTransactionInstallments): Promise<Transaction> {
+      if (
+         isBefore(new Date(dueDate!), addDays(new Date(), 1)) &&
+         dueDate !== null
+      ) {
+         throw new AppError('Due date must be at least one day in the future!');
+      }
+
+      const newTransaction = await this.prisma.transaction.create({
+         data: {
+            description: description,
+            value: new Prisma.Decimal(value),
+            due_date: dueDate,
+            installments: installments,
+            type: Number(value) < 0 ? 'expense' : 'revenue',
+            isSubscription: isSubscription,
+            recurrence: recurrence,
+            Category: categoryType,
+            author: {
+               connect: {
+                  email,
+               },
+            },
+         },
+      });
+
       return newTransaction;
    }
 

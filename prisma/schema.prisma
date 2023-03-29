@@ -10,6 +10,22 @@ datasource db {
 
 enum Recurrence {
    monthly
+   daily
+   yearly
+}
+
+enum Category {
+   transport
+   food
+   habitation
+   education
+   health
+   leisure
+   products
+   debts
+   Taxes
+   Investments
+   unknown
 }
 
 model User {
@@ -35,6 +51,7 @@ model Transaction {
    installments   Int?
    isSubscription Boolean?
    due_date       DateTime?
+   Category       Category    @default(unknown)
    resolved       Boolean     @default(false)
    created_at     DateTime    @default(now())
    updated_at     DateTime    @updatedAt

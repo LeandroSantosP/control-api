@@ -1,1 +1,1 @@
-# Deve ser possível gerar um relatório com todas as transações entrei de determinado período (RabbitMq)
+# Deve ser possível gerar um relatório com todas as transações entrei determinado período (RabbitMq)

@@ -1,20 +1,21 @@
 import { prisma } from '@/database/prisma';
-import { addDays } from 'date-fns';
+import { addDays, isBefore } from 'date-fns';
 import { Prisma, Transaction, User } from '@prisma/client';
 import { startOfMonth, endOfMonth } from 'date-fns';
 
 import {
+   ICreateTransactionInstallments,
    ITransactionsRepository,
    ITransactionsRepositoryProps,
 } from '../ITransactionsRepository';
+import { AppError } from '@/shared/infra/middleware/AppError';
+import { log } from 'console';
 
 export class TransactionsRepositoryTestDB implements ITransactionsRepository {
    private prisma;
 
    constructor() {
       this.prisma = prisma;
-
-      prisma.transaction.deleteMany();
    }
 
    async create({
@@ -22,12 +23,21 @@ export class TransactionsRepositoryTestDB implements ITransactionsRepository {
       value,
       email,
       dueDate,
+      Category,
    }: ITransactionsRepositoryProps): Promise<Transaction> {
+      if (
+         isBefore(new Date(dueDate!), addDays(new Date(), 1)) &&
+         dueDate !== null
+      ) {
+         throw new AppError('Due date must be at least one day in the future!');
+      }
       const newTransaction = await this.prisma.transaction.create({
          data: {
             description,
             value: new Prisma.Decimal(value),
             due_date: dueDate,
+            type: Number(value) < 0 ? 'expense' : 'revenue',
+            Category,
             author: {
                connect: {
                   email,
@@ -35,6 +45,41 @@ export class TransactionsRepositoryTestDB implements ITransactionsRepository {
             },
          },
       });
+      return newTransaction;
+   }
+
+   async CreateTransactionInstallments({
+      categoryType,
+      description,
+      email,
+      recurrence,
+      value,
+      dueDate,
+      installments,
+      isSubscription,
+   }: ICreateTransactionInstallments): Promise<Transaction> {
+      if (isBefore(new Date(dueDate!), addDays(new Date(), 1))) {
+         throw new AppError('Due date must be at least one day in the future!');
+      }
+
+      const newTransaction = await this.prisma.transaction.create({
+         data: {
+            description: description,
+            value: new Prisma.Decimal(value),
+            due_date: dueDate,
+            installments: installments,
+            type: Number(value) < 0 ? 'expense' : 'revenue',
+            isSubscription: isSubscription,
+            recurrence: recurrence,
+            Category: categoryType,
+            author: {
+               connect: {
+                  email,
+               },
+            },
+         },
+      });
+
       return newTransaction;
    }
 

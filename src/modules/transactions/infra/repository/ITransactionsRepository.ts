@@ -1,10 +1,22 @@
-import { Transaction, User } from '@prisma/client';
+import { Category, Transaction, User } from '@prisma/client';
 
 export interface ITransactionsRepositoryProps {
    value: string;
    description: string;
    email: string;
    dueDate?: string;
+   Category?: Category;
+}
+
+export interface ICreateTransactionInstallments {
+   isSubscription?: boolean;
+   installments?: number;
+   dueDate?: string;
+   email: string;
+   value: string;
+   description: string;
+   categoryType: Category | undefined;
+   recurrence: 'monthly' | 'daily' | 'yearly';
 }
 
 export abstract class ITransactionsRepository {
@@ -12,7 +24,12 @@ export abstract class ITransactionsRepository {
       description,
       value,
       email,
+      Category,
    }: ITransactionsRepositoryProps): Promise<Transaction>;
+
+   abstract CreateTransactionInstallments(
+      props: ICreateTransactionInstallments
+   ): Promise<Transaction>;
 
    abstract ListUserTransactionsById(
       user_id: string
