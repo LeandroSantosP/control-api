@@ -88,8 +88,6 @@ export class CreateTransactionWIthRecorrenteUseCase {
 
       const { id: _, ...transaction } = new TransactionsEntity();
 
-      console.log({ value: FinalResult });
-
       Object.assign(transaction, {
          ...validatedData,
          value: FinalResult,
@@ -118,7 +116,7 @@ export class CreateTransactionWIthRecorrenteUseCase {
          due_date: newTransaction.due_date,
          created_at: newTransaction.created_at,
          resolve: newTransaction.resolved,
-         Category: newTransaction.Category,
+         Category: newTransaction.category.name,
       } as any;
 
       if (
@@ -147,6 +145,12 @@ export class CreateTransactionWIthRecorrenteUseCase {
          ) {
             const newTransaction = await this.transactionManager(validatedData);
             return newTransaction;
+         }
+
+         if (!validatedData.isSubscription && !validatedData.installments) {
+            throw new AppError(
+               'Installments are required for transactions other than a subscription!'
+            );
          }
 
          if (validatedData.isSubscription && validatedData.installments) {

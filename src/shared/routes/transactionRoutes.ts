@@ -4,6 +4,7 @@ import { DeleteTransactionController } from '@/modules/transactions/useCases/Del
 import { UserAuthentication } from '../infra/middleware/UserAuthentication';
 import { ListTransactionController } from '@/modules/transactions/useCases/ListTransaction/ListTransactionController';
 import { CreateTransactionWIthRecorrenteController } from '@/modules/transactions/useCases/CreateTransactionWIthRecorrence/CreateTransactionWIthRecorrenteController';
+import { ResolveTransactionController } from '@/modules/transactions/useCases/ResolveTransaction/ResolveTransactionController';
 
 const transactionRoutes = Router();
 
@@ -12,6 +13,7 @@ const createTransactionWIthRecorrenteController =
    new CreateTransactionWIthRecorrenteController();
 const listTransactionController = new ListTransactionController();
 const deleteTransactionController = new DeleteTransactionController();
+const resolveTransactionController = new ResolveTransactionController();
 
 transactionRoutes.get(
    '/',
@@ -35,6 +37,12 @@ transactionRoutes.delete(
    '/:transaction_id',
    UserAuthentication,
    deleteTransactionController.handle
+);
+
+transactionRoutes.patch(
+   '/resolved/:transaction_id',
+   UserAuthentication,
+   resolveTransactionController.handle
 );
 
 export { transactionRoutes };

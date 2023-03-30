@@ -25,11 +25,23 @@ export abstract class ITransactionsRepository {
       value,
       email,
       Category,
-   }: ITransactionsRepositoryProps): Promise<Transaction>;
+   }: ITransactionsRepositoryProps): Promise<
+      Transaction & {
+         category: {
+            name: Category;
+         };
+      }
+   >;
 
    abstract CreateTransactionInstallments(
       props: ICreateTransactionInstallments
-   ): Promise<Transaction>;
+   ): Promise<
+      Transaction & {
+         category: {
+            name: Category;
+         };
+      }
+   >;
 
    abstract ListUserTransactionsById(
       user_id: string
@@ -50,9 +62,12 @@ export abstract class ITransactionsRepository {
       user_id: string;
       month: number;
    }): Promise<Transaction[]>;
+
    abstract GetDailyTransactions(user_id: string): Promise<
       (Transaction & {
          author: User;
       })[]
    >;
+
+   abstract resolved(transaction_id: string): Promise<Transaction>;
 }

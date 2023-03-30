@@ -39,6 +39,7 @@ describe('Create Transaction With Recorrente', () => {
          recurrence: 'daily',
          value: '-10.22',
          isSubscription: false,
+         installments: 12,
       });
 
       expect(result).toHaveProperty('Category', result.Category);

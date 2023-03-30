@@ -5,6 +5,7 @@ import { UserRepositoryTestDB } from '../../../users/infra/repository/test-db/Us
 import { CreateTransaction } from './CreateTransactionUseCase';
 import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
 import { prisma } from '@/database/prisma';
+import { addDays } from 'date-fns';
 
 let transactionRepositoryTestDB: TransactionsRepositoryTestDB;
 let userRepositoryTestDB: UserRepositoryTestDB;
@@ -40,11 +41,18 @@ describe('Create Transaction', () => {
          password: 'senha123',
       });
 
+      const currentDateWithThreeDays = addDays(new Date(), 3)
+         .toISOString()
+         .slice(0, 10);
+
       const newTransaction = await createTransaction.execute({
          email: 'mariatest@example.com',
          description: 'Desc',
          value: '11.1',
       });
+
+      /* Criar test onde em caso seja um revenue nao pode conter due_date */
+      /* Criar test onde uma expense nao pode ser um numero positivo  */
 
       expect(newTransaction).toHaveProperty('id');
       expect(newTransaction?.description).toEqual('Desc');
@@ -53,7 +61,7 @@ describe('Create Transaction', () => {
       expect(newTransaction?.installments).toBeNull();
       expect(newTransaction?.isSubscription).toBeNull();
       expect(newTransaction?.due_date).toBeNull();
-      expect(newTransaction?.Category).toEqual('unknown');
+      expect(newTransaction?.category.name).toEqual('unknown');
       expect(newTransaction?.resolved).toBe(false);
       expect(newTransaction?.userId).toEqual(newUser.id);
    });

@@ -1,6 +1,6 @@
 import { prisma } from '@/database/prisma';
 import { addDays, isBefore } from 'date-fns';
-import { Prisma, Transaction, User } from '@prisma/client';
+import { Category, Prisma, Transaction, User } from '@prisma/client';
 import { startOfMonth, endOfMonth } from 'date-fns';
 
 import {
@@ -23,30 +23,50 @@ export class TransactionsRepositoryTestDB implements ITransactionsRepository {
       email,
       dueDate,
       Category,
-   }: ITransactionsRepositoryProps): Promise<Transaction> {
-      if (
-         isBefore(new Date(dueDate!), addDays(new Date(), 1)) &&
-         dueDate !== null
-      ) {
+   }: ITransactionsRepositoryProps): Promise<
+      Transaction & {
+         category: {
+            name: Category;
+         };
+      }
+   > {
+      if (dueDate && isBefore(new Date(dueDate!), addDays(new Date(), 1))) {
          throw new AppError('Due date must be at least one day in the future!');
       }
+
       const newTransaction = await this.prisma.transaction.create({
          data: {
+            category: {
+               connectOrCreate: {
+                  where: {
+                     name: Category || 'unknown',
+                  },
+                  create: {
+                     name: Category || 'unknown',
+                  },
+               },
+            },
             description,
             value: new Prisma.Decimal(value),
-            due_date: dueDate,
+            due_date: dueDate !== null ? dueDate : undefined,
             type: Number(value) < 0 ? 'expense' : 'revenue',
-            Category,
             author: {
                connect: {
                   email,
                },
             },
          },
+         include: {
+            category: {
+               select: {
+                  name: true,
+               },
+            },
+         },
       });
+
       return newTransaction;
    }
-
    async CreateTransactionInstallments({
       categoryType,
       description,
@@ -56,8 +76,17 @@ export class TransactionsRepositoryTestDB implements ITransactionsRepository {
       dueDate,
       installments,
       isSubscription,
-   }: ICreateTransactionInstallments): Promise<Transaction> {
-      if (isBefore(new Date(dueDate!), addDays(new Date(), 1))) {
+   }: ICreateTransactionInstallments): Promise<
+      Transaction & {
+         category: {
+            name: Category;
+         };
+      }
+   > {
+      if (
+         isBefore(new Date(dueDate!), addDays(new Date(), 1)) &&
+         dueDate !== null
+      ) {
          throw new AppError('Due date must be at least one day in the future!');
       }
 
@@ -70,10 +99,27 @@ export class TransactionsRepositoryTestDB implements ITransactionsRepository {
             type: Number(value) < 0 ? 'expense' : 'revenue',
             isSubscription: isSubscription,
             recurrence: recurrence,
-            Category: categoryType,
+            resolved: Number(value) > 0 ? true : false,
+            category: {
+               connectOrCreate: {
+                  where: {
+                     name: categoryType || 'unknown',
+                  },
+                  create: {
+                     name: categoryType || 'unknown',
+                  },
+               },
+            },
             author: {
                connect: {
                   email,
+               },
+            },
+         },
+         include: {
+            category: {
+               select: {
+                  name: true,
                },
             },
          },
@@ -179,6 +225,19 @@ export class TransactionsRepositoryTestDB implements ITransactionsRepository {
          },
          include: {
             author: true,
+         },
+      });
+
+      return transaction;
+   }
+
+   async resolved(transaction_id: string): Promise<Transaction> {
+      const transaction = await this.prisma.transaction.update({
+         where: {
+            id: transaction_id,
+         },
+         data: {
+            resolved: true,
          },
       });
 
