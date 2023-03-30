@@ -9,7 +9,6 @@ import {
    ITransactionsRepositoryProps,
 } from '../ITransactionsRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
-import { log } from 'console';
 
 export class TransactionsRepositoryTestDB implements ITransactionsRepository {
    private prisma;

@@ -1,10 +1,10 @@
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { Category } from '@prisma/client';
-import { formatISO, parse } from 'date-fns';
+import { formatISO, parse } from 'date-fns'; /* Criar um provider */
 import { inject, injectable } from 'tsyringe';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
-import * as yup from 'yup';
 import { TransactionsEntity } from '../../infra/Entity/TransactionsEntity';
+import * as yup from 'yup';
 
 interface IRequest {
    isSubscription: boolean;
@@ -77,15 +77,18 @@ export class CreateTransactionWIthRecorrenteUseCase {
 
       let FinalResult;
 
+      const multiplyInstallmentsWithValue =
+         validatedData.installments! * Number(validatedData.value);
+
       if (validatedData.installments) {
-         FinalResult = String(
-            validatedData.installments! * Number(validatedData.value)
-         );
+         FinalResult = String(multiplyInstallmentsWithValue.toFixed(2));
       } else {
          FinalResult = validatedData.value;
       }
 
       const { id: _, ...transaction } = new TransactionsEntity();
+
+      console.log({ value: FinalResult });
 
       Object.assign(transaction, {
          ...validatedData,
