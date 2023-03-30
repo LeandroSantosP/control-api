@@ -34,6 +34,7 @@ model User {
    name          String
    password      String
    fireBaseToken String?
+   avatar        String?
    admin         Boolean       @default(false)
    created_at    DateTime      @default(now())
    updated_at    DateTime      @updatedAt

@@ -70,4 +70,25 @@ export class UserRepositoryTestDB implements IUserRepository {
 
       return dataUpdated;
    }
+
+   async UploadAvatar({
+      user_id,
+      avatar_ref,
+   }: {
+      user_id: string;
+      avatar_ref: string;
+   }): Promise<{ avatar: string | null }> {
+      const avatar = await this.prisma.user.update({
+         where: {
+            id: user_id,
+         },
+         data: {
+            avatar: avatar_ref,
+         },
+         select: {
+            avatar: true,
+         },
+      });
+      return avatar;
+   }
 }
