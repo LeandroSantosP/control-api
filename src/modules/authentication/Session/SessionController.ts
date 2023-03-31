@@ -5,12 +5,14 @@ import { SessionUseCase } from './SessionUseCase';
 /* test 2 2222*/
 
 export class SessionController {
-  async handle(request: Request, response: Response): Promise<Response> {
-    const authenticationBase64 = request.headers.authorization;
+   async handle(request: Request, response: Response): Promise<Response> {
+      const authenticationBase64 = request.headers.authorization;
 
-    const Authentication = container.resolve(SessionUseCase);
-    const credentials = await Authentication.execute({ authenticationBase64 });
+      const Authentication = container.resolve(SessionUseCase);
+      const credentials = await Authentication.execute({
+         authenticationBase64,
+      });
 
-    return response.status(200).json(credentials);
-  }
+      return response.status(200).json(credentials);
+   }
 }

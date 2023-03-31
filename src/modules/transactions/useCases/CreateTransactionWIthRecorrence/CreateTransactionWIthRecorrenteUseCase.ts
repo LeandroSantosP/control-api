@@ -84,11 +84,11 @@ export class CreateTransactionWIthRecorrenteUseCase {
       if (validatedData.installments) {
          FinalResult = String(multiplyInstallmentsWithValue.toFixed(2));
       } else {
-         FinalResult = validatedData.value;
+         const formatedValue = Number(validatedData.value).toFixed(2);
+         FinalResult = formatedValue;
       }
 
       const { id: _, ...transaction } = new TransactionsEntity();
-
       Object.assign(transaction, {
          ...validatedData,
          value: FinalResult,

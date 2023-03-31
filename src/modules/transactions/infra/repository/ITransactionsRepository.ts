@@ -6,6 +6,7 @@ export interface ITransactionsRepositoryProps {
    email: string;
    dueDate?: string;
    Category?: Category;
+   resolved?: boolean;
 }
 
 export interface ICreateTransactionInstallments {
@@ -17,6 +18,10 @@ export interface ICreateTransactionInstallments {
    description: string;
    categoryType: Category | undefined;
    recurrence: 'monthly' | 'daily' | 'yearly';
+}
+
+interface ListBySubcription {
+   month?: number;
 }
 
 export abstract class ITransactionsRepository {
@@ -70,4 +75,6 @@ export abstract class ITransactionsRepository {
    >;
 
    abstract resolved(transaction_id: string): Promise<Transaction>;
+
+   abstract ListBySubscription(month?: number): Promise<Transaction[]>;
 }

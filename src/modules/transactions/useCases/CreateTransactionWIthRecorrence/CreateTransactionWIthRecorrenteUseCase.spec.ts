@@ -5,6 +5,7 @@ import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/Tra
 import { CreateTransactionWIthRecorrenteUseCase } from './CreateTransactionWIthRecorrenteUseCase';
 import { addDays } from 'date-fns';
 import { AppError } from '@/shared/infra/middleware/AppError';
+import CreateUserTest from '@/utils/CrateUserTEST';
 
 let userRepository: UserRepositoryTestDB;
 let transactionRepository: TransactionsRepositoryTestDB;
@@ -29,6 +30,7 @@ describe('Create Transaction With Recorrente', () => {
          name: 'test',
          password: 'senha123',
       };
+
       await userRepository.create(newUser);
 
       const result = await createTransactionWIthRecorrenteUseCase.execute({
@@ -64,5 +66,26 @@ describe('Create Transaction With Recorrente', () => {
             isSubscription: false,
          })
       ).rejects.toThrow(AppError);
+   });
+
+   it('should throw YupError if recurrent its not valid!', async () => {
+      const newUser = await CreateUserTest();
+
+      await expect(
+         createTransactionWIthRecorrenteUseCase.execute({
+            categoryType: 'Investments',
+            description: 'Desc',
+            due_date: '2030-02-11',
+            email: newUser.email,
+            isSubscription: false,
+            // @ts-ignore
+            recurrence: 'invalid',
+            value: '12',
+         })
+      ).rejects.toEqual(
+         new AppError(
+            'Error: recurrence, message: recurrence must be one of the following values: monthly, daily, yearly\n'
+         )
+      );
    });
 });

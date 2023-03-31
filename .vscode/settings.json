@@ -4,5 +4,6 @@
     "dtos",
     "testdb",
     "tsyringe"
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -6,6 +6,7 @@ import { CreateTransaction } from './CreateTransactionUseCase';
 import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
 import { prisma } from '@/database/prisma';
 import { addDays } from 'date-fns';
+import CreateUserTest from '@/utils/CrateUserTEST';
 
 let transactionRepositoryTestDB: TransactionsRepositoryTestDB;
 let userRepositoryTestDB: UserRepositoryTestDB;
@@ -41,18 +42,11 @@ describe('Create Transaction', () => {
          password: 'senha123',
       });
 
-      const currentDateWithThreeDays = addDays(new Date(), 3)
-         .toISOString()
-         .slice(0, 10);
-
       const newTransaction = await createTransaction.execute({
          email: 'mariatest@example.com',
          description: 'Desc',
          value: '11.1',
       });
-
-      /* Criar test onde em caso seja um revenue nao pode conter due_date */
-      /* Criar test onde uma expense nao pode ser um numero positivo  */
 
       expect(newTransaction).toHaveProperty('id');
       expect(newTransaction?.description).toEqual('Desc');
@@ -64,6 +58,32 @@ describe('Create Transaction', () => {
       expect(newTransaction?.category.name).toEqual('unknown');
       expect(newTransaction?.resolved).toBe(false);
       expect(newTransaction?.userId).toEqual(newUser.id);
+   });
+
+   it('should not be able to create a revenue transaction, must not contains due date!', async () => {
+      const newUser = await CreateUserTest();
+      await expect(
+         createTransaction.execute({
+            description: 'Desc',
+            email: newUser.email,
+            value: '100.22',
+            categoryType: 'habitation',
+            dueDate: '2040-10-10',
+         })
+      ).rejects.toEqual(new AppError('Revenue does not have due date!'));
+   });
+
+   it('should not be able to create a revenue transaction, must not contains due date!', async () => {
+      const newUser = await CreateUserTest();
+      await expect(
+         createTransaction.execute({
+            description: 'Desc',
+            email: newUser.email,
+            value: '100.22',
+            categoryType: 'habitation',
+            dueDate: '2040-10-10',
+         })
+      ).rejects.toEqual(new AppError('Revenue does not have due date!'));
    });
 
    it('should not be able to create a new revenue if due date are passed', async () => {

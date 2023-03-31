@@ -10,10 +10,50 @@ import {
 } from '../ITransactionsRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
 
-export class TransactionsRepositoryTestDB implements ITransactionsRepository {
+class GetCurrentDate {
+   private today: Date;
+   private year: number;
+   private day: number;
+   private month: number;
+
+   constructor() {
+      this.today = new Date();
+      this.month = new Date().getMonth();
+      this.year = new Date().getFullYear();
+      this.day = this.today.getDate();
+   }
+
+   public getStartAndEndOfTheMonth(month?: number) {
+      const currentYear = this.year;
+
+      if (!month) {
+         return;
+      }
+
+      const startOfTheMount = startOfMonth(new Date(currentYear, month - 1));
+      const endOfTheMount = endOfMonth(new Date(currentYear, month - 1));
+
+      return { startOfTheMount, endOfTheMount };
+   }
+
+   public getDayMonthYear() {
+      return {
+         today: this.today,
+         year: this.year,
+         month: this.month,
+         day: this.day,
+      };
+   }
+}
+
+export class TransactionsRepositoryTestDB
+   extends GetCurrentDate
+   implements ITransactionsRepository
+{
    private prisma;
 
    constructor() {
+      super();
       this.prisma = prisma;
    }
 
@@ -23,6 +63,7 @@ export class TransactionsRepositoryTestDB implements ITransactionsRepository {
       email,
       dueDate,
       Category,
+      resolved,
    }: ITransactionsRepositoryProps): Promise<
       Transaction & {
          category: {
@@ -50,6 +91,7 @@ export class TransactionsRepositoryTestDB implements ITransactionsRepository {
             value: new Prisma.Decimal(value),
             due_date: dueDate !== null ? dueDate : undefined,
             type: Number(value) < 0 ? 'expense' : 'revenue',
+            resolved,
             author: {
                connect: {
                   email,
@@ -186,25 +228,22 @@ export class TransactionsRepositoryTestDB implements ITransactionsRepository {
    }): Promise<Transaction[]> {
       const currentYear = new Date().getFullYear();
 
-      const startOfTheMount = startOfMonth(new Date(currentYear, month - 1));
-      const endOfTheMount = endOfMonth(new Date(currentYear, month - 1));
+      const startOfTheMount = startOfMonth(new Date(currentYear, 4 - 1));
+      const endOfTheMount = endOfMonth(new Date(currentYear, 4 - 1));
 
       const transactions = await prisma.transaction.findMany({
          where: {
             userId: user_id,
-            AND: [
-               {
-                  due_date: {
-                     gte: new Date(startOfTheMount),
-                     lt: new Date(endOfTheMount),
-                  },
-               },
-            ],
+            due_date: {
+               gte: new Date(startOfTheMount),
+               lt: new Date(endOfTheMount),
+            },
          },
       });
 
       return transactions;
    }
+
    async GetDailyTransactions(user_id: string): Promise<
       (Transaction & {
          author: User;
@@ -238,6 +277,34 @@ export class TransactionsRepositoryTestDB implements ITransactionsRepository {
          },
          data: {
             resolved: true,
+         },
+      });
+
+      return transaction;
+   }
+
+   async ListBySubscription(month?: number): Promise<Transaction[]> {
+      const result = this.getStartAndEndOfTheMonth(month);
+
+      if (result !== undefined) {
+         const { endOfTheMount, startOfTheMount } = result;
+
+         const transaction = await this.prisma.transaction.findMany({
+            where: {
+               isSubscription: true,
+               due_date: {
+                  gte: new Date(startOfTheMount),
+                  lt: new Date(endOfTheMount),
+               },
+            },
+         });
+
+         return transaction;
+      }
+
+      const transaction = await this.prisma.transaction.findMany({
+         where: {
+            isSubscription: true,
          },
       });
 

@@ -3,10 +3,28 @@ import { Transaction } from '@prisma/client';
 import { inject, injectable } from 'tsyringe';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
 
-interface IResponse {
+interface IResponseBalense {
    expense: number;
    revenue: number;
    total: number;
+}
+
+interface IRequest {
+   month?: number | undefined;
+   user_id: string;
+   bySubscription?: boolean;
+}
+
+interface GetSubscriptionTransactions {
+   transactions: Transaction[];
+   user_id: string;
+   verify: (
+      transactions: Transaction[] | null,
+      user_id: string
+   ) => void | undefined;
+   getBalense: (
+      transactions: Transaction[] | null
+   ) => IResponseBalense | undefined;
 }
 
 @injectable()
@@ -29,7 +47,7 @@ export class ListTransactionUseCase {
 
    private GetMonthBalenseList(
       transactions: Transaction[] | null
-   ): IResponse | undefined {
+   ): IResponseBalense | undefined {
       const balense = transactions?.reduce(
          (storage, transaction) => {
             const transactionValue = Number(transaction.value);
@@ -63,7 +81,26 @@ export class ListTransactionUseCase {
       return balense;
    }
 
-   async execute(user_id: string, month?: number | undefined) {
+   private async GetTransactionBySubscription({
+      getBalense,
+      transactions,
+      user_id,
+      verify: verify,
+   }: GetSubscriptionTransactions): Promise<{
+      balense: IResponseBalense | undefined;
+      transactions: Transaction[];
+   }> {
+      verify(transactions, user_id);
+      const balenseResult = getBalense(transactions);
+
+      return { balense: balenseResult, transactions };
+   }
+
+   async execute({
+      user_id,
+      month,
+      bySubscription: bySubscription,
+   }: IRequest): Promise<any> {
       if (month === undefined) {
          const transactions =
             await this.TransactionRepository.ListUserTransactionsById(user_id);
@@ -72,6 +109,37 @@ export class ListTransactionUseCase {
          const balense = this.GetMonthBalenseList(transactions);
          return { transactions, balense };
       }
+
+      if (bySubscription) {
+         if (month) {
+            const transactions =
+               await this.TransactionRepository.ListBySubscription(month);
+
+            const transactionSubscriptionByMonth =
+               await this.GetTransactionBySubscription({
+                  getBalense: this.GetMonthBalenseList,
+                  verify: this.VerifyUserIsAuthentication,
+                  transactions,
+                  user_id,
+               });
+
+            return transactionSubscriptionByMonth;
+         }
+
+         const transactions =
+            await this.TransactionRepository.ListBySubscription();
+
+         const AllTransactionSubscription =
+            await this.GetTransactionBySubscription({
+               getBalense: this.GetMonthBalenseList,
+               verify: this.VerifyUserIsAuthentication,
+               transactions,
+               user_id,
+            });
+
+         return AllTransactionSubscription;
+      }
+
       if (isNaN(month) || !month) {
          throw new AppError('Invalid format, must be a number!');
       }

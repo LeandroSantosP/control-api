@@ -9,10 +9,11 @@ export class ListTransactionController {
       const { month } = req.query as { month: number | undefined };
 
       const useCase = container.resolve(ListTransactionUseCase);
-      const { transactions, monthBalense, balense } = await useCase.execute(
-         id,
-         month
-      );
+      const { transactions, monthBalense, balense } = await useCase.execute({
+         user_id: id,
+         bySubscription: false,
+         month,
+      });
 
       return res.status(200).json({ monthBalense, balense, transactions });
    }

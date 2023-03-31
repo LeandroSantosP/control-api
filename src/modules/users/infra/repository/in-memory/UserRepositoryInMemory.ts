@@ -5,6 +5,9 @@ import { UserEntity } from '../../Entity/UserEntity';
 import { IUserRepository, RemoveProps, UpdatedProps } from '../IUserRepository';
 
 export class UserRepositoryInMemory implements IUserRepository {
+  UploadAvatar({ user_id, avatar_ref, }: { user_id: string; avatar_ref: string; }): Promise<{ avatar: string | null; }> {
+    throw new Error('Method not implemented.');
+  }
   private users: UserEntity[] = [];
 
   async create({ email, name, password }: IUserDTO): Promise<UserEntity> {
