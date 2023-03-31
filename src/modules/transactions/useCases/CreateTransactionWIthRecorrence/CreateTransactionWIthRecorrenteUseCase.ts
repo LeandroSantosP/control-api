@@ -5,6 +5,7 @@ import { inject, injectable } from 'tsyringe';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
 import { TransactionsEntity } from '../../infra/Entity/TransactionsEntity';
 import * as yup from 'yup';
+import { log } from 'node:console';
 
 interface IRequest {
    isSubscription: boolean;

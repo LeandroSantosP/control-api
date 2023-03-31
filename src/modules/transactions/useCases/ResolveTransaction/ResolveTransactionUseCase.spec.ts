@@ -15,6 +15,7 @@ describe('Resolve Transaction', () => {
       userRepository = new UserRepositoryTestDB();
       transactionsRepository = new TransactionsRepositoryTestDB();
       resolveTransactionUseCase = new ResolveTransactionUseCase(
+         userRepository,
          transactionsRepository
       );
    });
@@ -46,7 +47,8 @@ describe('Resolve Transaction', () => {
       });
 
       const isResolved = await resolveTransactionUseCase.execute(
-         transaction.id
+         transaction.id,
+         user.id
       );
 
       expect(isResolved).toBeTruthy();
