@@ -1,17 +1,23 @@
 import { prisma } from '@/database/prisma';
 import { AppError } from '@/shared/infra/middleware/AppError';
+import { GetCurrentDate } from '@/utils/GetCurrentDate';
 import { Category, Prisma, Transaction, User } from '@prisma/client';
 import { addDays, endOfMonth, startOfMonth, isBefore } from 'date-fns';
 import {
    ICreateTransactionInstallments,
    ITransactionsRepository,
    ITransactionsRepositoryProps,
+   ListBySubscription,
 } from '../ITransactionsRepository';
 
-export class TransactionsRepository implements ITransactionsRepository {
+export class TransactionsRepository
+   extends GetCurrentDate
+   implements ITransactionsRepository
+{
    private prisma;
 
    constructor() {
+      super();
       this.prisma = prisma;
    }
 
@@ -232,6 +238,38 @@ export class TransactionsRepository implements ITransactionsRepository {
          },
          data: {
             resolved: true,
+         },
+      });
+
+      return transaction;
+   }
+
+   async ListBySubscription({
+      user_id,
+      month,
+   }: ListBySubscription): Promise<Transaction[]> {
+      const result = this.getStartAndEndOfTheMonth(month);
+
+      if (result !== undefined) {
+         const { endOfTheMount, startOfTheMount } = result;
+
+         const transaction = await this.prisma.transaction.findMany({
+            where: {
+               isSubscription: true,
+               userId: user_id,
+               due_date: {
+                  gte: new Date(startOfTheMount),
+                  lt: new Date(endOfTheMount),
+               },
+            },
+         });
+
+         return transaction;
+      }
+
+      const transaction = await this.prisma.transaction.findMany({
+         where: {
+            isSubscription: true,
          },
       });
 

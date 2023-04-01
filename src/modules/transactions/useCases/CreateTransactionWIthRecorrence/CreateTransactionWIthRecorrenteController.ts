@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { CreateTransactionWIthRecorrenteUseCase } from './CreateTransactionWIthRecorrenteUseCase';
-import { log } from 'node:console';
 
 export class CreateTransactionWIthRecorrenteController {
    async handle(req: Request, res: Response) {

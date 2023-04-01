@@ -6,7 +6,9 @@ import { CreateTransactionWIthRecorrenteUseCase } from './CreateTransactionWIthR
 import { addDays } from 'date-fns';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import CreateUserTest from '@/utils/CrateUserTEST';
+import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
 
+let dateFnsProvider: DateFnsProvider;
 let userRepository: UserRepositoryTestDB;
 let transactionRepository: TransactionsRepositoryTestDB;
 let createTransactionWIthRecorrenteUseCase: CreateTransactionWIthRecorrenteUseCase;
@@ -15,10 +17,14 @@ describe('Create Transaction With Recorrente', () => {
    beforeEach(async () => {
       await prisma.user.deleteMany();
       await prisma.transaction.deleteMany();
+      dateFnsProvider = new DateFnsProvider();
       userRepository = new UserRepositoryTestDB();
       transactionRepository = new TransactionsRepositoryTestDB();
       createTransactionWIthRecorrenteUseCase =
-         new CreateTransactionWIthRecorrenteUseCase(transactionRepository);
+         new CreateTransactionWIthRecorrenteUseCase(
+            transactionRepository,
+            dateFnsProvider
+         );
    });
    const currentDateWithThreeDays = addDays(new Date(), 3)
       .toISOString()

@@ -85,7 +85,7 @@ export class ListTransactionUseCase {
       getBalense,
       transactions,
       user_id,
-      verify: verify,
+      verify,
    }: GetSubscriptionTransactions): Promise<{
       balense: IResponseBalense | undefined;
       transactions: Transaction[];
@@ -96,11 +96,7 @@ export class ListTransactionUseCase {
       return { balense: balenseResult, transactions };
    }
 
-   async execute({
-      user_id,
-      month,
-      bySubscription: bySubscription,
-   }: IRequest): Promise<any> {
+   async execute({ user_id, month, bySubscription }: IRequest): Promise<any> {
       if (month === undefined) {
          const transactions =
             await this.TransactionRepository.ListUserTransactionsById(user_id);
@@ -110,10 +106,25 @@ export class ListTransactionUseCase {
          return { transactions, balense };
       }
 
+      if (isNaN(month) || !month) {
+         throw new AppError('Invalid format, must be a number!');
+      }
+
+      if (month < 1 || month > 12) {
+         throw new AppError(
+            'Just Filter By Month between 1 and 12 ' +
+               month +
+               ' IsInvalid Mount'
+         );
+      }
+
       if (bySubscription) {
          if (month) {
             const transactions =
-               await this.TransactionRepository.ListBySubscription(month);
+               await this.TransactionRepository.ListBySubscription({
+                  user_id: user_id,
+                  month,
+               });
 
             const transactionSubscriptionByMonth =
                await this.GetTransactionBySubscription({
@@ -127,7 +138,10 @@ export class ListTransactionUseCase {
          }
 
          const transactions =
-            await this.TransactionRepository.ListBySubscription();
+            await this.TransactionRepository.ListBySubscription({
+               user_id: user_id,
+               month,
+            });
 
          const AllTransactionSubscription =
             await this.GetTransactionBySubscription({
@@ -138,18 +152,6 @@ export class ListTransactionUseCase {
             });
 
          return AllTransactionSubscription;
-      }
-
-      if (isNaN(month) || !month) {
-         throw new AppError('Invalid format, must be a number!');
-      }
-
-      if (month < 1 || month > 12) {
-         throw new AppError(
-            'Just Filter By Month between 1 and 12 ' +
-               month +
-               ' IsInvalid Mount'
-         );
       }
 
       const transactionByMonth = await this.TransactionRepository.ListByMonth({

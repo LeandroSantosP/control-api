@@ -114,10 +114,12 @@ export class CreateTransaction {
             );
          }
 
+         const FormattedValue = String(Number(validadeData.value).toFixed(2));
+
          Object.assign(transactionModel, {
-            description: validadeData.description,
-            value: validadeData.value,
+            value: FormattedValue,
             due_date: DataFormate,
+            description: validadeData.description,
             Category: validadeData.categoryType,
          });
 

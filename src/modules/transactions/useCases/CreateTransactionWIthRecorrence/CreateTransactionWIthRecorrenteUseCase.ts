@@ -1,11 +1,11 @@
-import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { Category } from '@prisma/client';
+import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { formatISO, parse } from 'date-fns'; /* Criar um provider */
 import { inject, injectable } from 'tsyringe';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
 import { TransactionsEntity } from '../../infra/Entity/TransactionsEntity';
 import * as yup from 'yup';
-import { log } from 'node:console';
+import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
 
 interface IRequest {
    isSubscription: boolean;
@@ -68,7 +68,9 @@ const TransactionSchemaWithRecorrente = TransactionSchema.shape({
 export class CreateTransactionWIthRecorrenteUseCase {
    constructor(
       @inject('TransactionsRepository')
-      private transactionRepository: ITransactionsRepository
+      private transactionRepository: ITransactionsRepository,
+      @inject('DateFnsProvider')
+      private DateFnsProvider: IDateProvider
    ) {}
 
    private async transactionManager(validatedData: any) {
@@ -84,8 +86,8 @@ export class CreateTransactionWIthRecorrenteUseCase {
       if (validatedData.installments) {
          FinalResult = String(multiplyInstallmentsWithValue.toFixed(2));
       } else {
-         const formatedValue = Number(validatedData.value).toFixed(2);
-         FinalResult = formatedValue;
+         const formattedValue = Number(validatedData.value).toFixed(2);
+         FinalResult = formattedValue;
       }
 
       const { id: _, ...transaction } = new TransactionsEntity();
@@ -96,8 +98,13 @@ export class CreateTransactionWIthRecorrenteUseCase {
       });
 
       let DataFormate = null;
-      DataFormate = formatISO(
-         parse(transaction.due_date as string, 'yyyy-MM-dd', new Date())
+
+      DataFormate = this.DateFnsProvider.formatISO(
+         this.DateFnsProvider.parse({
+            dateString: transaction.due_date,
+            DatePatters: 'yyyy-MM-dd',
+            CurrentDate: new Date(),
+         })
       );
 
       const newTransaction =

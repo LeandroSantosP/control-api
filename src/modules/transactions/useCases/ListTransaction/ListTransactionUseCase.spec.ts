@@ -40,7 +40,7 @@ describe('List Transactions', () => {
       );
    });
 
-   const dataFormated = formatISO(
+   const dataFormatted = formatISO(
       parse('2023-04-23' as string, 'yyyy-MM-dd', new Date())
    );
 
@@ -75,14 +75,14 @@ describe('List Transactions', () => {
          email: newUser.email,
          description: 'test',
          value: '-12',
-         dueDate: dataFormated,
+         dueDate: dataFormatted,
       });
 
       await TransactionsRepository.create({
          email: newUser.email,
          description: 'test',
          value: '-12',
-         dueDate: dataFormated,
+         dueDate: dataFormatted,
       });
 
       const transactionByMount = await listTransactionUseCase.execute({

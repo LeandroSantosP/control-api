@@ -1,4 +1,10 @@
-import { Category, Transaction, User } from '@prisma/client';
+import {
+   Category,
+   Prisma,
+   Recurrence,
+   Transaction,
+   User,
+} from '@prisma/client';
 
 export interface ITransactionsRepositoryProps {
    value: string;
@@ -20,7 +26,8 @@ export interface ICreateTransactionInstallments {
    recurrence: 'monthly' | 'daily' | 'yearly';
 }
 
-interface ListBySubcription {
+export interface ListBySubscription {
+   user_id: string;
    month?: number;
 }
 
@@ -40,13 +47,17 @@ export abstract class ITransactionsRepository {
 
    abstract CreateTransactionInstallments(
       props: ICreateTransactionInstallments
-   ): Promise<
-      Transaction & {
-         category: {
-            name: Category;
-         };
-      }
-   >;
+   ): Promise<{
+      description: string;
+      value: Prisma.Decimal;
+      resolved: boolean;
+      recurrence: Recurrence | null;
+      installments: number | null;
+      isSubscription: boolean | null;
+      due_date: Date | null;
+      created_at: Date;
+      category: any;
+   }>;
 
    abstract ListUserTransactionsById(
       user_id: string
@@ -76,5 +87,8 @@ export abstract class ITransactionsRepository {
 
    abstract resolved(transaction_id: string): Promise<Transaction>;
 
-   abstract ListBySubscription(month?: number): Promise<Transaction[]>;
+   abstract ListBySubscription({
+      user_id,
+      month,
+   }: ListBySubscription): Promise<Transaction[]>;
 }

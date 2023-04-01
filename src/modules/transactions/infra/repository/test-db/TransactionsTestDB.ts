@@ -1,50 +1,22 @@
 import { prisma } from '@/database/prisma';
 import { addDays, isBefore } from 'date-fns';
-import { Category, Prisma, Transaction, User } from '@prisma/client';
+import {
+   Category,
+   Prisma,
+   Recurrence,
+   Transaction,
+   User,
+} from '@prisma/client';
 import { startOfMonth, endOfMonth } from 'date-fns';
 
 import {
    ICreateTransactionInstallments,
    ITransactionsRepository,
    ITransactionsRepositoryProps,
+   ListBySubscription,
 } from '../ITransactionsRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
-
-class GetCurrentDate {
-   private today: Date;
-   private year: number;
-   private day: number;
-   private month: number;
-
-   constructor() {
-      this.today = new Date();
-      this.month = new Date().getMonth();
-      this.year = new Date().getFullYear();
-      this.day = this.today.getDate();
-   }
-
-   public getStartAndEndOfTheMonth(month?: number) {
-      const currentYear = this.year;
-
-      if (!month) {
-         return;
-      }
-
-      const startOfTheMount = startOfMonth(new Date(currentYear, month - 1));
-      const endOfTheMount = endOfMonth(new Date(currentYear, month - 1));
-
-      return { startOfTheMount, endOfTheMount };
-   }
-
-   public getDayMonthYear() {
-      return {
-         today: this.today,
-         year: this.year,
-         month: this.month,
-         day: this.day,
-      };
-   }
-}
+import { GetCurrentDate } from '@/utils/GetCurrentDate';
 
 export class TransactionsRepositoryTestDB
    extends GetCurrentDate
@@ -118,13 +90,17 @@ export class TransactionsRepositoryTestDB
       dueDate,
       installments,
       isSubscription,
-   }: ICreateTransactionInstallments): Promise<
-      Transaction & {
-         category: {
-            name: Category;
-         };
-      }
-   > {
+   }: ICreateTransactionInstallments): Promise<{
+      description: string;
+      value: Prisma.Decimal;
+      resolved: boolean;
+      recurrence: Recurrence | null;
+      installments: number | null;
+      isSubscription: boolean | null;
+      due_date: Date | null;
+      created_at: Date;
+      category: any;
+   }> {
       if (
          isBefore(new Date(dueDate!), addDays(new Date(), 1)) &&
          dueDate !== null
@@ -158,7 +134,15 @@ export class TransactionsRepositoryTestDB
                },
             },
          },
-         include: {
+         select: {
+            description: true,
+            value: true,
+            due_date: true,
+            recurrence: true,
+            created_at: true,
+            resolved: true,
+            installments: true,
+            isSubscription: true,
             category: {
                select: {
                   name: true,
@@ -283,7 +267,10 @@ export class TransactionsRepositoryTestDB
       return transaction;
    }
 
-   async ListBySubscription(month?: number): Promise<Transaction[]> {
+   async ListBySubscription({
+      user_id,
+      month,
+   }: ListBySubscription): Promise<Transaction[]> {
       const result = this.getStartAndEndOfTheMonth(month);
 
       if (result !== undefined) {
@@ -292,6 +279,7 @@ export class TransactionsRepositoryTestDB
          const transaction = await this.prisma.transaction.findMany({
             where: {
                isSubscription: true,
+               userId: user_id,
                due_date: {
                   gte: new Date(startOfTheMount),
                   lt: new Date(endOfTheMount),
