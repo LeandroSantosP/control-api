@@ -29,6 +29,7 @@ export interface ICreateTransactionInstallments {
 export interface ListBySubscription {
    user_id: string;
    month?: number;
+   isSubscription?: boolean;
 }
 
 export abstract class ITransactionsRepository {
@@ -59,9 +60,7 @@ export abstract class ITransactionsRepository {
       category: any;
    }>;
 
-   abstract ListUserTransactionsById(
-      user_id: string
-   ): Promise<Transaction[] | null>;
+   abstract ListUserTransactionsById(user_id: string): Promise<Transaction[]>;
 
    abstract ListAllADM(user_id?: string): Promise<Transaction[]>;
 
@@ -87,8 +86,9 @@ export abstract class ITransactionsRepository {
 
    abstract resolved(transaction_id: string): Promise<Transaction>;
 
-   abstract ListBySubscription({
+   abstract ListSubscriptionWithOrNot({
       user_id,
       month,
+      isSubscription,
    }: ListBySubscription): Promise<Transaction[]>;
 }

@@ -6,27 +6,11 @@ import { prisma } from '@/database/prisma';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { formatISO, parse } from 'date-fns';
 import CreateUserTest from '@/utils/CrateUserTEST';
+import CreateTransactionTEST from '@/utils/CreateTransactionTEST';
 
 let userRepository: UserRepositoryTestDB;
 let TransactionsRepository: TransactionsRepositoryTestDB;
 let listTransactionUseCase: ListTransactionUseCase;
-
-interface createNewTransactionProps {
-   email?: string;
-   description?: string;
-   value?: string;
-}
-
-const createNewTransaction = async ({
-   description = 'desc',
-   email = 'email@exemple.com',
-   value = '12',
-}: createNewTransactionProps) =>
-   await TransactionsRepository.create({
-      email,
-      description,
-      value,
-   });
 
 describe('List Transactions', () => {
    beforeAll(async () => {
@@ -39,10 +23,6 @@ describe('List Transactions', () => {
          TransactionsRepository
       );
    });
-
-   const dataFormatted = formatISO(
-      parse('2023-04-23' as string, 'yyyy-MM-dd', new Date())
-   );
 
    it('should be able list all user transactions.', async () => {
       const user = {
@@ -67,27 +47,22 @@ describe('List Transactions', () => {
          password: 'senha123',
       };
 
-      /* Criar um rota onde liste todos os revenues pois o metado (ListByMonth) ele retorna baseado no due date porem revenue nao tem due date! */
+      /* Criar um rota onde liste todos os revenues pois o método (ListByMonth) ele retorna baseado no due date porem revenue nao tem due date! */
 
       const newUser = await userRepository.create({ ...user });
 
-      await TransactionsRepository.create({
-         email: newUser.email,
-         description: 'test',
-         value: '-12',
-         dueDate: dataFormatted,
-      });
-
-      await TransactionsRepository.create({
-         email: newUser.email,
-         description: 'test',
-         value: '-12',
-         dueDate: dataFormatted,
-      });
+      await Promise.all(
+         Array.from({ length: 2 }).map(async () => {
+            return CreateTransactionTEST({
+               email: newUser.email,
+               isSubscription: false,
+            });
+         })
+      );
 
       const transactionByMount = await listTransactionUseCase.execute({
          user_id: newUser.id,
-         month: 3,
+         month: 4,
       });
 
       expect(transactionByMount?.transactions).toHaveLength(2);
@@ -139,7 +114,7 @@ describe('List Transactions', () => {
       await TransactionsRepository.CreateTransactionInstallments({
          email: newUser.email,
          description: 'test',
-         value: '-77.29',
+         value: '-12.00',
          dueDate: dataFormattedTwo,
          isSubscription: true,
          categoryType: 'Investments',
@@ -150,16 +125,15 @@ describe('List Transactions', () => {
 
       const sut = await listTransactionUseCase.execute({
          user_id: newUser.id,
-         month: 5,
-         bySubscription: true,
+         month: 6,
       });
 
-      expect(sut.balense).toBeTruthy();
+      expect(sut.monthBalense).toBeTruthy();
       expect(sut.transactions).toBeTruthy();
       expect(sut.transactions).toHaveLength(1);
       expect(sut.transactions[0]).toHaveProperty('isSubscription', true);
 
-      expect(sut.balense).toEqual({
+      expect(sut.monthBalense).toEqual({
          expense: '-12.00',
          revenue: '0.00',
          total: '-12.00',
@@ -169,7 +143,6 @@ describe('List Transactions', () => {
 
       const sut2 = await listTransactionUseCase.execute({
          user_id: newUser.id,
-         bySubscription: true,
       });
 
       expect(sut2.balense).toBeTruthy();

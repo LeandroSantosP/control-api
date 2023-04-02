@@ -1,6 +1,5 @@
 import { Category } from '@prisma/client';
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
-import { formatISO, parse } from 'date-fns'; /* Criar um provider */
 import { inject, injectable } from 'tsyringe';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
 import { TransactionsEntity } from '../../infra/Entity/TransactionsEntity';
@@ -116,25 +115,7 @@ export class CreateTransactionWIthRecorrenteUseCase {
             categoryType: transaction.Category,
          });
 
-      let response = {
-         description: newTransaction.description,
-         value: newTransaction.value,
-         isSubscription: newTransaction.isSubscription,
-         recurrence: newTransaction.recurrence,
-         due_date: newTransaction.due_date,
-         created_at: newTransaction.created_at,
-         resolve: newTransaction.resolved,
-         Category: newTransaction.category.name,
-      } as any;
-
-      if (
-         newTransaction.installments !== null &&
-         newTransaction.installments > 0
-      ) {
-         response['installments'] = newTransaction.installments;
-      }
-
-      return response;
+      return newTransaction;
    }
 
    async execute(data: IRequest) {

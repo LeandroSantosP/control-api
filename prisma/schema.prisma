@@ -34,6 +34,24 @@ enum Category {
    unknown
 }
 
+model adress {
+   id String @id @default(uuid())
+}
+
+// Not aplly yet
+
+// model Profile {
+//    id            String  @id @default(uuid())
+//    avatar        String?
+//    profession    String?
+//    salary        Decimal @default(0)
+//    marital_state String?
+//    phonenumber   String?
+//    dateOfBirth   String
+
+//    User User[]
+// }
+
 model User {
    id            String    @id @default(uuid())
    email         String    @unique
@@ -45,6 +63,9 @@ model User {
    created_at    DateTime  @default(now())
    updated_at    DateTime  @updatedAt
    deleted_at    DateTime?
+
+   // profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+   // profileId    String
 
    transactions Transaction[]
 

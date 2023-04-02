@@ -8,7 +8,7 @@ export class ResolveTransactionController {
       const { id } = req.client;
 
       const useCase = container.resolve(ResolveTransactionUseCase);
-      
+
       await useCase.execute(transaction_id, id);
 
       return res.status(204).send();

@@ -108,6 +108,8 @@ export class TransactionsRepositoryTestDB
          throw new AppError('Due date must be at least one day in the future!');
       }
 
+      console.log(dueDate);
+
       const newTransaction = await this.prisma.transaction.create({
          data: {
             description: description,
@@ -154,9 +156,7 @@ export class TransactionsRepositoryTestDB
       return newTransaction;
    }
 
-   async ListUserTransactionsById(
-      user_id: string
-   ): Promise<Transaction[] | null> {
+   async ListUserTransactionsById(user_id: string): Promise<Transaction[]> {
       const transactions = await this.prisma.transaction.findMany({
          where: {
             userId: user_id,
@@ -212,8 +212,8 @@ export class TransactionsRepositoryTestDB
    }): Promise<Transaction[]> {
       const currentYear = new Date().getFullYear();
 
-      const startOfTheMount = startOfMonth(new Date(currentYear, 4 - 1));
-      const endOfTheMount = endOfMonth(new Date(currentYear, 4 - 1));
+      const startOfTheMount = startOfMonth(new Date(currentYear, month - 1));
+      const endOfTheMount = endOfMonth(new Date(currentYear, month - 1));
 
       const transactions = await prisma.transaction.findMany({
          where: {
@@ -267,9 +267,10 @@ export class TransactionsRepositoryTestDB
       return transaction;
    }
 
-   async ListBySubscription({
+   async ListSubscriptionWithOrNot({
       user_id,
       month,
+      isSubscription,
    }: ListBySubscription): Promise<Transaction[]> {
       const result = this.getStartAndEndOfTheMonth(month);
 
@@ -278,7 +279,7 @@ export class TransactionsRepositoryTestDB
 
          const transaction = await this.prisma.transaction.findMany({
             where: {
-               isSubscription: true,
+               isSubscription,
                userId: user_id,
                due_date: {
                   gte: new Date(startOfTheMount),
@@ -292,7 +293,8 @@ export class TransactionsRepositoryTestDB
 
       const transaction = await this.prisma.transaction.findMany({
          where: {
-            isSubscription: true,
+            userId: user_id,
+            isSubscription,
          },
       });
 

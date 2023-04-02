@@ -1,9 +1,10 @@
 import 'reflect-metadata';
+import { addDays } from 'date-fns';
 import { prisma } from '@/database/prisma';
+
 import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
 import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
 import { CreateTransactionWIthRecorrenteUseCase } from './CreateTransactionWIthRecorrenteUseCase';
-import { addDays } from 'date-fns';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import CreateUserTest from '@/utils/CrateUserTEST';
 import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
@@ -50,7 +51,7 @@ describe('Create Transaction With Recorrente', () => {
          installments: 12,
       });
 
-      expect(result).toHaveProperty('Category', result.Category);
+      expect(result).toHaveProperty('category', { name: 'Investments' });
    });
 
    it('should not be able pass positives values', async () => {

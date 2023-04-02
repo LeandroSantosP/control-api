@@ -5,6 +5,7 @@ import { UserAuthentication } from '../infra/middleware/UserAuthentication';
 import { ListTransactionController } from '@/modules/transactions/useCases/ListTransaction/ListTransactionController';
 import { CreateTransactionWIthRecorrenteController } from '@/modules/transactions/useCases/CreateTransactionWIthRecorrence/CreateTransactionWIthRecorrenteController';
 import { ResolveTransactionController } from '@/modules/transactions/useCases/ResolveTransaction/ResolveTransactionController';
+import { ListTransactionsBySubscriptionController } from '@/modules/transactions/useCases/ListTransactionsBySubscription/ListTransctionsBySubscriptionController';
 
 const transactionRoutes = Router();
 
@@ -12,6 +13,8 @@ const createTransactionController = new CreateTransactionsController();
 const createTransactionWIthRecorrenteController =
    new CreateTransactionWIthRecorrenteController();
 const listTransactionController = new ListTransactionController();
+const listTransactionsBySubscriptionController =
+   new ListTransactionsBySubscriptionController();
 const deleteTransactionController = new DeleteTransactionController();
 const resolveTransactionController = new ResolveTransactionController();
 
@@ -20,9 +23,6 @@ Fields:{
    month: number | undefined
 }: req.query
 
-Campos2:{
-   bySubscription: boolean | undefined
-}: req.query
 
 filter todas as traslações ou informe um mes especifico, passo no body o "bySubscription",
 para filtrar pelo inscrições, também com a opção de informar o mes
@@ -32,6 +32,20 @@ transactionRoutes.get(
    '/',
    UserAuthentication,
    listTransactionController.handle
+);
+
+/*
+
+Fields:{
+   month: number | undefined
+   isSubscription: "true" | "false | undefiled"
+}: req.query
+
+*/
+transactionRoutes.get(
+   '/bySubscriptions',
+   UserAuthentication,
+   listTransactionsBySubscriptionController.handle
 );
 
 /*

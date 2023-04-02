@@ -5,7 +5,6 @@ import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/U
 import { addDays, formatISO, parse } from 'date-fns';
 import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
 import { ResolveTransactionUseCase } from './ResolveTransactionUseCase';
-import { log } from 'console';
 import { AppError } from '@/shared/infra/middleware/AppError';
 
 let userRepository: UserRepositoryTestDB;

@@ -1,7 +1,13 @@
 import { prisma } from '@/database/prisma';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { GetCurrentDate } from '@/utils/GetCurrentDate';
-import { Category, Prisma, Transaction, User } from '@prisma/client';
+import {
+   Category,
+   Prisma,
+   Recurrence,
+   Transaction,
+   User,
+} from '@prisma/client';
 import { addDays, endOfMonth, startOfMonth, isBefore } from 'date-fns';
 import {
    ICreateTransactionInstallments,
@@ -81,13 +87,17 @@ export class TransactionsRepository
       dueDate,
       installments,
       isSubscription,
-   }: ICreateTransactionInstallments): Promise<
-      Transaction & {
-         category: {
-            name: Category;
-         };
-      }
-   > {
+   }: ICreateTransactionInstallments): Promise<{
+      description: string;
+      value: Prisma.Decimal;
+      recurrence: Recurrence | null;
+      installments: number | null;
+      isSubscription: boolean | null;
+      due_date: Date | null;
+      resolved: boolean;
+      created_at: Date;
+      category: any;
+   }> {
       if (
          isBefore(new Date(dueDate!), addDays(new Date(), 1)) &&
          dueDate !== null
@@ -120,7 +130,15 @@ export class TransactionsRepository
                },
             },
          },
-         include: {
+         select: {
+            description: true,
+            value: true,
+            due_date: true,
+            recurrence: true,
+            created_at: true,
+            resolved: true,
+            installments: true,
+            isSubscription: true,
             category: {
                select: {
                   name: true,
@@ -132,9 +150,7 @@ export class TransactionsRepository
       return newTransaction;
    }
 
-   async ListUserTransactionsById(
-      user_id: string
-   ): Promise<Transaction[] | null> {
+   async ListUserTransactionsById(user_id: string): Promise<Transaction[]> {
       const transactions = await this.prisma.transaction.findMany({
          where: {
             userId: user_id,
@@ -244,9 +260,10 @@ export class TransactionsRepository
       return transaction;
    }
 
-   async ListBySubscription({
+   async ListSubscriptionWithOrNot({
       user_id,
       month,
+      isSubscription,
    }: ListBySubscription): Promise<Transaction[]> {
       const result = this.getStartAndEndOfTheMonth(month);
 
@@ -255,7 +272,7 @@ export class TransactionsRepository
 
          const transaction = await this.prisma.transaction.findMany({
             where: {
-               isSubscription: true,
+               isSubscription,
                userId: user_id,
                due_date: {
                   gte: new Date(startOfTheMount),
@@ -269,7 +286,8 @@ export class TransactionsRepository
 
       const transaction = await this.prisma.transaction.findMany({
          where: {
-            isSubscription: true,
+            userId: user_id,
+            isSubscription,
          },
       });
 
