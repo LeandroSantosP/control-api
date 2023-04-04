@@ -3,6 +3,7 @@ import {
    Prisma,
    Recurrence,
    Transaction,
+   TransactionsCategory,
    User,
 } from '@prisma/client';
 
@@ -32,7 +33,7 @@ export interface ListBySubscription {
    isSubscription?: boolean;
 }
 
-export abstract class ITransactionsRepository {
+export abstract class ITransactionsRepository<T> {
    abstract create({
       description,
       value,
@@ -60,15 +61,17 @@ export abstract class ITransactionsRepository {
       category: any;
    }>;
 
-   abstract ListUserTransactionsById(user_id: string): Promise<Transaction[]>;
+   abstract ListUserTransactionsById(user_id: string): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   >;
 
-   abstract ListAllADM(user_id?: string): Promise<Transaction[]>;
+   abstract ListAllADM(user_id?: string): Promise<T[]>;
 
    abstract remove(transaction_id: string): Promise<string>;
 
-   abstract GetTransactionById(
-      transaction_id: string
-   ): Promise<Transaction | null>;
+   abstract GetTransactionById(transaction_id: string): Promise<T | null>;
 
    abstract ListByMonth({
       user_id,
@@ -76,19 +79,27 @@ export abstract class ITransactionsRepository {
    }: {
       user_id: string;
       month: number;
-   }): Promise<Transaction[]>;
+   }): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   >;
 
    abstract GetDailyTransactions(user_id: string): Promise<
-      (Transaction & {
+      (T & {
          author: User;
       })[]
    >;
 
-   abstract resolved(transaction_id: string): Promise<Transaction>;
+   abstract resolved(transaction_id: string): Promise<T>;
 
    abstract ListSubscriptionWithOrNot({
       user_id,
       month,
       isSubscription,
-   }: ListBySubscription): Promise<Transaction[]>;
+   }: ListBySubscription): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   >;
 }

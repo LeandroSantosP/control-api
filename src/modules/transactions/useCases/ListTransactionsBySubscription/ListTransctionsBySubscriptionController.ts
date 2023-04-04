@@ -21,8 +21,6 @@ export class ListTransactionsBySubscriptionController {
          }
       }
 
-      console.log(isSubscription);
-
       const useCase = container.resolve(ListTransitionsBySubscriptionUseCase);
       const result = await useCase.execute({
          user_id: id,

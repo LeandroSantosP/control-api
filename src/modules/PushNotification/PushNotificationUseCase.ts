@@ -3,16 +3,17 @@ import { AppError } from '@/shared/infra/middleware/AppError';
 import { IAuthProvider } from '@/shared/providers/AuthProvider/IAuthProvider';
 import { ITransactionsRepository } from '../transactions/infra/repository/ITransactionsRepository';
 import { inject, injectable } from 'tsyringe';
+import { Transaction } from '@prisma/client';
 
 @injectable()
 export class PushNotificationUseCase {
    constructor(
       @inject('TransactionsRepository')
-      private TransactionsRepository: ITransactionsRepository,
+      private TransactionsRepository: ITransactionsRepository<Transaction>,
       @inject('JwtAuthProvider')
       private JwtAuthProvider: IAuthProvider
    ) {}
-   async execute(token: string): Promise<any> {
+   async execute(token: string, day: any): Promise<any> {
       const { secretTokenPushNotification } = auth;
 
       if (!token) {
@@ -65,6 +66,8 @@ export class PushNotificationUseCase {
          },
          []
       );
+
+      console.log(result);
 
       return result;
    }

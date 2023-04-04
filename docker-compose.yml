@@ -2,7 +2,7 @@ version: '3'
 
 services:
    db:
-      container_name: db
+      container_name: db-puf
       image: postgres:15.2
       restart: always
       ports:
@@ -11,15 +11,6 @@ services:
          - POSTGRES_USER=puf_admin
          - POSTGRES_PASSWORD=puf_pass
          - POSTGRES_DB=puf
-
-   cronjobs:
-      container_name: cron
-      image: brunobertolini/node-cron:0.1.0
-      environment:
-         - CRONTAB_FILE=./.crontab
-      volumes:
-         - ./src/jobs/.crontab:/usr/src/app/.crontab
-         - ./dist:/usr/src/app
 
    api:
       container_name: api

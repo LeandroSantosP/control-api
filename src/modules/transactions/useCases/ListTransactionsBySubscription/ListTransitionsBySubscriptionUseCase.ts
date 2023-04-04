@@ -1,3 +1,4 @@
+import { Transaction } from '@prisma/client';
 import { inject, injectable } from 'tsyringe';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
 import { TransactionManagement } from '../TransactionManagement/TransactionManagement';
@@ -13,7 +14,7 @@ export class ListTransitionsBySubscriptionUseCase {
    private TransactionManagement: TransactionManagement;
    constructor(
       @inject('TransactionsRepository')
-      private TransactionRepository: ITransactionsRepository
+      private TransactionRepository: ITransactionsRepository<Transaction>
    ) {
       this.TransactionManagement = new TransactionManagement();
    }
@@ -29,6 +30,8 @@ export class ListTransitionsBySubscriptionUseCase {
             month,
             isSubscription,
          });
+
+      console.log(transactions);
 
       const transactionFormatted =
          await this.TransactionManagement.GetTransactionFormattedWithBalense({

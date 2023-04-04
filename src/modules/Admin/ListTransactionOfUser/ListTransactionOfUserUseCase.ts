@@ -6,7 +6,7 @@ import { ITransactionsRepository } from '@/modules/transactions/infra/repository
 export class ListTransactionsOfUserUseCase {
    constructor(
       @inject('TransactionsRepository')
-      private TransactionsRepository: ITransactionsRepository
+      private TransactionsRepository: ITransactionsRepository<Transaction>
    ) {}
 
    async execute(user_id?: string): Promise<Transaction[] | null> {

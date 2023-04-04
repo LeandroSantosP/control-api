@@ -7,6 +7,7 @@ import { PushNotificationUseCase } from './PushNotificationUseCase';
 import { JwtAuthProvider } from '@/shared/providers/AuthProvider/implementation/JwtAuthProvider';
 import { hash } from 'bcrypt';
 import auth from '@/config/auth';
+import { addDays } from 'date-fns';
 
 let sessionUseCase: SessionUseCase;
 let userRepository: UserRepositoryTestDB;
@@ -58,7 +59,8 @@ describe('PushNotification', () => {
       });
 
       const push = await pushNotificationUseCase.execute(
-         'Bearer ' + PushNotificationToken
+         'Bearer ' + PushNotificationToken,
+         'COLOQUE UMA DATA(EM DIAS) QUE IRAR TRAZES AS NOTIFICAÇÕES DO DATA EM QUESTÃO'
       );
 
       expect(push).toHaveLength(2);

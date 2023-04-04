@@ -1,4 +1,4 @@
-import { Category } from '@prisma/client';
+import { Category, Transaction } from '@prisma/client';
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { inject, injectable } from 'tsyringe';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
@@ -67,7 +67,7 @@ const TransactionSchemaWithRecorrente = TransactionSchema.shape({
 export class CreateTransactionWIthRecorrenteUseCase {
    constructor(
       @inject('TransactionsRepository')
-      private transactionRepository: ITransactionsRepository,
+      private transactionRepository: ITransactionsRepository<Transaction>,
       @inject('DateFnsProvider')
       private DateFnsProvider: IDateProvider
    ) {}

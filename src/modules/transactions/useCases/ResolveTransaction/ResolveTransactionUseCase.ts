@@ -1,5 +1,6 @@
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
+import { Transaction } from '@prisma/client';
 import { inject, injectable } from 'tsyringe';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
 
@@ -9,7 +10,7 @@ export class ResolveTransactionUseCase {
       @inject('UserRepository')
       private UserRepository: IUserRepository,
       @inject('TransactionsRepository')
-      private TransactionRepository: ITransactionsRepository
+      private TransactionRepository: ITransactionsRepository<Transaction>
    ) {}
 
    async execute(transaction_id: string, user_id: string): Promise<boolean> {

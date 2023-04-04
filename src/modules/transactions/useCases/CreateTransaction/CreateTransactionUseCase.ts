@@ -7,6 +7,7 @@ import { inject, injectable } from 'tsyringe';
 import { TransactionsDTO } from '../../infra/dto/TransactionsDTO';
 import { TransactionsEntity } from '../../infra/Entity/TransactionsEntity';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
+import { Transaction } from '@prisma/client';
 
 interface IRequest extends TransactionsDTO {
    email: string;
@@ -59,7 +60,7 @@ export class CreateTransaction {
       @inject('UserRepository')
       private userRepository: IUserRepository,
       @inject('TransactionsRepository')
-      private transactionRepository: ITransactionsRepository
+      private transactionRepository: ITransactionsRepository<Transaction>
    ) {}
 
    async execute({

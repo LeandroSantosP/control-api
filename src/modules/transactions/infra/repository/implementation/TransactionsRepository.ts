@@ -1,3 +1,4 @@
+import { addDays, endOfMonth, startOfMonth, isBefore } from 'date-fns';
 import { prisma } from '@/database/prisma';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { GetCurrentDate } from '@/utils/GetCurrentDate';
@@ -6,9 +7,10 @@ import {
    Prisma,
    Recurrence,
    Transaction,
+   TransactionsCategory,
    User,
 } from '@prisma/client';
-import { addDays, endOfMonth, startOfMonth, isBefore } from 'date-fns';
+
 import {
    ICreateTransactionInstallments,
    ITransactionsRepository,
@@ -18,7 +20,7 @@ import {
 
 export class TransactionsRepository
    extends GetCurrentDate
-   implements ITransactionsRepository
+   implements ITransactionsRepository<Transaction>
 {
    private prisma;
 
@@ -150,13 +152,20 @@ export class TransactionsRepository
       return newTransaction;
    }
 
-   async ListUserTransactionsById(user_id: string): Promise<Transaction[]> {
+   async ListUserTransactionsById(user_id: string): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   > {
       const transactions = await this.prisma.transaction.findMany({
          where: {
             userId: user_id,
          },
          orderBy: {
             created_at: 'desc',
+         },
+         include: {
+            category: true,
          },
       });
 
@@ -202,7 +211,11 @@ export class TransactionsRepository
    }: {
       user_id: string;
       month: number;
-   }): Promise<Transaction[]> {
+   }): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   > {
       const currentYear = new Date().getFullYear();
 
       const startOfTheMount = startOfMonth(new Date(currentYear, month - 1));
@@ -215,6 +228,9 @@ export class TransactionsRepository
                gte: new Date(startOfTheMount),
                lt: new Date(endOfTheMount),
             },
+         },
+         include: {
+            category: true,
          },
       });
 
@@ -264,7 +280,11 @@ export class TransactionsRepository
       user_id,
       month,
       isSubscription,
-   }: ListBySubscription): Promise<Transaction[]> {
+   }: ListBySubscription): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   > {
       const result = this.getStartAndEndOfTheMonth(month);
 
       if (result !== undefined) {
@@ -279,6 +299,9 @@ export class TransactionsRepository
                   lt: new Date(endOfTheMount),
                },
             },
+            include: {
+               category: true,
+            },
          });
 
          return transaction;
@@ -288,6 +311,9 @@ export class TransactionsRepository
          where: {
             userId: user_id,
             isSubscription,
+         },
+         include: {
+            category: true,
          },
       });
 

@@ -80,6 +80,8 @@ model Transaction {
    installments   Int?
    isSubscription Boolean?
    due_date       DateTime?
+   // pedding
+   filingDate     DateTime?
    resolved       Boolean     @default(false)
    created_at     DateTime    @default(now())
    updated_at     DateTime    @updatedAt

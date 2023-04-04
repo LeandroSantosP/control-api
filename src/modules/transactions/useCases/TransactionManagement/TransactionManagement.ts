@@ -1,5 +1,5 @@
 import { AppError } from '@/shared/infra/middleware/AppError';
-import { Transaction } from '@prisma/client';
+import { Transaction, TransactionsCategory } from '@prisma/client';
 
 interface IResponseBalense {
    expense: number;
@@ -7,7 +7,9 @@ interface IResponseBalense {
    total: number;
 }
 interface GetSubscriptionTransactions {
-   transactions: Transaction[];
+   transactions: (Transaction & {
+      category: TransactionsCategory;
+   })[];
    user_id: string;
 }
 
@@ -24,7 +26,11 @@ export class TransactionManagement {
    }
 
    private GetMonthBalenseList(
-      transactions: Transaction[] | null
+      transactions:
+         | (Transaction & {
+              category: TransactionsCategory;
+           })[]
+         | null
    ): IResponseBalense | undefined {
       const balense = transactions?.reduce(
          (storage, transaction) => {
@@ -64,7 +70,9 @@ export class TransactionManagement {
       user_id,
    }: GetSubscriptionTransactions): Promise<{
       balense: IResponseBalense | undefined;
-      transactions: Transaction[];
+      transactions: (Transaction & {
+         category: TransactionsCategory;
+      })[];
    }> {
       this.VerifyUserIsAuthentication(transactions, user_id);
       const balenseResult = this.GetMonthBalenseList(transactions);

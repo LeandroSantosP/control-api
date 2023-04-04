@@ -5,7 +5,6 @@ import { UserRepositoryTestDB } from '../../../users/infra/repository/test-db/Us
 import { CreateTransaction } from './CreateTransactionUseCase';
 import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
 import { prisma } from '@/database/prisma';
-import { addDays } from 'date-fns';
 import CreateUserTest from '@/utils/CrateUserTEST';
 
 let transactionRepositoryTestDB: TransactionsRepositoryTestDB;

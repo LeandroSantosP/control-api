@@ -17,102 +17,102 @@ const name = 'test';
 const password = 'testPassword';
 
 describe('User Session', () => {
-  beforeEach(() => {
-    userRepositoryInMemory = new UserRepositoryInMemory();
-    jwtProvider = new JwtAuthProvider();
-    sessionUseCase = new SessionUseCase(userRepositoryInMemory, jwtProvider);
-  });
-  it('Should return user credentials and used.', async () => {
-    await userRepositoryInMemory.create({
-      email,
-      name,
-      password,
-    });
-
-    const token = Buffer.from(`${email}:${password}`, 'utf8').toString(
-      'base64'
-    );
-
-    const CredentialsToken = `Basic ${token}`;
-
-    const credentials = await sessionUseCase.execute({
-      authenticationBase64: CredentialsToken,
-    });
-
-    expect(credentials).toBeInstanceOf(Object);
-    expect(credentials).toMatchObject<IResponse>({
-      user: {
-        name: 'test',
-        email: 'test@example.com',
-      },
-      token: expect.any(String),
-    });
-
-    //Should be able use credentials
-
-    const { secretToken } = auth;
-
-    const use = await userRepositoryInMemory.GetUserByEmail(email);
-
-    const { sub: client_id } = verify(credentials.token, secretToken);
-
-    expect(client_id).toEqual(use!.id);
-  });
-
-  it('Should not allow authentication if authenticationBase64 is not provided.', async () => {
-    const result = () =>
-      sessionUseCase.execute({
-        authenticationBase64: '',
+   beforeEach(() => {
+      userRepositoryInMemory = new UserRepositoryInMemory();
+      jwtProvider = new JwtAuthProvider();
+      sessionUseCase = new SessionUseCase(userRepositoryInMemory, jwtProvider);
+   });
+   it('Should return user credentials and used.', async () => {
+      await userRepositoryInMemory.create({
+         email,
+         name,
+         password,
       });
 
-    await expect(result).rejects.toEqual(
-      new AppError('Authentication Failed', 404)
-    );
-  });
+      const token = Buffer.from(`${email}:${password}`, 'utf8').toString(
+         'base64'
+      );
 
-  it('should not allow authentication if user does not exits.', async () => {
-    const token = Buffer.from(`${email}:${password}`, 'utf8').toString(
-      'base64'
-    );
+      const CredentialsToken = `Basic ${token}`;
 
-    const CredentialsToken = `Basic ${token}`;
-
-    await expect(
-      sessionUseCase.execute({
-        authenticationBase64: CredentialsToken,
-      })
-    ).rejects.toEqual(new AppError('Email or password Is Incorrect!'));
-  });
-
-  it('should not allow authentication if password is wrong.', async () => {
-    await userRepositoryInMemory.create({
-      email,
-      name,
-      password,
-    });
-
-    const token = Buffer.from(`${email}:${password}Wrong`, 'utf8').toString(
-      'base64'
-    );
-
-    const CredentialsToken = `Basic ${token}`;
-
-    const result = () =>
-      sessionUseCase.execute({
-        authenticationBase64: CredentialsToken,
+      const credentials = await sessionUseCase.execute({
+         authenticationBase64: CredentialsToken,
       });
 
-    await expect(result).rejects.toEqual(
-      new AppError('Email or password Is Incorrect!')
-    );
-  });
+      expect(credentials).toBeInstanceOf(Object);
+      expect(credentials).toMatchObject<IResponse>({
+         user: {
+            name: 'test',
+            email: 'test@example.com',
+         },
+         token: expect.any(String),
+      });
 
-  it('should throw an error if the credentials are in the wrong format', async () => {
-    try {
-      sessionUseCase.DecodedBase64Basis('WRONG_FORMAT_CREDENTIALS');
-    } catch (error: any) {
-      expect(error).toBeInstanceOf(AppError);
-      expect(error.message).toBe('Credentials are in the wrong format');
-    }
-  });
+      //Should be able use credentials
+
+      const { secretToken } = auth;
+
+      const use = await userRepositoryInMemory.GetUserByEmail(email);
+
+      const { sub: client_id } = verify(credentials.token, secretToken);
+
+      expect(client_id).toEqual(use!.id);
+   });
+
+   it('Should not allow authentication if authenticationBase64 is not provided.', async () => {
+      const result = () =>
+         sessionUseCase.execute({
+            authenticationBase64: '',
+         });
+
+      await expect(result).rejects.toEqual(
+         new AppError('Authentication Failed', 404)
+      );
+   });
+
+   it('should not allow authentication if user does not exits.', async () => {
+      const token = Buffer.from(`${email}:${password}`, 'utf8').toString(
+         'base64'
+      );
+
+      const CredentialsToken = `Basic ${token}`;
+
+      await expect(
+         sessionUseCase.execute({
+            authenticationBase64: CredentialsToken,
+         })
+      ).rejects.toEqual(new AppError('Email or password Is Incorrect!'));
+   });
+
+   it('should not allow authentication if password is wrong.', async () => {
+      await userRepositoryInMemory.create({
+         email,
+         name,
+         password,
+      });
+
+      const token = Buffer.from(`${email}:${password}Wrong`, 'utf8').toString(
+         'base64'
+      );
+
+      const CredentialsToken = `Basic ${token}`;
+
+      const result = () =>
+         sessionUseCase.execute({
+            authenticationBase64: CredentialsToken,
+         });
+
+      await expect(result).rejects.toEqual(
+         new AppError('Email or password Is Incorrect!')
+      );
+   });
+
+   it('should throw an error if the credentials are in the wrong format', async () => {
+      try {
+         sessionUseCase.DecodedBase64Basis('WRONG_FORMAT_CREDENTIALS');
+      } catch (error: any) {
+         expect(error).toBeInstanceOf(AppError);
+         expect(error.message).toBe('Credentials are in the wrong format');
+      }
+   });
 });
