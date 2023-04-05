@@ -30,6 +30,7 @@ describe('Create Transaction', () => {
             email: 'test11@example.com',
             description: 'Desc',
             value: '11',
+            filingDate: '2023-09-11',
          })
       ).rejects.toThrow(new AppError('User does not exites!'));
    });
@@ -45,9 +46,11 @@ describe('Create Transaction', () => {
          email: 'mariatest@example.com',
          description: 'Desc',
          value: '11.1',
+         filingDate: '2023-09-02',
       });
 
       expect(newTransaction).toHaveProperty('id');
+      expect(newTransaction).toHaveProperty('filingDate');
       expect(newTransaction?.description).toEqual('Desc');
       expect(newTransaction?.value).toBeTruthy();
       expect(newTransaction?.recurrence).toBeNull();
@@ -59,17 +62,30 @@ describe('Create Transaction', () => {
       expect(newTransaction?.userId).toEqual(newUser.id);
    });
 
-   it('should not be able to create a revenue transaction, must not contains due date!', async () => {
+   it('should not be able to create a new transaction(revenue) if filling date is wrong formatted!', async () => {
+      const newUser = await CreateUserTest();
+
+      await expect(
+         createTransaction.execute({
+            email: newUser.email,
+            description: 'Desc',
+            value: '11.1',
+            filingDate: 'INVALID_FORMAT',
+         })
+      ).rejects.toThrow('Data inválida. O formato deve ser yyyy-MM-dd');
+   });
+
+   it('should not be able to create a expense transaction, must not contains felling date!', async () => {
       const newUser = await CreateUserTest();
       await expect(
          createTransaction.execute({
             description: 'Desc',
             email: newUser.email,
-            value: '100.22',
+            value: '-100.22',
             categoryType: 'habitation',
-            dueDate: '2040-10-10',
+            filingDate: '2040-10-10',
          })
-      ).rejects.toEqual(new AppError('Revenue does not have due date!'));
+      ).rejects.toEqual(new AppError('Expense does not have filling date!'));
    });
 
    it('should not be able to create a revenue transaction, must not contains due date!', async () => {
@@ -116,9 +132,25 @@ describe('Create Transaction', () => {
       }
    });
 
-   it('should not be able create an transaction if data is in incorrect format.', async () => {
+   it('should be able choose a category for a new transaction!', async () => {
       const newUser = await userRepositoryTestDB.create({
          email: 'test14@example.com',
+         name: 'John doe',
+         password: 'senha123',
+      });
+      const response = await createTransaction.execute({
+         email: newUser.email,
+         description: 'Desc',
+         value: '10',
+         filingDate: '2023-09-22',
+         categoryType: 'food',
+      });
+      expect(response).toHaveProperty('category', { name: 'food' });
+   });
+
+   it('should not be able create an transaction if data is in incorrect format.', async () => {
+      const newUser = await userRepositoryTestDB.create({
+         email: 'test1@example.com',
          name: 'John doe',
          password: 'senha123',
       });
@@ -127,7 +159,7 @@ describe('Create Transaction', () => {
          createTransaction.execute({
             email: newUser.email,
             description: 'Desc',
-            value: 'wrong format' as any,
+            value: 'wrong format',
          })
       ).rejects.toThrow(InvalidYupError);
    });

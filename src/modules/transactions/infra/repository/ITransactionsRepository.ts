@@ -14,6 +14,7 @@ export interface ITransactionsRepositoryProps {
    dueDate?: string;
    Category?: Category;
    resolved?: boolean;
+   filingDate?: string;
 }
 
 export interface ICreateTransactionInstallments {
@@ -24,6 +25,7 @@ export interface ICreateTransactionInstallments {
    value: string;
    description: string;
    categoryType: Category | undefined;
+   filingDate?: string;
    recurrence: 'monthly' | 'daily' | 'yearly';
 }
 

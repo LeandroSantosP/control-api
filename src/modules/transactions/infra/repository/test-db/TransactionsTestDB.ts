@@ -30,6 +30,14 @@ export class TransactionsRepositoryTestDB
       this.prisma = prisma;
    }
 
+   private verifyFutureDate(date?: string, month = 1) {
+      if (date && isBefore(new Date(date!), addDays(new Date(), month))) {
+         throw new AppError(
+            'Due date or filling Date must be at least one day in the future!'
+         );
+      }
+   }
+
    async create({
       description,
       value,
@@ -37,6 +45,7 @@ export class TransactionsRepositoryTestDB
       dueDate,
       Category,
       resolved,
+      filingDate,
    }: ITransactionsRepositoryProps): Promise<
       Transaction & {
          category: {
@@ -44,9 +53,8 @@ export class TransactionsRepositoryTestDB
          };
       }
    > {
-      if (dueDate && isBefore(new Date(dueDate!), addDays(new Date(), 1))) {
-         throw new AppError('Due date must be at least one day in the future!');
-      }
+      this.verifyFutureDate(filingDate);
+      this.verifyFutureDate(dueDate);
 
       const newTransaction = await this.prisma.transaction.create({
          data: {
@@ -61,8 +69,9 @@ export class TransactionsRepositoryTestDB
                },
             },
             description,
+            filingDate,
+            due_date: dueDate,
             value: new Prisma.Decimal(value),
-            due_date: dueDate !== null ? dueDate : undefined,
             type: Number(value) < 0 ? 'expense' : 'revenue',
             resolved,
             author: {
@@ -91,6 +100,7 @@ export class TransactionsRepositoryTestDB
       dueDate,
       installments,
       isSubscription,
+      filingDate,
    }: ICreateTransactionInstallments): Promise<{
       description: string;
       value: Prisma.Decimal;
@@ -98,26 +108,32 @@ export class TransactionsRepositoryTestDB
       recurrence: Recurrence | null;
       installments: number | null;
       isSubscription: boolean | null;
-      due_date: Date | null;
       created_at: Date;
       category: any;
+      due_date: Date | null;
+      filingDate: Date | null;
    }> {
       if (
-         isBefore(new Date(dueDate!), addDays(new Date(), 1)) &&
-         dueDate !== null
+         (isBefore(new Date(dueDate!), addDays(new Date(), 1)) &&
+            dueDate !== null) ||
+         (isBefore(new Date(filingDate!), addDays(new Date(), 1)) &&
+            filingDate !== null)
       ) {
-         throw new AppError('Due date must be at least one day in the future!');
+         throw new AppError(
+            'Due date or filling date must be at least one day in the future!'
+         );
       }
 
       const newTransaction = await this.prisma.transaction.create({
          data: {
-            description: description,
-            value: new Prisma.Decimal(value),
+            description,
             due_date: dueDate,
-            installments: installments,
+            installments,
+            isSubscription,
+            recurrence,
+            filingDate,
+            value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
-            isSubscription: isSubscription,
-            recurrence: recurrence,
             resolved: Number(value) > 0 ? true : false,
             category: {
                connectOrCreate: {
@@ -135,15 +151,7 @@ export class TransactionsRepositoryTestDB
                },
             },
          },
-         select: {
-            description: true,
-            value: true,
-            due_date: true,
-            recurrence: true,
-            created_at: true,
-            resolved: true,
-            installments: true,
-            isSubscription: true,
+         include: {
             category: {
                select: {
                   name: true,

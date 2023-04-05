@@ -10,10 +10,11 @@ interface ICreateTransactionTEST {
    email: string;
    description?: string;
    value?: string;
-   isSubscription: boolean;
+   isSubscription?: boolean;
    categoryType?: any;
    recurrence?: any;
    dueDate?: any;
+   filingDate?: any;
 }
 
 export default async function CreateTransactionTEST({
@@ -24,6 +25,7 @@ export default async function CreateTransactionTEST({
    recurrence = 'daily',
    isSubscription,
    dueDate = dataFormatted,
+   filingDate,
 }: ICreateTransactionTEST) {
    const useExits = await prisma.transaction.create({
       data: {
@@ -32,6 +34,7 @@ export default async function CreateTransactionTEST({
          due_date: dueDate,
          recurrence,
          isSubscription,
+         filingDate,
          author: {
             connect: {
                email,
