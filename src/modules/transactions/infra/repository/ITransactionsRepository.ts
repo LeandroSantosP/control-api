@@ -14,6 +14,7 @@ export interface ITransactionsRepositoryProps {
    dueDate?: string;
    Category?: Category;
    resolved?: boolean;
+
    filingDate?: string;
 }
 
@@ -25,7 +26,6 @@ export interface ICreateTransactionInstallments {
    value: string;
    description: string;
    categoryType: Category | undefined;
-   filingDate?: string;
    recurrence: 'monthly' | 'daily' | 'yearly';
 }
 
@@ -33,6 +33,13 @@ export interface ListBySubscription {
    user_id: string;
    month?: number;
    isSubscription?: boolean;
+}
+
+export interface ListBYRevenueOrResolvedTransactionsProps {
+   resolved?: boolean;
+   revenue?: boolean;
+   user_id: string;
+   month?: number;
 }
 
 export abstract class ITransactionsRepository<T> {
@@ -104,4 +111,11 @@ export abstract class ITransactionsRepository<T> {
          category: TransactionsCategory;
       })[]
    >;
+
+   abstract ListBYRevenueOrResolvedTransactions({
+      resolved,
+      revenue,
+      user_id,
+      month,
+   }: ListBYRevenueOrResolvedTransactionsProps): Promise<Transaction[]>;
 }

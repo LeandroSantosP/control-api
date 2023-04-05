@@ -14,6 +14,7 @@ import {
    ICreateTransactionInstallments,
    ITransactionsRepository,
    ITransactionsRepositoryProps,
+   ListBYRevenueOrResolvedTransactionsProps,
    ListBySubscription,
 } from '../ITransactionsRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
@@ -44,7 +45,7 @@ export class TransactionsRepositoryTestDB
       email,
       dueDate,
       Category,
-      resolved,
+
       filingDate,
    }: ITransactionsRepositoryProps): Promise<
       Transaction & {
@@ -73,7 +74,7 @@ export class TransactionsRepositoryTestDB
             due_date: dueDate,
             value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
-            resolved,
+
             author: {
                connect: {
                   email,
@@ -100,7 +101,6 @@ export class TransactionsRepositoryTestDB
       dueDate,
       installments,
       isSubscription,
-      filingDate,
    }: ICreateTransactionInstallments): Promise<{
       description: string;
       value: Prisma.Decimal;
@@ -113,16 +113,7 @@ export class TransactionsRepositoryTestDB
       due_date: Date | null;
       filingDate: Date | null;
    }> {
-      if (
-         (isBefore(new Date(dueDate!), addDays(new Date(), 1)) &&
-            dueDate !== null) ||
-         (isBefore(new Date(filingDate!), addDays(new Date(), 1)) &&
-            filingDate !== null)
-      ) {
-         throw new AppError(
-            'Due date or filling date must be at least one day in the future!'
-         );
-      }
+      this.verifyFutureDate(dueDate);
 
       const newTransaction = await this.prisma.transaction.create({
          data: {
@@ -131,7 +122,6 @@ export class TransactionsRepositoryTestDB
             installments,
             isSubscription,
             recurrence,
-            filingDate,
             value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
             resolved: Number(value) > 0 ? true : false,
@@ -311,6 +301,9 @@ export class TransactionsRepositoryTestDB
                   lt: new Date(endOfTheMount),
                },
             },
+            orderBy: {
+               created_at: 'desc',
+            },
             include: {
                category: true,
             },
@@ -330,5 +323,61 @@ export class TransactionsRepositoryTestDB
       });
 
       return transaction;
+   }
+
+   async ListBYRevenueOrResolvedTransactions({
+      resolved,
+      revenue,
+      user_id,
+      month,
+   }: ListBYRevenueOrResolvedTransactionsProps): Promise<Transaction[]> {
+      const result = this.getStartAndEndOfTheMonth(month);
+
+      if (result !== undefined) {
+         const { endOfTheMount, startOfTheMount } = result;
+
+         let whereClause = {
+            userId: user_id,
+            due_date: {
+               gte: new Date(startOfTheMount),
+               lt: new Date(endOfTheMount),
+            },
+         } as any;
+
+         if (resolved) {
+            whereClause.resolved = resolved;
+         }
+
+         if (revenue) {
+            whereClause.value = { gt: 0 };
+         } else if (!revenue) {
+            whereClause.value = { lt: 0 };
+         }
+
+         const transactions = await this.prisma.transaction.findMany({
+            where: whereClause,
+         });
+         return transactions;
+      }
+
+      let whereClause = {
+         userId: user_id,
+      } as any;
+
+      if (resolved) {
+         whereClause.resolved = resolved;
+      }
+
+      if (revenue) {
+         whereClause.value = { gt: 0 };
+      } else if (!revenue) {
+         whereClause.value = { lt: 0 };
+      }
+
+      const transactions = await this.prisma.transaction.findMany({
+         where: whereClause,
+      });
+
+      return transactions;
    }
 }

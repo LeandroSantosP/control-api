@@ -13,6 +13,7 @@ interface ICreateTransactionTEST {
    isSubscription?: boolean;
    categoryType?: any;
    recurrence?: any;
+   resolved?: boolean | undefined;
    dueDate?: any;
    filingDate?: any;
 }
@@ -24,6 +25,7 @@ export default async function CreateTransactionTEST({
    categoryType = 'Investments',
    recurrence = 'daily',
    isSubscription,
+   resolved = false,
    dueDate = dataFormatted,
    filingDate,
 }: ICreateTransactionTEST) {
@@ -35,6 +37,7 @@ export default async function CreateTransactionTEST({
          recurrence,
          isSubscription,
          filingDate,
+         resolved,
          author: {
             connect: {
                email,

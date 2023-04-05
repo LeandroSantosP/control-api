@@ -7,6 +7,15 @@ interface IRequest {
    month?: number;
    isSubscription?: boolean;
    user_id: string;
+   resolved?: boolean;
+   revenue?: boolean;
+}
+
+interface ListByRevenueOrResolvedTransactionProps {
+   month: number | undefined;
+   resolved: boolean | undefined;
+   revenue: boolean | undefined;
+   user_id: string;
 }
 
 @injectable()
@@ -19,9 +28,41 @@ export class ListTransitionsBySubscriptionUseCase {
       this.TransactionManagement = new TransactionManagement();
    }
 
-   async execute({ isSubscription, month, user_id }: IRequest) {
+   private async ListByRevenueOrResolvedTransaction({
+      month,
+      resolved,
+      revenue,
+      user_id,
+   }: ListByRevenueOrResolvedTransactionProps) {
+      const transactions =
+         await this.TransactionRepository.ListBYRevenueOrResolvedTransactions({
+            user_id,
+            month,
+            resolved,
+            revenue,
+         });
+
+      return transactions;
+   }
+
+   async execute({
+      user_id,
+      isSubscription,
+      month,
+      resolved,
+      revenue,
+   }: IRequest): Promise<any> {
       if (month) {
          this.TransactionManagement.verifyMonth(month);
+      }
+
+      if ((resolved || revenue) && !isSubscription) {
+         return await this.ListByRevenueOrResolvedTransaction({
+            month,
+            resolved,
+            revenue,
+            user_id,
+         });
       }
 
       const transactions =
@@ -30,8 +71,6 @@ export class ListTransitionsBySubscriptionUseCase {
             month,
             isSubscription,
          });
-
-      console.log(transactions);
 
       const transactionFormatted =
          await this.TransactionManagement.GetTransactionFormattedWithBalense({

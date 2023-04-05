@@ -29,12 +29,21 @@ export class TransactionsRepository
       this.prisma = prisma;
    }
 
+   private verifyFutureDate(date?: string, month = 1) {
+      if (date && isBefore(new Date(date!), addDays(new Date(), month))) {
+         throw new AppError(
+            'Due date or filling Date must be at least one day in the future!'
+         );
+      }
+   }
+
    async create({
       description,
       value,
       email,
       dueDate,
       Category,
+      filingDate,
    }: ITransactionsRepositoryProps): Promise<
       Transaction & {
          category: {
@@ -42,9 +51,8 @@ export class TransactionsRepository
          };
       }
    > {
-      if (dueDate && isBefore(new Date(dueDate!), addDays(new Date(), 1))) {
-         throw new AppError('Due date must be at least one day in the future!');
-      }
+      this.verifyFutureDate(filingDate);
+      this.verifyFutureDate(dueDate);
 
       const newTransaction = await this.prisma.transaction.create({
          data: {
@@ -59,8 +67,9 @@ export class TransactionsRepository
                },
             },
             description,
-            value: new Prisma.Decimal(value),
+            filingDate,
             due_date: dueDate,
+            value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
             author: {
                connect: {
@@ -100,22 +109,17 @@ export class TransactionsRepository
       created_at: Date;
       category: any;
    }> {
-      if (
-         isBefore(new Date(dueDate!), addDays(new Date(), 1)) &&
-         dueDate !== null
-      ) {
-         throw new AppError('Due date must be at least one day in the future!');
-      }
+      this.verifyFutureDate(dueDate);
 
       const newTransaction = await this.prisma.transaction.create({
          data: {
-            description: description,
-            value: new Prisma.Decimal(value),
+            installments,
+            recurrence,
+            description,
+            isSubscription,
             due_date: dueDate,
-            installments: installments,
+            value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
-            isSubscription: isSubscription,
-            recurrence: recurrence,
             category: {
                connectOrCreate: {
                   where: {
@@ -132,15 +136,7 @@ export class TransactionsRepository
                },
             },
          },
-         select: {
-            description: true,
-            value: true,
-            due_date: true,
-            recurrence: true,
-            created_at: true,
-            resolved: true,
-            installments: true,
-            isSubscription: true,
+         include: {
             category: {
                select: {
                   name: true,

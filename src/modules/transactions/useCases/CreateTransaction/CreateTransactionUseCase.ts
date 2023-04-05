@@ -31,6 +31,7 @@ export const TransactionSchema = yup.object().shape({
    description: yup.string().required(),
    value: decimalValidate().required(),
    email: yup.string().email().required(),
+
    dueDate: yup
       .string()
       .nullable()

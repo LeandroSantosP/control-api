@@ -1,5 +1,4 @@
 import { AppError } from '@/shared/infra/middleware/AppError';
-import { log } from 'console';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { ListTransitionsBySubscriptionUseCase } from './ListTransitionsBySubscriptionUseCase';
