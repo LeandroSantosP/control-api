@@ -15,6 +15,7 @@ import {
    ICreateTransactionInstallments,
    ITransactionsRepository,
    ITransactionsRepositoryProps,
+   ListBYRevenueOrResolvedTransactionsProps,
    ListBySubscription,
 } from '../ITransactionsRepository';
 
@@ -314,5 +315,71 @@ export class TransactionsRepository
       });
 
       return transaction;
+   }
+
+   async ListBYRevenueOrResolvedTransactions({
+      resolved,
+      revenue,
+      user_id,
+      month,
+   }: ListBYRevenueOrResolvedTransactionsProps): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   > {
+      const result = this.getStartAndEndOfTheMonth(month);
+
+      if (result !== undefined) {
+         const { endOfTheMount, startOfTheMount } = result;
+
+         let whereClause = {
+            userId: user_id,
+            [revenue ? 'filingDate' : 'due_date']: {
+               gte: new Date(startOfTheMount),
+               lt: new Date(endOfTheMount),
+            },
+         } as any;
+
+         if (resolved) {
+            whereClause.resolved = resolved;
+         }
+
+         if (revenue) {
+            whereClause.value = { gt: 0 };
+         } else if (!revenue) {
+            whereClause.value = { lt: 0 };
+         }
+
+         const transactions = await this.prisma.transaction.findMany({
+            where: whereClause,
+            include: {
+               category: true,
+            },
+         });
+         return transactions;
+      }
+
+      let whereClause = {
+         userId: user_id,
+      } as any;
+
+      if (resolved) {
+         whereClause.resolved = resolved;
+      }
+
+      if (revenue) {
+         whereClause.value = { gt: 0 };
+      } else if (!revenue) {
+         whereClause.value = { lt: 0 };
+      }
+
+      const transactions = await this.prisma.transaction.findMany({
+         where: whereClause,
+         include: {
+            category: true,
+         },
+      });
+
+      return transactions;
    }
 }

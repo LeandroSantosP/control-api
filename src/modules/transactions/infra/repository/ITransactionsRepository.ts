@@ -117,5 +117,9 @@ export abstract class ITransactionsRepository<T> {
       revenue,
       user_id,
       month,
-   }: ListBYRevenueOrResolvedTransactionsProps): Promise<Transaction[]>;
+   }: ListBYRevenueOrResolvedTransactionsProps): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   >;
 }

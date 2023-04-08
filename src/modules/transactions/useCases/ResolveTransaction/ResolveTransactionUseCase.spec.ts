@@ -1,11 +1,11 @@
 import 'reflect-metadata';
-import CreateUserTest from '@/utils/CrateUserTEST';
 import { prisma } from '@/database/prisma';
-import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
 import { addDays, formatISO, parse } from 'date-fns';
-import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
-import { ResolveTransactionUseCase } from './ResolveTransactionUseCase';
+import CreateUserTest from '@/utils/CrateUserTEST';
 import { AppError } from '@/shared/infra/middleware/AppError';
+import { ResolveTransactionUseCase } from './ResolveTransactionUseCase';
+import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
+import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
 
 let userRepository: UserRepositoryTestDB;
 let transactionsRepository: TransactionsRepositoryTestDB;
@@ -50,10 +50,10 @@ describe('Resolve Transaction', () => {
       expect(isResolved).toBeTruthy();
    });
 
-   it('should throw new Error if Transaction allready resolved'!, async () => {
+   it('should throw new Error if Transaction already resolved'!, async () => {
       const User = await CreateUserTest();
-      const newTransaciton = await transactionsRepository.create({
-         description: 'Desct',
+      const newTransaction = await transactionsRepository.create({
+         description: 'Desc',
          email: User.email,
          value: '-12',
          Category: 'education',
@@ -62,7 +62,7 @@ describe('Resolve Transaction', () => {
       });
 
       await expect(
-         resolveTransactionUseCase.execute(newTransaciton.id, User.id)
+         resolveTransactionUseCase.execute(newTransaction.id, User.id)
       ).rejects.toThrow(AppError);
    });
 });

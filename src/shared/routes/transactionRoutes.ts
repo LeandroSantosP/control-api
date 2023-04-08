@@ -39,6 +39,10 @@ transactionRoutes.get(
 Fields:{
    month: number | undefined
    isSubscription: "true" | "false | undefiled"
+   month: string => number | undefined,
+   isSubscription: Boolean => string | undefiled,
+   resolved: Boolean => string | undefiled,
+   revenue:Boolean => string | undefiled,
 }: req.query
 
 */
@@ -53,7 +57,8 @@ Fields:{
    description: string,
    value: string,
    dueDate: string yyyy-mm-dd | undefined,
-   categoryType:string | undefined
+   categoryType:string | undefined]
+   filingDate: string yyyy-mm-dd | undefined,
 }: Body
 
 Crated a new transaction where it can be an revenue or expense

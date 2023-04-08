@@ -102,6 +102,14 @@ export class CreateTransaction {
             abortEarly: false,
          });
 
+         const user = await this.userRepository.GetUserByEmail(
+            validadeData.email
+         );
+
+         if (!user) {
+            throw new AppError('User does not exites!');
+         }
+
          const isRevenue = Number(value) > 0;
 
          if (isRevenue && validadeData.dueDate) {
@@ -117,14 +125,6 @@ export class CreateTransaction {
             !validadeData.filingDate
          ) {
             throw new AppError('Revenue should have filling date!');
-         }
-
-         const user = await this.userRepository.GetUserByEmail(
-            validadeData.email
-         );
-
-         if (!user) {
-            throw new AppError('User does not exites!');
          }
 
          const transactionModel = new TransactionsEntity();

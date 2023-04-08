@@ -330,7 +330,11 @@ export class TransactionsRepositoryTestDB
       revenue,
       user_id,
       month,
-   }: ListBYRevenueOrResolvedTransactionsProps): Promise<Transaction[]> {
+   }: ListBYRevenueOrResolvedTransactionsProps): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   > {
       const result = this.getStartAndEndOfTheMonth(month);
 
       if (result !== undefined) {
@@ -356,6 +360,9 @@ export class TransactionsRepositoryTestDB
 
          const transactions = await this.prisma.transaction.findMany({
             where: whereClause,
+            include: {
+               category: true,
+            },
          });
          return transactions;
       }
@@ -376,6 +383,9 @@ export class TransactionsRepositoryTestDB
 
       const transactions = await this.prisma.transaction.findMany({
          where: whereClause,
+         include: {
+            category: true,
+         },
       });
 
       return transactions;

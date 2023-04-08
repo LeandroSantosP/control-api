@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { prisma } from '@/database/prisma';
 import CreateUserTest from '@/utils/CrateUserTEST';
-import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
-import { ListTransitionsBySubscriptionUseCase } from './ListTransitionsBySubscriptionUseCase';
 import CreateTransactionTEST from '@/utils/CreateTransactionTEST';
+import { ListTransitionsBySubscriptionUseCase } from './ListTransitionsBySubscriptionUseCase';
+import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
 
 let transactionRepository: TransactionsRepositoryTestDB;
 let listTransitionsBySubscriptionUseCase: ListTransitionsBySubscriptionUseCase;
@@ -82,7 +82,7 @@ describe('listTransitionsBySubscriptionUseCase', () => {
       });
    });
 
-   it('test', async () => {
+   it('should be possible to list the transactions the are resolved and are revenues!', async () => {
       const newUser = await CreateUserTest({ name: 'joãozinho' });
       await CreateTransactions({
          email: newUser.email,
@@ -103,7 +103,7 @@ describe('listTransitionsBySubscriptionUseCase', () => {
       expect(sut).toHaveLength(5);
    });
 
-   it('', async () => {
+   it('should be possible to list the transactions the are resolved and are not revenue!', async () => {
       /*  */
       const newUser = await CreateUserTest({
          name: 'joãozinho',

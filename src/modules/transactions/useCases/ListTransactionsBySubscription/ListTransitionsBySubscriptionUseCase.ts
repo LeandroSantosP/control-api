@@ -42,7 +42,13 @@ export class ListTransitionsBySubscriptionUseCase {
             revenue,
          });
 
-      return transactions;
+      const transactionFormatted =
+         await this.TransactionManagement.GetTransactionFormattedWithBalense({
+            user_id,
+            transactions,
+         });
+
+      return transactionFormatted;
    }
 
    async execute({

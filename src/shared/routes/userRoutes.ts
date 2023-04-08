@@ -1,7 +1,5 @@
 import { Router } from 'express';
 import multer from 'multer';
-import crypto from 'crypto';
-import { resolve } from 'path';
 
 import { ListUserController } from '@/modules/users/useCases/ListUser/ListUserController';
 import { CreateUserController } from '@/modules/users/useCases/CreateUser/CreateUserController';

@@ -53,16 +53,15 @@ model adress {
 // }
 
 model User {
-   id            String    @id @default(uuid())
-   email         String    @unique
-   name          String
-   password      String
-   fireBaseToken String?
-   avatar        String?
-   admin         Boolean   @default(false)
-   created_at    DateTime  @default(now())
-   updated_at    DateTime  @updatedAt
-   deleted_at    DateTime?
+   id         String    @id @default(uuid())
+   email      String    @unique
+   name       String
+   password   String
+   avatar     String?
+   admin      Boolean   @default(false)
+   created_at DateTime  @default(now())
+   updated_at DateTime  @updatedAt
+   deleted_at DateTime?
 
    // profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
    // profileId    String
@@ -80,7 +79,6 @@ model Transaction {
    installments   Int?
    isSubscription Boolean?
    due_date       DateTime?
-   // pedding
    filingDate     DateTime?
    resolved       Boolean     @default(false)
    created_at     DateTime    @default(now())
