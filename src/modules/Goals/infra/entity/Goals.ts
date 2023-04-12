@@ -3,8 +3,8 @@ import { v4 as uuidV4 } from 'uuid';
 export class GoalEntity {
    user_id!: string;
    month!: string;
-   expectated_revenue!: string;
-   expectated_expense!: string;
+   expectated_revenue!: number;
+   expectated_expense!: number;
    created_at?: Date;
    updated_at?: Date;
 
