@@ -7,24 +7,28 @@ services:
       restart: always
       ports:
          - ${DB_PORT}:5432
-      environment:
-         - POSTGRES_USER=puf_admin
-         - POSTGRES_PASSWORD=puf_pass
-         - POSTGRES_DB=puf
+      networks:
+         - puf_network
 
    api:
+      stdin_open: true
       container_name: api
       image: node:18.15.0
-      env_file:
-         - .env
+      build:
+         context: .
+      restart: always
       ports:
          - ${SERVER_PORT}:${SERVER_PORT}
       working_dir: /usr/src/app
       volumes:
          - .:/usr/src/app
-         - /usr/src/app/node_modules
+      networks:
+         - puf_network
       depends_on:
          - db
       command: yarn start
 
+networks:
+   puf_network:
+      driver: bridge
 

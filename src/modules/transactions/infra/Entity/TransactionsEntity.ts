@@ -1,6 +1,5 @@
 import { Category, Recurrence } from '@prisma/client';
 import { v4 as uuidV4 } from 'uuid';
-import { Transaction } from '@prisma/client';
 
 export class TransactionsEntity {
    id?: string;

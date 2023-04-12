@@ -67,8 +67,25 @@ model User {
    // profileId    String
 
    transactions Transaction[]
+   MonthlyGoals MonthlyGoals[]
 
    @@map("users")
+}
+
+model MonthlyGoals {
+   id    String @id @default(uuid())
+   month String @unique
+
+   expectated_revenue Decimal
+   expectated_expense Decimal
+
+   created_at DateTime @default(now())
+   updated_at DateTime @updatedAt
+
+   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+   userId String
+
+   @@map("monthly_goals")
 }
 
 model Transaction {
@@ -84,8 +101,9 @@ model Transaction {
    created_at     DateTime    @default(now())
    updated_at     DateTime    @updatedAt
    type           String?
-   userId         String
-   author         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+   author User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+   userId String
 
    category               TransactionsCategory @relation(fields: [transactionsCategoryId], references: [id], onDelete: Cascade)
    transactionsCategoryId String

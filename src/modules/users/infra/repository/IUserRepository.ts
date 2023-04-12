@@ -20,7 +20,7 @@ abstract class IUserRepository {
       password,
    }: IUserDTO): Promise<User | UserEntity>;
    abstract list(): Promise<User[] | UserEntity[]>;
-   abstract GetUserByEmail(email: string): Promise<User | UserEntity | null>;
+   abstract GetUserByEmail(email: string): Promise<User | null>;
    abstract GetUserById(user_id: string): Promise<User | null>;
    abstract remove({ email, id }: RemoveProps): Promise<void>;
    abstract update(data: UpdatedProps, user_id: string): Promise<User>;

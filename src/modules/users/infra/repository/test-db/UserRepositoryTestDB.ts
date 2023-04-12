@@ -1,7 +1,6 @@
 import { prisma } from '@/database/prisma';
 import { User } from '@prisma/client';
 import { IUserDTO } from '../../dtos/IUserDTO';
-import { randomUUID } from 'crypto';
 import { IUserRepository, RemoveProps, UpdatedProps } from '../IUserRepository';
 
 export class UserRepositoryTestDB implements IUserRepository {
@@ -21,7 +20,6 @@ export class UserRepositoryTestDB implements IUserRepository {
             email,
             name,
             password,
-            fireBaseToken: randomUUID(),
          },
       });
 

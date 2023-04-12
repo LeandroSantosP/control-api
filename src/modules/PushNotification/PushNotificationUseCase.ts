@@ -13,6 +13,7 @@ export class PushNotificationUseCase {
       @inject('JwtAuthProvider')
       private JwtAuthProvider: IAuthProvider
    ) {}
+
    async execute(token: string, day: any): Promise<any> {
       const { secretTokenPushNotification } = auth;
 

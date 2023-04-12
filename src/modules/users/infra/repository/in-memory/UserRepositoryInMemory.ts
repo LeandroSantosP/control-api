@@ -32,9 +32,9 @@ export class UserRepositoryInMemory implements IUserRepository {
    async list(): Promise<UserEntity[]> {
       return this.users;
    }
-   async GetUserByEmail(email: string): Promise<UserEntity | User | null> {
-      const user = this.users.find((us) => us.email === email);
-      return user || null;
+   async GetUserByEmail(email: string): Promise<User | null> {
+      const user = this.users.find((us) => us.email === email)!;
+      return user as User;
    }
 
    async GetUserById(user_id: string): Promise<User | any> {

@@ -2,11 +2,11 @@ import 'reflect-metadata';
 import { addDays } from 'date-fns';
 import { prisma } from '@/database/prisma';
 
+import CreateUserTest from '@/utils/CrateUserTEST';
 import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
 import { TransactionsRepositoryTestDB } from '../../infra/repository/test-db/TransactionsTestDB';
 import { CreateTransactionWIthRecorrenteUseCase } from './CreateTransactionWIthRecorrenteUseCase';
 import { AppError } from '@/shared/infra/middleware/AppError';
-import CreateUserTest from '@/utils/CrateUserTEST';
 import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
 
 let dateFnsProvider: DateFnsProvider;
