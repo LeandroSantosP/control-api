@@ -8,8 +8,8 @@ export class PushNotificationController {
 
       const useCase = container.resolve(PushNotificationUseCase);
 
-      const response = await useCase.execute(token);
+      // const response = await useCase.execute(token);
 
-      return res?.status(200).json(response);
+      return res?.status(200).json();
    }
 }

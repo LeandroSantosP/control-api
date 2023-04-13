@@ -68,8 +68,6 @@ export class PushNotificationUseCase {
          []
       );
 
-      console.log(result);
-
       return result;
    }
 }

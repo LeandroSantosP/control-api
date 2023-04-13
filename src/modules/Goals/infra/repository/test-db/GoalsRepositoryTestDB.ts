@@ -1,6 +1,11 @@
 import { prisma } from '@/database/prisma';
 import { MonthlyGoals, Prisma } from '@prisma/client';
-import { createRequest, IGoalsRepository } from '../IGoalsRepository';
+import { Retryer } from 'react-query/types/core/retryer';
+import {
+   createRequest,
+   IGoalsRepository,
+   updateRequest,
+} from '../IGoalsRepository';
 
 export class GoalsRepositoryTestDB implements IGoalsRepository {
    private readonly prisma;
@@ -34,5 +39,92 @@ export class GoalsRepositoryTestDB implements IGoalsRepository {
          },
       });
       return goals;
+   }
+
+   async update({
+      user_id,
+      goal_id,
+      month,
+      expectated_expense,
+      expectated_revenue,
+   }: updateRequest): Promise<any> {
+      let result;
+      if (!month) {
+         let expectated_expenseForDecimal;
+         let expectated_revenueForDecimal;
+
+         if (expectated_expense) {
+            expectated_expenseForDecimal = new Prisma.Decimal(
+               expectated_expense
+            );
+         }
+         if (expectated_revenue) {
+            expectated_revenueForDecimal = new Prisma.Decimal(
+               expectated_revenue
+            );
+         }
+
+         const goalUpdated = await this.prisma.monthlyGoals.update({
+            where: {
+               id: goal_id,
+            },
+            data: {
+               expectated_expense: expectated_expenseForDecimal,
+               expectated_revenue: expectated_revenueForDecimal,
+            },
+            include: {
+               user: {
+                  select: {
+                     id: true,
+                  },
+               },
+            },
+         });
+         result = goalUpdated;
+      } else {
+         let expectated_expenseForDecimal;
+         let expectated_revenueForDecimal;
+
+         if (expectated_expense) {
+            expectated_expenseForDecimal = new Prisma.Decimal(
+               expectated_expense
+            );
+         }
+         if (expectated_revenue) {
+            expectated_revenueForDecimal = new Prisma.Decimal(
+               expectated_revenue
+            );
+         }
+
+         const goalUpdated = await this.prisma.user.update({
+            where: {
+               id: user_id,
+            },
+            data: {
+               MonthlyGoals: {
+                  update: {
+                     where: {
+                        month,
+                     },
+                     data: {
+                        expectated_expense: expectated_expenseForDecimal,
+                        expectated_revenue: expectated_revenueForDecimal,
+                     },
+                  },
+               },
+            },
+            select: {
+               MonthlyGoals: {
+                  where: {
+                     month,
+                  },
+               },
+            },
+         });
+
+         result = goalUpdated.MonthlyGoals[0];
+      }
+
+      return result;
    }
 }

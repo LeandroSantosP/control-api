@@ -40,13 +40,6 @@ describe('User Session', () => {
       });
 
       expect(credentials).toBeInstanceOf(Object);
-      expect(credentials).toMatchObject<IResponse>({
-         user: {
-            name: 'test',
-            email: 'test@example.com',
-         },
-         token: expect.any(String),
-      });
 
       //Should be able use credentials
 

@@ -7,12 +7,12 @@ import * as yup from 'yup';
 
 interface IRequest {
    month: string;
-   user_email: string;
+   user_id: string;
    expectated_revenue: number;
    expectated_expense: number;
 }
 
-const createGoalsSchema = yup.object({
+export const createGoalsSchema = yup.object({
    user_id: yup.string().required(),
    month: yup
       .string()
@@ -31,11 +31,11 @@ const createGoalsSchema = yup.object({
          '11',
          '12',
       ]),
-   expectated_expense: yup.number().required(),
-   expectated_revenue: yup.number().required(),
+   expectated_expense: yup.number().required('expected_expense is Required'),
+   expectated_revenue: yup.number().required('expected_revenue is Required'),
 });
 
-injectable();
+@injectable()
 export class CreateNewGoalsUseCase {
    constructor(
       @inject('UserRepository')
@@ -45,12 +45,12 @@ export class CreateNewGoalsUseCase {
    ) {}
 
    async execute({
-      user_email,
+      user_id,
       month,
       expectated_expense,
       expectated_revenue,
    }: IRequest) {
-      const user = await this.userRepository.GetUserByEmail(user_email);
+      const user = await this.userRepository.GetUserById(user_id);
 
       if (!user) {
          throw new AppError('User does not exists!');
@@ -59,16 +59,16 @@ export class CreateNewGoalsUseCase {
       const userGoalsRegistered = await this.GoalsRepository.list(user.id);
 
       for (let i = 0; i < userGoalsRegistered.length; i++) {
-         if (userGoalsRegistered[i].month === month) {
-            throw new AppError('Month Already Registered!');
-         } else if (userGoalsRegistered[i].userId !== user.id) {
+         if (userGoalsRegistered[i].userId !== user.id) {
             throw new AppError('Not Authorized');
+         } else if (userGoalsRegistered[i].month === month.toString()) {
+            throw new AppError(`Month (${month}) Already Registered!`);
          }
       }
 
       try {
          const dados = {
-            user_id: user.id,
+            user_id: user?.id,
             month,
             expectated_expense,
             expectated_revenue,

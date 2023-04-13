@@ -61,7 +61,7 @@ describe('CreateNewGoalsUserCase', () => {
             expectated_expense: 10,
             expectated_revenue: 12,
          })
-      ).rejects.toEqual(new AppError('Month Already Registered!'));
+      ).rejects.toEqual(new AppError(`Month (${12}) Already Registered!`));
    });
 
    it('should not be able create new month goal if month is invalid!', async () => {
