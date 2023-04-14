@@ -115,6 +115,7 @@ describe('UpdatedUseCase', () => {
 
       const sut = await updateGoalsUseCase.execute({
          user_id: newUser.id,
+         createIfNotExist: true,
          dataForUpdate: [
             {
                month: '02',
@@ -129,6 +130,6 @@ describe('UpdatedUseCase', () => {
          ],
       });
 
-      console.log(sut);
+      expect(sut).toHaveLength(2);
    });
 });
