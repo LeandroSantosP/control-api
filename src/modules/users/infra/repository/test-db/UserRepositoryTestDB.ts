@@ -48,6 +48,7 @@ export class UserRepositoryTestDB implements IUserRepository {
             id: user_id,
          },
       });
+
       return user;
    }
    async remove({ email, id }: RemoveProps): Promise<void> {

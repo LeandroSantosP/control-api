@@ -27,7 +27,7 @@ describe('CreateNewGoalsUserCase', () => {
 
       await expect(
          createNewGoalsUseCase.execute({
-            user_email: newUser.email,
+            user_id: newUser.id,
             month: '12',
             expectated_expense: 10,
             expectated_revenue: 12,
@@ -48,7 +48,7 @@ describe('CreateNewGoalsUserCase', () => {
       const newUser = await CreateUserTest({});
 
       await createNewGoalsUseCase.execute({
-         user_email: newUser.email,
+         user_id: newUser.id,
          month: '12',
          expectated_expense: -10,
          expectated_revenue: 12,
@@ -56,7 +56,7 @@ describe('CreateNewGoalsUserCase', () => {
 
       await expect(
          createNewGoalsUseCase.execute({
-            user_email: newUser.email,
+            user_id: newUser.id,
             month: '12',
             expectated_expense: 10,
             expectated_revenue: 12,
@@ -69,7 +69,7 @@ describe('CreateNewGoalsUserCase', () => {
 
       await expect(
          createNewGoalsUseCase.execute({
-            user_email: newUser.email,
+            user_id: newUser.id,
             month: 'wrong',
             expectated_expense: 11,
             expectated_revenue: 11,
@@ -82,14 +82,15 @@ describe('CreateNewGoalsUserCase', () => {
    });
    it('should not be able create new month goal if expectated_expense/expectated_revenue is invalid!', async () => {
       const newUser = await CreateUserTest({});
+
       await expect(
          createNewGoalsUseCase.execute({
-            user_email: newUser.email,
+            user_id: newUser.id,
             month: '12',
             expectated_revenue: 12,
             // @ts-ignore
             expectated_expense: 'wrong_format',
          })
-      ).rejects.toBeInstanceOf(InvalidYupError);
+      ).rejects.toThrow(InvalidYupError);
    });
 });

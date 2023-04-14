@@ -1,0 +1,9 @@
+{
+    "jsc": {
+        "externalHelpers": false,
+        "parser": {
+            "syntax": "typescript",
+            "decorators": true
+        }
+    }
+}
