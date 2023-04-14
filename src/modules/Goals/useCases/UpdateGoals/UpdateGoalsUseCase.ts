@@ -14,6 +14,7 @@ type IRequestSingle = {
 type IRequestMúltiplo = {
    user_id: string;
    goal_id?: string;
+   createIfNotExist?: boolean;
    dataForUpdate: Array<{
       month: string;
       expectated_expense?: string;
@@ -41,44 +42,81 @@ export class UpdateGoalsUseCase {
       const userGoalsList = await this.GoalsRepository.list(user_id);
       /* Múltiplas Metas */
 
+      /**
+       * If dataForUpdate Exists
+       */
+
+      /*
+         TEst
+         */
+
       if ('dataForUpdate' in request) {
          // Trata-se de uma requisição múltipla
-         const { dataForUpdate, user_id } = request;
+         const { dataForUpdate, user_id, createIfNotExist } = request;
 
          const goalsNotRegistered = dataForUpdate.filter((data) => {
             return !userGoalsList.some((item) => item.month === data.month);
          });
 
-         /* Validation of data! / Manipulation of data. */
+         /**
+          * Checks if there are unregistered goals for the user and, if so, registers new goals.
+          *
+          * @param {Array} goalsNotRegistered - an array containing the unregistered goals
+          * @param {string} user_id - the user ID
+          * @param {boolean} createIfNotExist - defines whether the goals should be created if they don't exist. The default value is `false`.
+          *
+          * @throws {AppError} if createIfNotExist is `false` and there are unregistered goals
+          *
+          * @returns {Promise} a Promise that resolves when all goals have been successfully registered
+          */
 
          if (goalsNotRegistered.length > 0) {
-            // const newGoals = this.CreateNewGoal.execute({});
-            // throw new AppError(
-            //    `Goals [${goalsNotRegistered.map(
-            //       (item) => `${item.month}`
-            //    )}] Not Registered!`
-            // );
-            return;
+            if (createIfNotExist === false || createIfNotExist === undefined) {
+               throw new AppError(
+                  `Goals [${goalsNotRegistered.map(
+                     (item) => `${item.month}`
+                  )}] Not Registered!`
+               );
+            }
+
+            /**
+             * If createIfNotExist is `true` or not defined, the code below registers the new goals
+             * by calling the `CreateNewGoal.execute()` function.
+             */
+
+            for (let i = 0; i < goalsNotRegistered.length; i++) {
+               const { expectated_expense, month, expectated_revenue } =
+                  goalsNotRegistered[i];
+               await this.CreateNewGoal.execute({
+                  user_id,
+                  month,
+                  expectated_expense: Number(expectated_expense),
+                  expectated_revenue: Number(expectated_revenue),
+               });
+            }
          }
 
-         const updatedGoals = [];
-         for (let i = 0; i < dataForUpdate.length; i++) {
-            let { month, expectated_expense, expectated_revenue } =
-               dataForUpdate[i];
-
-            const dataUpdated = await this.GoalsRepository.update({
-               month,
-               user_id,
-               expectated_expense,
-               expectated_revenue,
-            });
-
-            updatedGoals.push(dataUpdated);
-         }
+         const updatedGoals = await Promise.all(
+            dataForUpdate.map(
+               async ({ month, expectated_expense, expectated_revenue }) => {
+                  const dataUpdated = await this.GoalsRepository.update({
+                     month,
+                     user_id,
+                     expectated_expense,
+                     expectated_revenue,
+                  });
+                  return dataUpdated;
+               }
+            )
+         );
 
          return updatedGoals;
       } else {
-         // Trata-se de uma requisição única
+         /**
+          *  its about the only one request!
+          * @return returns the modify data about
+          */
+
          const goalExistes = userGoalsList.find((goal) => goal.id === goal_id);
 
          if (!goalExistes) {
