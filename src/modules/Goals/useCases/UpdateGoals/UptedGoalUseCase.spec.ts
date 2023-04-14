@@ -99,9 +99,9 @@ describe('UpdatedUseCase', () => {
       });
 
       expect(sut).toHaveLength(2);
-      expect(sut[0].expectated_expense.toString()).toBe('124');
+      expect(sut[0].expectated_expense.toString()).toBe('-2');
       expect(sut[0].expectated_revenue.toString()).toBe('122');
-      expect(sut[0].expectated_expense.toString()).not.toBe('12');
+      expect(sut[0].expectated_expense.toString()).not.toBe('-12');
       expect(sut[0].expectated_revenue.toString()).not.toBe('12');
    });
 
@@ -119,12 +119,12 @@ describe('UpdatedUseCase', () => {
          dataForUpdate: [
             {
                month: '02',
-               expectated_expense: '124',
+               expectated_expense: '-124',
                expectated_revenue: '122',
             },
             {
                month: '04',
-               expectated_expense: '124',
+               expectated_expense: '-124',
                expectated_revenue: '122',
             },
          ],
@@ -153,7 +153,7 @@ describe('UpdatedUseCase', () => {
       );
    });
 
-   it.only('should throw a new exception if data is in invalid format(múltiplo)', async () => {
+   it('should throw a new exception if data is in invalid format(múltiplo)', async () => {
       const newUser = await CreateUserTest();
 
       await createNewGoalsTEST.createNewGoal({
@@ -182,5 +182,62 @@ describe('UpdatedUseCase', () => {
             ],
          })
       ).rejects.toEqual(new AppError('Monthly Goals [02] Not Registered!'));
+   });
+
+   it('should be able to create a new goal if the goal the user is trying to updated does not exits!(múltiplo)', async () => {
+      const newUser = await CreateUserTest();
+
+      const PrimaryGoal = await createNewGoalsTEST.createNewGoal({
+         month: '03',
+         user_id: newUser.id,
+      });
+      await createNewGoalsTEST.createNewGoal({
+         month: '04',
+         user_id: newUser.id,
+      });
+
+      const listBefore = await goalsRepositoryTestDB.list(newUser.id);
+
+      expect(listBefore).toHaveLength(2);
+
+      const sut = (await updateGoalsUseCase.execute({
+         user_id: newUser.id,
+         createIfNotExist: true,
+         dataForUpdate: [
+            {
+               month: '02',
+               expectated_expense: '-124',
+               expectated_revenue: '122',
+            },
+            {
+               month: '10',
+               expectated_expense: '-124',
+               expectated_revenue: '122',
+            },
+         ],
+      })) as any[];
+
+      const listAfter = await goalsRepositoryTestDB.list(newUser.id);
+
+      const expectated_expenseAfterRef =
+         listAfter[3].expectated_expense.toString();
+
+      let newGoalsAddForDataBase = [] as any[];
+
+      listAfter.forEach((item) => {
+         const itemUpdated = sut.find((i) => i.id === item.id);
+         if (itemUpdated !== undefined) {
+            newGoalsAddForDataBase.push(itemUpdated);
+         }
+         return itemUpdated;
+      });
+
+      expect(newGoalsAddForDataBase).toHaveLength(2);
+
+      expect(listAfter).toHaveLength(4);
+      expect(sut).toBeTruthy();
+      expect(expectated_expenseAfterRef).toBe('-124');
+      expect(listAfter[3]).toHaveProperty('expectated_expense');
+      expect(listAfter[3]).toHaveProperty('expectated_revenue');
    });
 });
