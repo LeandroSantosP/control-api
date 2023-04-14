@@ -16,7 +16,7 @@ interface IRequest extends TransactionsDTO {
    filingDate?: string;
 }
 
-const decimalValidate = () => {
+export const decimalValidate = () => {
    return yup
       .string()
       .test('decimal', 'Deve ser um numero decimal', (value) => {

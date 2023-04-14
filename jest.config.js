@@ -10,8 +10,9 @@ module.exports = {
    coverageDirectory: 'coverage',
    testEnvironment: 'node',
    transform: {
-      '.+\\.ts$': 'ts-jest',
-      // '.+\\.ts$': '@swc/jest',
+      // '.+\\.ts$': 'ts-jest',
+
+      '^.+\\.ts$': '@swc/jest',
    },
    moduleNameMapper: {
       '@/(.*)': '<rootDir>/src/$1',

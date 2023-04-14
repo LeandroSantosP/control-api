@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import CreateUserTest from '@/utils/CrateUserTEST';
 import { GoalsRepositoryTestDB } from '../../infra/repository/test-db/GoalsRepositoryTestDB';
 import { UpdateGoalsUseCase } from './UpdateGoalsUseCase';
-import { AppError } from '@/shared/infra/middleware/AppError';
+import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
 import { prisma } from '@/database/prisma';
 import { CreateNewGoalsTEST } from '@/utils/CreateNewGoalsTEST';
@@ -87,12 +87,12 @@ describe('UpdatedUseCase', () => {
          dataForUpdate: [
             {
                month: '02',
-               expectated_expense: '124',
+               expectated_expense: '-2',
                expectated_revenue: '122',
             },
             {
                month: '04',
-               expectated_expense: '124',
+               expectated_expense: '-22',
                expectated_revenue: '122',
             },
          ],
@@ -105,7 +105,7 @@ describe('UpdatedUseCase', () => {
       expect(sut[0].expectated_revenue.toString()).not.toBe('12');
    });
 
-   it.only('should create a new goals if specificated goal does not exits!', async () => {
+   it('should create a new goals if specificated goal does not exits!', async () => {
       const newUser = await CreateUserTest();
 
       await createNewGoalsTEST.createNewGoal({
@@ -131,5 +131,56 @@ describe('UpdatedUseCase', () => {
       });
 
       expect(sut).toHaveLength(2);
+   });
+
+   it('should throw a new exception if data is in invalid format(single).', async () => {
+      const newUser = await CreateUserTest();
+
+      const newGoals = await createNewGoalsTEST.createNewGoal({
+         month: '02',
+         user_id: newUser.id,
+      });
+
+      await expect(
+         updateGoalsUseCase.execute({
+            user_id: newUser.id,
+            goal_id: newGoals.id,
+            expectated_expense: '12',
+            expectated_revenue: '88',
+         })
+      ).rejects.toEqual(
+         new InvalidYupError('Must be a negative value and a decimal value! \n')
+      );
+   });
+
+   it.only('should throw a new exception if data is in invalid format(múltiplo)', async () => {
+      const newUser = await CreateUserTest();
+
+      await createNewGoalsTEST.createNewGoal({
+         month: '03',
+         user_id: newUser.id,
+      });
+      await createNewGoalsTEST.createNewGoal({
+         month: '04',
+         user_id: newUser.id,
+      });
+
+      await expect(
+         updateGoalsUseCase.execute({
+            user_id: newUser.id,
+            dataForUpdate: [
+               {
+                  month: '02',
+                  expectated_expense: '-124',
+                  expectated_revenue: '122',
+               },
+               {
+                  month: '04',
+                  expectated_expense: '-124',
+                  expectated_revenue: '122',
+               },
+            ],
+         })
+      ).rejects.toEqual(new AppError('Monthly Goals [02] Not Registered!'));
    });
 });
