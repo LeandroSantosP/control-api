@@ -18,7 +18,7 @@ export class CreateNewGoalsTEST {
    async createNewGoal({
       month,
       user_id,
-      expectated_expense = '12',
+      expectated_expense = '-12',
       expectated_revenue = '12',
    }: IRequest): Promise<MonthlyGoals> {
       return this.goalsRepositoryTestDB.create({
