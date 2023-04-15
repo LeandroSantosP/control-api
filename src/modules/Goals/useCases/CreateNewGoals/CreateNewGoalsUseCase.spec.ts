@@ -29,7 +29,7 @@ describe('CreateNewGoalsUserCase', () => {
          createNewGoalsUseCase.execute({
             user_id: newUser.id,
             month: '12',
-            expectated_expense: 10,
+            expectated_expense: -10.22,
             expectated_revenue: 12,
          })
       ).resolves.toBeUndefined();
@@ -40,7 +40,7 @@ describe('CreateNewGoalsUserCase', () => {
 
       const { expectated_expense, expectated_revenue } = listGoals[0];
       expect(listGoals[0]).toHaveProperty('userId', newUser.id);
-      expect(Number(expectated_expense)).toEqual(10);
+      expect(Number(expectated_expense)).toEqual(-10.22);
       expect(Number(expectated_revenue)).toEqual(12);
    });
 
@@ -71,7 +71,7 @@ describe('CreateNewGoalsUserCase', () => {
          createNewGoalsUseCase.execute({
             user_id: newUser.id,
             month: 'wrong',
-            expectated_expense: 11,
+            expectated_expense: -11,
             expectated_revenue: 11,
          })
       ).rejects.toEqual(

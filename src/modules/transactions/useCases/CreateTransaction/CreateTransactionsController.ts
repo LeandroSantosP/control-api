@@ -18,6 +18,6 @@ export class CreateTransactionsController {
          filingDate,
       });
 
-      return res.status(200).json(result);
+      return res.status(201).json(result);
    }
 }
