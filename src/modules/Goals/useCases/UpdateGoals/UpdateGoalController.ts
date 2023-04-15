@@ -13,15 +13,27 @@ export class UpdatedGoalsController {
       } = req.body;
       const { id } = req.client;
 
+      let formattedParams: any = { user_id: id };
+
+      if (dataForUpdate === undefined) {
+         formattedParams = {
+            ...formattedParams,
+            expectated_expense,
+            expectated_revenue,
+            goal_id,
+         };
+      } else {
+         formattedParams = {
+            ...formattedParams,
+            createIfNotExist,
+            expectated_expense,
+            expectated_revenue,
+            dataForUpdate,
+         };
+      }
+
       const useCase = container.resolve(UpdateGoalsUseCase);
-      const response = await useCase.execute({
-         user_id: id,
-         createIfNotExist,
-         expectated_expense,
-         expectated_revenue,
-         dataForUpdate,
-         goal_id,
-      });
+      const response = await useCase.execute({ ...formattedParams });
       return res.status(201).json(response);
    }
 }

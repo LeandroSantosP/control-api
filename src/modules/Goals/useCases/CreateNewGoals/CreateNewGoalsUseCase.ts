@@ -4,6 +4,7 @@ import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { IGoalsRepository } from '../../infra/repository/IGoalsRepository';
 import { GoalEntity } from '../../infra/entity/Goals';
 import * as yup from 'yup';
+import { ValidationYup } from '@/utils/ValidationYup';
 
 interface IRequest {
    month: string;
@@ -31,8 +32,32 @@ export const createGoalsSchema = yup.object({
          '11',
          '12',
       ]),
-   expectated_expense: yup.number().required('expected_expense is Required'),
-   expectated_revenue: yup.number().required('expected_revenue is Required'),
+   expectated_expense: yup
+      .string()
+      .required('expected_expense is Required')
+      .test(
+         'decimal',
+         'Must be a negative value and a decimal value!',
+         (value) => {
+            if (!value) {
+               return true;
+            }
+
+            if (!value.includes('-')) {
+               return false;
+            }
+            return /^-?\d*\.?\d*$/.test(value);
+         }
+      ),
+   expectated_revenue: yup
+      .string()
+      .required('expected_revenue is Required')
+      .test('decimal', 'Must be a decimal value!', (value) => {
+         if (!value) {
+            return true;
+         }
+         return /^-?\d*\.?\d*$/.test(value);
+      }),
 });
 
 @injectable()
@@ -94,19 +119,7 @@ export class CreateNewGoalsUseCase {
 
          return;
       } catch (err: any) {
-         if (err instanceof yup.ValidationError) {
-            const errorMessages: string[] = [];
-
-            err.inner.forEach(({ path, message }: any) => {
-               if (path) {
-                  errorMessages.push(`${message} \n`);
-               }
-            });
-
-            throw new InvalidYupError(errorMessages.join(''));
-         }
-
-         throw new AppError(err.message, 400);
+         new ValidationYup(err);
       }
    }
 }

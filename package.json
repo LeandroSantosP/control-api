@@ -10,7 +10,8 @@
     "dev": "ts-node-dev --transpile-only --exit-child --ignore-watch node_modules -r tsconfig-paths/register -r dotenv-safe/config src/shared/https/index.ts",
     "test": "jest",
     "build": "tsc",
-    "start": "yarn && yarn dev"
+    "start": "yarn && yarn dev",
+    "prisma-gen":"prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^4.11.0",

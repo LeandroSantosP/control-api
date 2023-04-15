@@ -1,9 +1,10 @@
+import * as yup from 'yup';
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { inject, injectable } from 'tsyringe';
-import * as yup from 'yup';
 import { IGoalsRepository } from '../../infra/repository/IGoalsRepository';
 import { CreateNewGoalsUseCase } from '../CreateNewGoals/CreateNewGoalsUseCase';
+import { ValidationYup } from '@/utils/ValidationYup';
 
 type IRequestSingle = {
    user_id: string;
@@ -105,11 +106,20 @@ export class UpdateGoalsUseCase {
       );
    }
 
+   /**
+    *
+    * @todo
+    * Validation Revenue expectation does not be a negative value.
+    */
+
    async execute(request: IRequestMúltiplo | IRequestSingle): Promise<any> {
       const { user_id } = request;
       const userGoalsList = await this.GoalsRepository.list(user_id);
 
-      /* Múltiplas Metas */
+      /**
+       *  its about the Múltiplo request!
+       * @return returns Múltiplo modify data about it
+       */
       if ('dataForUpdate' in request) {
          const { dataForUpdate, user_id, createIfNotExist } = request;
 
@@ -186,19 +196,7 @@ export class UpdateGoalsUseCase {
 
             return updatedGoals;
          } catch (err: any) {
-            if (err instanceof yup.ValidationError) {
-               const errorMessages: string[] = [];
-
-               err.inner.forEach(({ path, message }: any) => {
-                  if (path) {
-                     errorMessages.push(`${message} \n`);
-                  }
-               });
-
-               throw new InvalidYupError(errorMessages.join(''));
-            }
-
-            throw new AppError(err.message, 400);
+            new ValidationYup(err);
          }
       } else {
          /**
@@ -216,6 +214,15 @@ export class UpdateGoalsUseCase {
                }
             );
 
+            if (
+               valetedDate.expectated_expense === undefined &&
+               valetedDate.expectated_revenue === undefined
+            ) {
+               throw new AppError(
+                  'Must be provider a less an param (expectated_expense or expectated_revenue)'
+               );
+            }
+
             const goalExistes = userGoalsList.find(
                (goal) => goal.id === valetedDate.goal_id
             );
@@ -232,19 +239,7 @@ export class UpdateGoalsUseCase {
 
             return dataUpdated;
          } catch (err: any) {
-            if (err instanceof yup.ValidationError) {
-               const errorMessages: string[] = [];
-
-               err.inner.forEach(({ path, message }: any) => {
-                  if (path) {
-                     errorMessages.push(`${message} \n`);
-                  }
-               });
-
-               throw new InvalidYupError(errorMessages.join(''));
-            }
-
-            throw new AppError(err.message, 400);
+            new ValidationYup(err);
          }
       }
    }

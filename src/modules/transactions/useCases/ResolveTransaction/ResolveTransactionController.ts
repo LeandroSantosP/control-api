@@ -11,6 +11,6 @@ export class ResolveTransactionController {
 
       await useCase.execute(transaction_id, id);
 
-      return res.status(204).send();
+      return res.status(200).send();
    }
 }

@@ -8,6 +8,7 @@ import { TransactionsDTO } from '../../infra/dto/TransactionsDTO';
 import { TransactionsEntity } from '../../infra/Entity/TransactionsEntity';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
 import { Transaction } from '@prisma/client';
+import { ValidationYup } from '@/utils/ValidationYup';
 
 interface IRequest extends TransactionsDTO {
    email: string;
@@ -164,18 +165,7 @@ export class CreateTransaction {
             userId: user.id,
          };
       } catch (err: any) {
-         if (err instanceof yup.ValidationError) {
-            const errorMessages: string[] = [];
-
-            err.inner.forEach(({ path, message }: any) => {
-               if (path) {
-                  errorMessages.push(`${message} \n`);
-               }
-            });
-            throw new InvalidYupError(errorMessages.join(''));
-         }
-
-         throw new AppError(err.message, 400);
+         new ValidationYup(err);
       }
    }
 }
