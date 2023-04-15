@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 import { CreateTransactionWIthRecorrenteUseCase } from './CreateTransactionWIthRecorrenteUseCase';
 
 export class CreateTransactionWIthRecorrenteController {
-   async handle(req: Request, res: Response) {
+   async handle(req: Request, res: Response): Promise<Response> {
       const {
          description,
          value,

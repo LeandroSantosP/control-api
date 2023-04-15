@@ -173,7 +173,7 @@ export class TransactionsRepositoryTestDB
       return transactions;
    }
 
-   async remove(transaction_id: string): Promise<string> {
+   async delete(transaction_id: string): Promise<string> {
       const transaction = await this.prisma.transaction.delete({
          where: {
             id: transaction_id,

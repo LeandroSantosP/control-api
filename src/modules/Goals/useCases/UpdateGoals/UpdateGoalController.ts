@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 import { UpdateGoalsUseCase } from './UpdateGoalsUseCase';
 
 export class UpdatedGoalsController {
-   async handle(req: Request, res: Response) {
+   async handle(req: Request, res: Response): Promise<Response> {
       const {
          createIfNotExist,
          expectated_expense,
