@@ -2,6 +2,7 @@ import { prisma } from '@/database/prisma';
 import { MonthlyGoals, Prisma } from '@prisma/client';
 import {
    createRequest,
+   deleteRequest,
    IGoalsRepository,
    updateRequest,
 } from '../IGoalsRepository';
@@ -125,5 +126,29 @@ export class GoalsRepository implements IGoalsRepository {
       }
 
       return result;
+   }
+   async deleteSingleOrMúltiplo(
+      props: deleteRequest
+   ): Promise<MonthlyGoals | Prisma.BatchPayload> {
+      if (Array.isArray(props.goal_id)) {
+         const goals = await this.prisma.monthlyGoals.deleteMany({
+            where: {
+               userId: props.user_id,
+               month: {
+                  in: props.goal_id,
+               },
+            },
+         });
+
+         return goals;
+      } else {
+         const goal = await this.prisma.monthlyGoals.delete({
+            where: {
+               id: props.goal_id,
+            },
+         });
+
+         return goal;
+      }
    }
 }

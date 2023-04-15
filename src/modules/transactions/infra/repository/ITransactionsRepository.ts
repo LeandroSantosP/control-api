@@ -78,7 +78,7 @@ export abstract class ITransactionsRepository<T> {
 
    abstract ListAllADM(user_id?: string): Promise<T[]>;
 
-   abstract remove(transaction_id: string): Promise<string>;
+   abstract delete(transaction_id: string): Promise<string>;
 
    abstract GetTransactionById(transaction_id: string): Promise<T | null>;
 

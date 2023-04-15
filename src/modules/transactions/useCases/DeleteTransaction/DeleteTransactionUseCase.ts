@@ -31,7 +31,7 @@ export class DeleteTransactionUseCase {
          throw new AppError('Not Authorization!', 401);
       }
 
-      const transactionId = await this.TransactionsRepository.remove(
+      const transactionId = await this.TransactionsRepository.delete(
          transaction_id
       );
 

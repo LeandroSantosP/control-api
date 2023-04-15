@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 import { ListTransactionUseCase } from './ListTransactionUseCase';
 
 export class ListTransactionController {
-   async handle(req: Request, res: Response) {
+   async handle(req: Request, res: Response): Promise<Response> {
       const { id } = req.client;
       const { month } = req.query as {
          month: number | undefined;

@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 import { ListGoalsUseCase } from './ListGoalsUseCase';
 
 export class ListGoalsController {
-   async handle(req: Request, res: Response) {
+   async handle(req: Request, res: Response): Promise<Response> {
       const { id } = req.client;
 
       const useCase = container.resolve(ListGoalsUseCase);
