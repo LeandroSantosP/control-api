@@ -226,6 +226,9 @@ export class TransactionsRepository
                lt: new Date(endOfTheMount),
             },
          },
+         orderBy: {
+            created_at: 'desc',
+         },
          include: {
             category: true,
          },
@@ -296,6 +299,9 @@ export class TransactionsRepository
                   lt: new Date(endOfTheMount),
                },
             },
+            orderBy: {
+               created_at: 'desc',
+            },
             include: {
                category: true,
             },
@@ -308,6 +314,9 @@ export class TransactionsRepository
          where: {
             userId: user_id,
             isSubscription,
+         },
+         orderBy: {
+            created_at: 'desc',
          },
          include: {
             category: true,
