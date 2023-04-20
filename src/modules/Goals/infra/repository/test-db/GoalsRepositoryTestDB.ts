@@ -1,6 +1,6 @@
 import { prisma } from '@/database/prisma';
 import { MonthlyGoals, Prisma } from '@prisma/client';
-import { Retryer } from 'react-query/types/core/retryer';
+
 import {
    createRequest,
    deleteRequest,
@@ -39,6 +39,7 @@ export class GoalsRepositoryTestDB implements IGoalsRepository {
             userId: user_id,
          },
       });
+
       return goals;
    }
 

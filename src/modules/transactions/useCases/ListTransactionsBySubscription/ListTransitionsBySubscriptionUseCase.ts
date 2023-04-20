@@ -73,7 +73,7 @@ export class ListTransitionsBySubscriptionUseCase {
 
       const transactions =
          await this.TransactionRepository.ListSubscriptionWithOrNot({
-            user_id: user_id,
+            user_id,
             month,
             isSubscription,
          });

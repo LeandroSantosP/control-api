@@ -1,6 +1,6 @@
 import { UserAuthentication } from '../infra/middleware/UserAuthentication';
 import { CreateNewGoalsController } from '@/modules/Goals/useCases/CreateNewGoals/CreateNewGoalsController';
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
 import { UpdatedGoalsController } from '@/modules/Goals/useCases/UpdateGoals/UpdateGoalController';
 import { ListGoalsController } from '@/modules/Goals/useCases/ListGoals/LIstGoalsController';
 import { DeletedGoalsController } from '@/modules/Goals/useCases/DeletedGoal/DeletedGoalController';
@@ -20,7 +20,14 @@ Fields:{
 
 Get all user Goals // need be authenticated by middleware for acesse this route
 */
-GoalsRoutes.get('/', UserAuthentication, listGoalsController.handle);
+GoalsRoutes.get(
+   '/',
+   UserAuthentication,
+   async (req: Request, res: Response) => {
+      const response = await listGoalsController.handle(req, res);
+      return res.status(response.statusCode)[response.type](response.body);
+   }
+);
 
 /*
 Fields:{

@@ -231,6 +231,9 @@ export class TransactionsRepositoryTestDB
                lt: new Date(endOfTheMount),
             },
          },
+         orderBy: {
+            created_at: 'desc',
+         },
          include: {
             category: true,
          },
@@ -278,7 +281,7 @@ export class TransactionsRepositoryTestDB
       return transaction;
    }
 
-   async ListSubscriptionWithOrNot({
+   async ListSubscriptionWithOrNot<T>({
       user_id,
       month,
       isSubscription,
@@ -316,6 +319,9 @@ export class TransactionsRepositoryTestDB
          where: {
             userId: user_id,
             isSubscription,
+         },
+         orderBy: {
+            created_at: 'desc',
          },
          include: {
             category: true,

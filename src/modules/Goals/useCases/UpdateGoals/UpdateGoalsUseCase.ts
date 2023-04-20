@@ -96,9 +96,9 @@ export class UpdateGoalsUseCase {
    private readonly CreateNewGoal: CreateNewGoalsUseCase;
    constructor(
       @inject('GoalsRepository')
-      private GoalsRepository: IGoalsRepository,
+      private readonly GoalsRepository: IGoalsRepository,
       @inject('UserRepository')
-      private UserRepository: IUserRepository
+      private readonly UserRepository: IUserRepository
    ) {
       this.CreateNewGoal = new CreateNewGoalsUseCase(
          this.UserRepository,

@@ -12,7 +12,7 @@ interface IRequest {
 export class DeletedGoalsUseCase {
    constructor(
       @inject('GoalsRepository')
-      private GoalsRepository: IGoalsRepository
+      private readonly GoalsRepository: IGoalsRepository
    ) {}
 
    private VerifyGoals(
@@ -47,6 +47,17 @@ export class DeletedGoalsUseCase {
       }
    }
 
+   async SingleGoals(params: string | string[], user_id: string) {
+      if (!Array.isArray(params)) {
+         await this.GoalsRepository.deleteSingleOrMúltiplo({
+            user_id,
+            goal_id: params,
+         });
+
+         return;
+      }
+   }
+
    async execute({ goals_id_or_months, user_id }: IRequest): Promise<void> {
       /* O Usuário pode deletar todos sua metas ou deletar uma em especifica. */
       const userGoals = await this.GoalsRepository.list(user_id);
@@ -54,16 +65,9 @@ export class DeletedGoalsUseCase {
       if (goals_id_or_months === undefined) {
          throw new AppError('Invalid data!');
       }
+
       this.VerifyGoals(goals_id_or_months, userGoals);
-
-      if (!Array.isArray(goals_id_or_months)) {
-         await this.GoalsRepository.deleteSingleOrMúltiplo({
-            user_id,
-            goal_id: goals_id_or_months,
-         });
-
-         return;
-      }
+      await this.SingleGoals(goals_id_or_months, user_id);
 
       await this.GoalsRepository.deleteSingleOrMúltiplo({
          user_id,

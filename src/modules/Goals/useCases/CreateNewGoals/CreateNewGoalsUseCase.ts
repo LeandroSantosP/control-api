@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
-import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
+import { AppError } from '@/shared/infra/middleware/AppError';
 import { IGoalsRepository } from '../../infra/repository/IGoalsRepository';
 import { GoalEntity } from '../../infra/entity/Goals';
 import * as yup from 'yup';
@@ -64,9 +64,9 @@ export const createGoalsSchema = yup.object({
 export class CreateNewGoalsUseCase {
    constructor(
       @inject('UserRepository')
-      private userRepository: IUserRepository,
+      private readonly userRepository: IUserRepository,
       @inject('GoalsRepository')
-      private GoalsRepository: IGoalsRepository
+      private readonly GoalsRepository: IGoalsRepository
    ) {}
 
    async execute({

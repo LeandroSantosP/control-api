@@ -7,9 +7,9 @@ import { IGoalsRepository } from '../../infra/repository/IGoalsRepository';
 export class ListGoalsUseCase {
    constructor(
       @inject('GoalsRepository')
-      private GoalsRepository: IGoalsRepository,
+      private readonly GoalsRepository: IGoalsRepository,
       @inject('UserRepository')
-      private UserRepository: IUserRepository
+      private readonly UserRepository: IUserRepository
    ) {}
 
    async execute(user_id: string) {
