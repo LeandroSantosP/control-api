@@ -2,20 +2,20 @@ import * as yup from 'yup';
 import { formatISO, parse } from 'date-fns';
 
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
-import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
+import { AppError } from '@/shared/infra/middleware/AppError';
 import { inject, injectable } from 'tsyringe';
-import { TransactionsDTO } from '../../infra/dto/TransactionsDTO';
-import { TransactionsEntity } from '../../infra/Entity/TransactionsEntity';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
 import { Transaction } from '@prisma/client';
 import { ValidationYup } from '@/utils/ValidationYup';
+import { Transaction as TransactionCustom } from '../../infra/Entity/Transaction';
+import { CategoryProps } from '../../infra/Entity/Category';
 
-interface IRequest extends TransactionsDTO {
-   email: string;
-   dueDate?: string;
-   categoryType?: string;
-   filingDate?: string;
-}
+// interface IRequest extends TransactionsDTO {
+//    email: string;
+//    dueDate?: string;
+//    categoryType?: string;
+//    filingDate?: string;
+// }
 
 export const decimalValidate = () => {
    return yup
@@ -84,7 +84,7 @@ export class CreateTransaction {
       categoryType,
       dueDate,
       filingDate,
-   }: IRequest) {
+   }: any) {
       if (!description || !value || !email) {
          throw new AppError('Invalid Data', 400);
       }
@@ -128,36 +128,35 @@ export class CreateTransaction {
             throw new AppError('Revenue should have filling date!');
          }
 
-         const transactionModel = new TransactionsEntity();
-
          let FormateDueDate = null;
          let FormateFellingDate = null;
 
          if (validadeData.dueDate) {
-            FormateDueDate = formatISO(
-               parse(validadeData.dueDate, 'yyyy-MM-dd', new Date())
-            );
+            FormateFellingDate = this.formattedData(validadeData.dueDate);
          } else if (validadeData.filingDate) {
             FormateFellingDate = this.formattedData(validadeData.filingDate);
          }
 
          const FormattedValue = String(Number(validadeData.value).toFixed(2));
 
-         Object.assign(transactionModel, {
-            value: FormattedValue,
+         const transactionModel = TransactionCustom.create({
             description: validadeData.description,
-            Category: validadeData.categoryType,
-            due_date: FormateDueDate,
-            filingDate: FormateFellingDate,
+            filingDate: FormateFellingDate || undefined,
+            isSubscription: false,
+            recurrence: 'daily',
+            type: 'expense',
+            value: FormattedValue,
+            category: validadeData.categoryType as CategoryProps,
+            due_date: FormateDueDate || undefined,
          });
 
          const newTransaction = await this.transactionRepository.create({
             email,
             description: transactionModel.description,
-            value: transactionModel.value,
-            dueDate: transactionModel.due_date,
-            Category: transactionModel.Category,
-            filingDate: transactionModel.filingDate,
+            value: transactionModel.value.getValue,
+            dueDate: transactionModel.due_date?.getValue,
+            Category: transactionModel.category?.GetCategory as any,
+            filingDate: transactionModel.filingDate?.getValue,
          });
 
          return {
