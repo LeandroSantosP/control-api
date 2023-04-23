@@ -45,7 +45,7 @@ describe('Create Transaction', () => {
       const newTransaction = await createTransaction.execute({
          email: 'mariatest@example.com',
          description: 'Desc',
-         value: '11.1',
+         value: '111.1',
          filingDate: '2023-09-02',
       });
 
@@ -69,7 +69,7 @@ describe('Create Transaction', () => {
          createTransaction.execute({
             email: newUser.email,
             description: 'Desc',
-            value: '11.1',
+            value: '111.1',
             filingDate: 'INVALID_FORMAT',
          })
       ).rejects.toThrow('Data inválida. O formato deve ser yyyy-MM-dd');
@@ -106,7 +106,7 @@ describe('Create Transaction', () => {
          await createTransaction.execute({
             email: 'mariatest@example.com',
             description: 'Desc',
-            value: '11.1',
+            value: '111.1',
             dueDate: '2023-09-22',
          });
       } catch (error: any) {
@@ -119,7 +119,7 @@ describe('Create Transaction', () => {
          await createTransaction.execute({
             email: 'mariatest@example.com',
             description: 'Desc',
-            value: '11.1',
+            value: '111.1',
             dueDate: '2023-09-22',
             categoryType: 'InvalidCategory',
          });
@@ -141,7 +141,7 @@ describe('Create Transaction', () => {
       const response = await createTransaction.execute({
          email: newUser.email,
          description: 'Desc',
-         value: '10',
+         value: '100',
          filingDate: '2023-09-22',
          categoryType: 'food',
       });
