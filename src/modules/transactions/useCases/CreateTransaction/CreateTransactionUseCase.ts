@@ -73,7 +73,7 @@ export class CreateTransaction {
       private transactionRepository: ITransactionsRepository<Transaction>
    ) {}
 
-   private formattedData(date: string) {
+   private static formattedData(date: string) {
       return formatISO(parse(date, 'yyyy-MM-dd', new Date()));
    }
 
@@ -132,9 +132,13 @@ export class CreateTransaction {
          let FormateFellingDate = null;
 
          if (validadeData.dueDate) {
-            FormateFellingDate = this.formattedData(validadeData.dueDate);
+            FormateFellingDate = CreateTransaction.formattedData(
+               validadeData.dueDate
+            );
          } else if (validadeData.filingDate) {
-            FormateFellingDate = this.formattedData(validadeData.filingDate);
+            FormateFellingDate = CreateTransaction.formattedData(
+               validadeData.filingDate
+            );
          }
 
          const FormattedValue = String(Number(validadeData.value).toFixed(2));
@@ -155,7 +159,7 @@ export class CreateTransaction {
             description: transactionModel.description,
             value: transactionModel.value.getValue,
             dueDate: transactionModel.due_date?.getValue,
-            Category: transactionModel.category?.GetCategory as any,
+            Category: transactionModel.category?.GetCategory,
             filingDate: transactionModel.filingDate?.getValue,
          });
 

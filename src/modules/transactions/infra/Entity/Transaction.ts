@@ -5,13 +5,15 @@ import { randomUUID } from 'crypto';
 import { FilingDate } from './FilingDate';
 import { Value } from './Value';
 import { CreatePropsDTO } from '../dto/TransactionsDTO';
+import { Installments } from './Installments';
+import { AppError } from '@/shared/infra/middleware/AppError';
 
 export class Transaction {
    private constructor(
       readonly id: string | undefined,
       readonly description: string,
       readonly value: Value,
-      readonly installments: number | undefined,
+      readonly installments: Installments,
       readonly isSubscription: boolean,
       readonly resolved: boolean,
       readonly type: 'revenue' | 'expense',
@@ -22,6 +24,14 @@ export class Transaction {
       readonly CreateAt: Date | undefined,
       readonly UpdateAt: Date | undefined
    ) {
+      const IsSubscriptionAndHaveInstallments = this.validateData(
+         isSubscription,
+         installments
+      );
+
+      if (IsSubscriptionAndHaveInstallments)
+         throw new AppError('Subscription must not be have installments.');
+
       if (!this.CreateAt) {
          this.CreateAt = new Date();
       }
@@ -31,6 +41,14 @@ export class Transaction {
       if (!this.id) {
          this.id = randomUUID();
       }
+   }
+
+   validateData(isSubscription: boolean, installments: Installments) {
+      if (isSubscription && installments.getValue) {
+         return true;
+      }
+
+      return false;
    }
 
    static create({
@@ -52,7 +70,7 @@ export class Transaction {
          id,
          description,
          new Value(value),
-         installments,
+         new Installments(installments),
          isSubscription,
          resolved,
          type,
