@@ -1,9 +1,18 @@
 import { AppError } from '@/shared/infra/middleware/AppError';
 
 export class FilingDate {
-   private _value;
+   private readonly _value;
 
    constructor(value: string | undefined) {
+      Object.defineProperties(this, {
+         _value: {
+            writable: true,
+            configurable: true,
+            enumerable: true,
+            value,
+         },
+      });
+
       if (!value) {
          return;
       }

@@ -1,4 +1,5 @@
 import { CategoryProps } from '../Entity/Category';
+import { Installments } from '../Entity/Installments';
 import { RecurrenceProps } from '../Entity/Recurrence';
 
 export type CreatePropsDTO = {

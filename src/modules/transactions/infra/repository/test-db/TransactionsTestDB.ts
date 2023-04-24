@@ -45,7 +45,6 @@ export class TransactionsRepositoryTestDB
       email,
       dueDate,
       Category,
-
       filingDate,
    }: ITransactionsRepositoryProps): Promise<
       Transaction & {

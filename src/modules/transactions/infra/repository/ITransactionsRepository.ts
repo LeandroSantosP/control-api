@@ -6,15 +6,15 @@ import {
    TransactionsCategory,
    User,
 } from '@prisma/client';
+import { CategoryProps } from '../Entity/Category';
 
 export interface ITransactionsRepositoryProps {
    value: string;
    description: string;
    email: string;
    dueDate?: string;
-   Category?: Category;
+   Category?: any; // RESOLVA
    resolved?: boolean;
-
    filingDate?: string;
 }
 
