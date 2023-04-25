@@ -1,12 +1,13 @@
 import {
-   Category,
    Prisma,
-   Recurrence,
    Transaction,
    TransactionsCategory,
    User,
+   Category,
+   Recurrence as RecurrenceProps,
 } from '@prisma/client';
 import { CategoryProps } from '../Entity/Category';
+import { Model } from '../Entity/Model';
 
 export interface ITransactionsRepositoryProps {
    value: string;
@@ -25,8 +26,8 @@ export interface ICreateTransactionInstallments {
    email: string;
    value: string;
    description: string;
-   categoryType: Category | undefined;
-   recurrence: 'monthly' | 'daily' | 'yearly';
+   categoryType: CategoryProps | undefined;
+   recurrence: RecurrenceProps | undefined;
 }
 
 export interface ListBySubscription {
@@ -42,7 +43,7 @@ export interface ListBYRevenueOrResolvedTransactionsProps {
    month?: number;
 }
 
-export abstract class ITransactionsRepository<T> {
+export abstract class ITransactionsRepository extends Model<any, Transaction> {
    abstract create({
       description,
       value,
@@ -62,12 +63,12 @@ export abstract class ITransactionsRepository<T> {
       description: string;
       value: Prisma.Decimal;
       resolved: boolean;
-      recurrence: Recurrence | null;
+      recurrence: RecurrenceProps | null;
       installments: number | null;
       isSubscription: boolean | null;
       due_date: Date | null;
       created_at: Date;
-      category: any;
+      category: CategoryProps | null;
    }>;
 
    abstract ListUserTransactionsById(user_id: string): Promise<
@@ -76,11 +77,11 @@ export abstract class ITransactionsRepository<T> {
       })[]
    >;
 
-   abstract ListAllADM(user_id?: string): Promise<T[]>;
+   abstract ListAllADM(user_id?: string): Promise<any[]>;
 
-   abstract delete(transaction_id: string): Promise<string>;
+   abstract delete(transaction_id: string): Promise<Transaction>;
 
-   abstract GetTransactionById(transaction_id: string): Promise<T | null>;
+   abstract GetTransactionById(transaction_id: string): Promise<any | null>;
 
    abstract ListByMonth({
       user_id,
@@ -95,12 +96,12 @@ export abstract class ITransactionsRepository<T> {
    >;
 
    abstract GetDailyTransactions(user_id: string): Promise<
-      (T & {
+      (any & {
          author: User;
       })[]
    >;
 
-   abstract resolved(transaction_id: string): Promise<T>;
+   abstract resolved(transaction_id: string): Promise<any>;
 
    abstract ListSubscriptionWithOrNot({
       user_id,

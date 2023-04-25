@@ -13,7 +13,7 @@ export class ListTransactionUseCase {
    private TransactionManagement;
    constructor(
       @inject('TransactionsRepository')
-      private TransactionRepository: ITransactionsRepository<Transaction>
+      private TransactionRepository: ITransactionsRepository
    ) {
       this.TransactionManagement = new TransactionManagement();
    }
@@ -45,25 +45,38 @@ export class ListTransactionUseCase {
 
       this.TransactionManagement.verifyMonth(month);
 
-      const transactionByMonth = await this.TransactionRepository.ListByMonth({
+      const allUserTransactions = await this.TransactionRepository.list({
          user_id,
-         month: month,
+      });
+
+      const Transactions = allUserTransactions.filter((transaction) => {
+         const dueDate = transaction.due_date
+            ? new Date(transaction.due_date)
+            : null;
+         const filingDate = transaction.filingDate
+            ? new Date(transaction.filingDate)
+            : null;
+
+         return (
+            (dueDate && dueDate.getMonth() + 1 === Number(month)) ||
+            (filingDate && filingDate.getMonth() + 1 === Number(month))
+         );
       });
 
       this.TransactionManagement.VerifyUserIsAuthentication(
-         transactionByMonth,
+         Transactions,
          user_id
       );
 
       const response =
          await this.TransactionManagement.GetTransactionFormattedWithBalense({
-            transactions: transactionByMonth,
+            transactions: Transactions as any,
             user_id,
          });
 
       return {
          monthBalense: response.balense,
-         transactions: transactionByMonth,
+         transactions: Transactions,
          total: response.balense?.total,
       };
    }

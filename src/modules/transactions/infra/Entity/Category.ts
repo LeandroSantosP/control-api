@@ -1,15 +1,19 @@
+let CategoryProps2: {
+   transport: 'transport';
+   food: 'food';
+   habitation: 'habitation';
+   education: 'education';
+   health: 'health';
+   leisure: 'leisure';
+   products: 'products';
+   debts: 'debts';
+   Taxes: 'Taxes';
+   Investments: 'Investments';
+   unknown: 'unknown';
+};
+
 export type CategoryProps =
-   | 'transport'
-   | 'food'
-   | 'habitation'
-   | 'education'
-   | 'health'
-   | 'leisure'
-   | 'products'
-   | 'debts'
-   | 'taxes'
-   | 'investments'
-   | 'unknown';
+   (typeof CategoryProps2)[keyof typeof CategoryProps2];
 
 export class Category {
    private value: CategoryProps;

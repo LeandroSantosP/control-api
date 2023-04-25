@@ -24,8 +24,12 @@ GoalsRoutes.get(
    '/',
    UserAuthentication,
    async (req: Request, res: Response) => {
-      const response = await listGoalsController.handle(req, res);
-      return res.status(response.statusCode)[response.type](response.body);
+      const response = await listGoalsController.interceptH(
+         listGoalsController.handle
+      );
+      const { body, statusCode, type } = await response(req, res);
+
+      return res.status(statusCode)[type](body);
    }
 );
 

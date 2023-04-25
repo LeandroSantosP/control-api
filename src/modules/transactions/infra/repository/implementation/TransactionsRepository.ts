@@ -21,13 +21,35 @@ import {
 
 export class TransactionsRepository
    extends GetCurrentDate
-   implements ITransactionsRepository<Transaction>
+   implements ITransactionsRepository
 {
    private prisma;
 
    constructor() {
       super();
       this.prisma = prisma;
+   }
+
+   updated(props: any): Promise<any> {
+      throw new Error('Method not implemented.');
+   }
+   async list({ user_id }: { user_id: string }): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   > {
+      const transaction = await this.prisma.transaction.findMany({
+         where: {
+            userId: user_id,
+         },
+         include: {
+            category: true,
+         },
+         orderBy: {
+            created_at: 'desc',
+         },
+      });
+      return transaction;
    }
 
    private verifyFutureDate(date?: string, month = 1) {
@@ -168,13 +190,13 @@ export class TransactionsRepository
 
       return transactions;
    }
-   async delete(transaction_id: string): Promise<string> {
+   async delete(transaction_id: string): Promise<Transaction> {
       const transaction = await this.prisma.transaction.delete({
          where: {
             id: transaction_id,
          },
       });
-      return transaction.id;
+      return transaction;
    }
 
    async GetTransactionById(
@@ -213,6 +235,7 @@ export class TransactionsRepository
          category: TransactionsCategory;
       })[]
    > {
+      /* NOT USING */ /* NOT USING */ /* NOT USING */
       const currentYear = new Date().getFullYear();
 
       const startOfTheMount = startOfMonth(new Date(currentYear, month - 1));

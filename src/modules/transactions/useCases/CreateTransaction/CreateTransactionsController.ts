@@ -1,9 +1,10 @@
+import { HTTPRequest } from '@/types/HTTPRequest';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { CreateTransaction } from './CreateTransactionUseCase';
 
 export class CreateTransactionsController {
-   async handle(req: Request, res: Response): Promise<Response> {
+   async handle(req: Request, res: Response): Promise<HTTPRequest<any>> {
       const { description, value, dueDate, categoryType, filingDate } =
          req.body;
       const { email } = req.client;
@@ -18,6 +19,10 @@ export class CreateTransactionsController {
          filingDate,
       });
 
-      return res.status(201).json(result);
+      return {
+         body: result,
+         statusCode: 200,
+         type: 'json',
+      };
    }
 }

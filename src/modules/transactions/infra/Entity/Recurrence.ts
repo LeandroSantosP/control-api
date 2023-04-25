@@ -1,4 +1,4 @@
-export type RecurrenceProps = 'monthly' | 'daily' | 'yearly';
+import { Recurrence as RecurrenceProps } from '@prisma/client';
 
 export class Recurrence {
    private _value: RecurrenceProps;

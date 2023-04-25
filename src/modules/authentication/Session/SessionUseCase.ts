@@ -46,7 +46,7 @@ export class SessionUseCase extends DecodedMethods {
       const user = await this.UserRepository.GetUserByEmail(email);
 
       if (!user) {
-         throw new AppError('Email or password Is Incorrect!');
+         throw new AppError('Email or password Is Incorrect!', 401);
       }
 
       let password_user_db: string = '';

@@ -14,6 +14,7 @@ let createTransaction: CreateTransaction;
 describe('Create Transaction', () => {
    beforeAll(async () => {
       await prisma.user.deleteMany();
+      await prisma.transaction.deleteMany();
    });
    beforeEach(async () => {
       transactionRepositoryTestDB = new TransactionsRepositoryTestDB();

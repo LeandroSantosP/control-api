@@ -12,7 +12,7 @@ interface IRequest {
 export class DeleteTransactionUseCase {
    constructor(
       @inject('TransactionsRepository')
-      private TransactionsRepository: ITransactionsRepository<Transaction>
+      private TransactionsRepository: ITransactionsRepository
    ) {}
 
    async execute({
@@ -31,10 +31,8 @@ export class DeleteTransactionUseCase {
          throw new AppError('Not Authorization!', 401);
       }
 
-      const transactionId = await this.TransactionsRepository.delete(
-         transaction_id
-      );
+      const { id } = await this.TransactionsRepository.delete(transaction_id);
 
-      return { transactionId };
+      return { transactionId: id };
    }
 }

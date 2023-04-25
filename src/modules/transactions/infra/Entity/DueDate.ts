@@ -12,9 +12,9 @@ export class DueDate {
          throw new AppError('Invalid type - ( DueDate )');
       }
 
-      if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}-\d{2}:\d{2}$/.test(value)) {
-         throw new AppError('Invalid due date format.');
-      }
+      // if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}-\d{2}:\d{2}$/.test(value)) {
+      //    throw new AppError('Invalid due date format.');
+      // }
 
       const now = new Date();
       const dueDate = new Date(value);

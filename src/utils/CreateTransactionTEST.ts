@@ -29,11 +29,13 @@ export default async function CreateTransactionTEST({
    dueDate = dataFormatted,
    filingDate,
 }: ICreateTransactionTEST) {
+   console.log(dueDate, filingDate);
+
    const useExits = await prisma.transaction.create({
       data: {
          description: description,
          value: new Prisma.Decimal(value),
-         due_date: dueDate,
+         due_date: !filingDate && dueDate,
          recurrence,
          isSubscription,
          filingDate,

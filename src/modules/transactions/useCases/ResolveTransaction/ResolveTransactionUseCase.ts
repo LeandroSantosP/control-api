@@ -10,7 +10,7 @@ export class ResolveTransactionUseCase {
       @inject('UserRepository')
       private UserRepository: IUserRepository,
       @inject('TransactionsRepository')
-      private TransactionRepository: ITransactionsRepository<Transaction>
+      private TransactionRepository: ITransactionsRepository
    ) {}
 
    async execute(transaction_id: string, user_id: string): Promise<boolean> {
@@ -33,6 +33,7 @@ export class ResolveTransactionUseCase {
          if (key !== 'resolved') {
             return;
          }
+         console.log(value);
 
          if (value === true) {
             throw new AppError('Transaction AllReady Resolved!');

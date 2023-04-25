@@ -17,7 +17,7 @@ export async function UserAuthentication(
    const { authorization } = req.headers;
 
    if (!authorization) {
-      throw new AppError('Token Missing!');
+      throw new AppError('Token Missing!', 401);
    }
 
    const tokenValid = authorization.split(' ') as string[];
@@ -49,6 +49,6 @@ export async function UserAuthentication(
       };
       next();
    } catch (err: any) {
-      throw new AppError('Invalid Token');
+      throw new AppError('Invalid Token', 401);
    }
 }

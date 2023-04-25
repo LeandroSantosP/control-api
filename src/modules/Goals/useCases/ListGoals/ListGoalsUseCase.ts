@@ -18,6 +18,8 @@ export class ListGoalsUseCase {
          user_id
       )) as User;
 
+      //validacoes
+
       const MonthFormatted = UserGoals.map((goal) => {
          type monthNamesProps = {
             [key: string]: string;

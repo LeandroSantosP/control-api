@@ -22,13 +22,35 @@ import { GetCurrentDate } from '@/utils/GetCurrentDate';
 
 export class TransactionsRepositoryTestDB
    extends GetCurrentDate
-   implements ITransactionsRepository<Transaction>
+   implements ITransactionsRepository
 {
    private readonly prisma;
 
    constructor() {
       super();
       this.prisma = prisma;
+   }
+
+   updated(props: any): Promise<any> {
+      throw new Error('Method not implemented.');
+   }
+   async list({ user_id }: { user_id: string }): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
+   > {
+      const transaction = await this.prisma.transaction.findMany({
+         where: {
+            userId: user_id,
+         },
+         include: {
+            category: true,
+         },
+         orderBy: {
+            created_at: 'desc',
+         },
+      });
+      return transaction;
    }
 
    private verifyFutureDate(date?: string, month = 1) {
@@ -46,6 +68,7 @@ export class TransactionsRepositoryTestDB
       dueDate,
       Category,
       filingDate,
+      resolved,
    }: ITransactionsRepositoryProps): Promise<
       Transaction & {
          category: {
@@ -73,7 +96,7 @@ export class TransactionsRepositoryTestDB
             due_date: dueDate,
             value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
-
+            resolved,
             author: {
                connect: {
                   email,
@@ -120,7 +143,7 @@ export class TransactionsRepositoryTestDB
             due_date: dueDate,
             installments,
             isSubscription,
-            recurrence,
+            recurrence: recurrence,
             value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
             resolved: Number(value) > 0 ? true : false,
@@ -172,13 +195,13 @@ export class TransactionsRepositoryTestDB
       return transactions;
    }
 
-   async delete(transaction_id: string): Promise<string> {
+   async delete(transaction_id: string): Promise<Transaction> {
       const transaction = await this.prisma.transaction.delete({
          where: {
             id: transaction_id,
          },
       });
-      return transaction.id;
+      return transaction;
    }
 
    async GetTransactionById(
@@ -206,6 +229,7 @@ export class TransactionsRepositoryTestDB
       const allTransaction = await this.prisma.transaction.findMany();
       return allTransaction;
    }
+
    async ListByMonth({
       user_id,
       month,
@@ -217,6 +241,7 @@ export class TransactionsRepositoryTestDB
          category: TransactionsCategory;
       })[]
    > {
+      /* NOT USING */ /* NOT USING */ /* NOT USING */
       const currentYear = new Date().getFullYear();
 
       const startOfTheMount = startOfMonth(new Date(currentYear, month - 1));
@@ -298,7 +323,7 @@ export class TransactionsRepositoryTestDB
             where: {
                isSubscription,
                userId: user_id,
-               due_date: {
+               created_at: {
                   gte: new Date(startOfTheMount),
                   lt: new Date(endOfTheMount),
                },
@@ -347,7 +372,7 @@ export class TransactionsRepositoryTestDB
 
          let whereClause = {
             userId: user_id,
-            due_date: {
+            [revenue ? 'filingDate' : 'due_date']: {
                gte: new Date(startOfTheMount),
                lt: new Date(endOfTheMount),
             },
@@ -369,6 +394,7 @@ export class TransactionsRepositoryTestDB
                category: true,
             },
          });
+
          return transactions;
       }
 

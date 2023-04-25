@@ -13,10 +13,9 @@ let TransactionsRepository: TransactionsRepositoryTestDB;
 let listTransactionUseCase: ListTransactionUseCase;
 
 describe('List Transactions', () => {
-   beforeAll(async () => {
-      await prisma.user.deleteMany();
-   });
    beforeEach(async () => {
+      await prisma.user.deleteMany();
+      await prisma.transaction.deleteMany();
       userRepository = new UserRepositoryTestDB();
       TransactionsRepository = new TransactionsRepositoryTestDB();
       listTransactionUseCase = new ListTransactionUseCase(
@@ -149,5 +148,85 @@ describe('List Transactions', () => {
       expect(sut2.transactions).toBeTruthy();
       expect(sut2.transactions).toHaveLength(2);
       expect(sut2.transactions[1]).toHaveProperty('isSubscription', true);
+   });
+
+   it('should return positive values', async () => {
+      const newUser = await CreateUserTest();
+
+      const dataFormattedOne = formatISO(
+         parse('2023-05-02' as string, 'yyyy-MM-dd', new Date())
+      );
+
+      await TransactionsRepository.CreateTransactionInstallments({
+         email: newUser.email,
+         description: 'test',
+         value: '-12',
+         dueDate: dataFormattedOne,
+         isSubscription: true,
+         categoryType: 'Investments',
+         recurrence: 'monthly',
+      });
+
+      await TransactionsRepository.CreateTransactionInstallments({
+         email: newUser.email,
+         description: 'test',
+         value: '122',
+         dueDate: dataFormattedOne,
+         categoryType: 'food',
+         recurrence: 'monthly',
+      });
+
+      const sut = await listTransactionUseCase.execute({
+         user_id: newUser.id,
+         month: 5,
+      });
+
+      expect(sut.transactions.some((i) => Number(i.value) > 0)).toBeTruthy();
+   });
+
+   it('should be able to list transaction revenue/expense', async () => {
+      const newUser = await CreateUserTest();
+
+      const dataFormattedOne = formatISO(
+         parse('2023-08-02' as string, 'yyyy-MM-dd', new Date())
+      );
+
+      await TransactionsRepository.create({
+         email: newUser.email,
+         description: 'test',
+         value: '-122',
+         filingDate: dataFormattedOne,
+      });
+
+      await TransactionsRepository.CreateTransactionInstallments({
+         email: newUser.email,
+         description: 'test',
+         value: '1222.11',
+         dueDate: dataFormattedOne,
+         categoryType: 'food',
+         recurrence: 'monthly',
+      });
+
+      const sut = await listTransactionUseCase.execute({
+         user_id: newUser.id,
+         month: 8,
+      });
+
+      const sutTwo = await listTransactionUseCase.execute({
+         user_id: newUser.id,
+         month: 1,
+      });
+
+      const sutThree = await listTransactionUseCase.execute({
+         user_id: newUser.id,
+         month: 5,
+      });
+
+      expect(sut.monthBalense?.revenue).toEqual('1222.11');
+      expect(sut.monthBalense?.expense).toEqual('-122.00');
+
+      expect(sut.transactions).toHaveLength(2);
+      expect(sutTwo.transactions).toHaveLength(0);
+      expect(sutThree.transactions).toHaveLength(0);
    });
 });

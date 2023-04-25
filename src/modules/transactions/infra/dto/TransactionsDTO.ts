@@ -10,8 +10,8 @@ export type CreatePropsDTO = {
    isSubscription: boolean;
    resolved?: boolean;
    type: 'revenue' | 'expense';
-   recurrence: RecurrenceProps;
-   filingDate: string | undefined;
+   recurrence?: RecurrenceProps | undefined;
+   filingDate?: string | undefined;
    category?: CategoryProps | undefined;
    due_date?: string | undefined;
    updatedAt?: Date | undefined;

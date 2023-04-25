@@ -35,8 +35,8 @@ const CreateTransactions = async ({
 
 describe('listTransitionsBySubscriptionUseCase', () => {
    beforeEach(async () => {
-      await prisma.transaction.deleteMany({});
-      await prisma.user.deleteMany({});
+      await prisma.user.deleteMany();
+      await prisma.transaction.deleteMany();
       transactionRepository = new TransactionsRepositoryTestDB();
       listTransitionsBySubscriptionUseCase =
          new ListTransitionsBySubscriptionUseCase(transactionRepository);
@@ -67,8 +67,6 @@ describe('listTransitionsBySubscriptionUseCase', () => {
          revenue: '0.00',
          total: '-48.00',
       });
-
-      /* With subscription */
 
       await CreateTransactions({
          email: newUser.email,

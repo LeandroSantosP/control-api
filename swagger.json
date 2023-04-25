@@ -1,0 +1,454 @@
+{
+   "openapi": "3.0.0",
+   "info": {
+      "title": "TRANSACTION CONTROL API.",
+      "description": "This api is an api to create an app to control TRANSACTIONS / control expenses and income.",
+      "contact": {
+         "name": "Support",
+         "email": "skp.tridimensional@gmail.com"
+      },
+      "version": "1.0.0"
+   },
+   "paths": {
+      "/auth": {
+         "get": {
+            "tags": ["Auth"],
+            "description": "Authentication rote.",
+            "security": [
+               {
+                  "basicAuth": []
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Login successful.",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/ResponseAuth"
+                        }
+                     }
+                  }
+               },
+               "404": {
+                  "description": "When the User is not found in the database.",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "type": "object",
+                           "properties": {
+                              "status": {
+                                 "type": "string",
+                                 "example": "Error"
+                              },
+                              "message": {
+                                 "type": "string",
+                                 "example": "Authentication Failed"
+                              }
+                           }
+                        }
+                     }
+                  }
+               },
+               "401": {
+                  "description": "When User Wrong Password.",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "type": "object",
+                           "properties": {
+                              "status": {
+                                 "type": "string",
+                                 "example": "Error"
+                              },
+                              "message": {
+                                 "type": "string",
+                                 "example": "Email or password Is Incorrect!"
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "/transaction": {
+         "post": {
+            "tags": ["Transactions"],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "description": "Create of Transaction.",
+            "requestBody": {
+               "description": "Create a new Transaction passing the following data...",
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "$ref": "#/components/schemas/RequestTransaction"
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "200": {
+                  "description": "Created realized with success.",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/ResponseTransaction"
+                        }
+                     }
+                  }
+               },
+               "400": {
+                  "description": "Invalid data."
+               },
+               "401": {
+                  "description": "Token is missing."
+               }
+            }
+         },
+         "get": {
+            "parameters": [
+               {
+                  "in": "query",
+                  "name": "month",
+                  "type": "string",
+                  "description": "Get by Month of create."
+               }
+            ],
+            "tags": ["Transactions"],
+            "description": "Get transaction by months orderBy(CREATE DATE).",
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "responses": {
+               "200": {
+                  "description": "Success",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/ResponseListTransactions"
+                        }
+                     }
+                  }
+               },
+               "404": {
+                  "description": "Errors 400",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "type": "object",
+                           "properties": {
+                              "status": {
+                                 "type": "string",
+                                 "example": "Error"
+                              },
+                              "message": {
+                                 "type": "string",
+                                 "example": "Just Filter By Month between 1 and 12 42 IsInvalid Mount"
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
+      "/transaction/{transaction_id}": {
+         "delete": {
+            "parameters": [
+               {
+                  "in": "path",
+                  "name": "transaction_id",
+                  "type": "integer",
+                  "required": true
+               }
+            ],
+            "tags": ["Transactions"],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "description": "Delete a transaction.",
+            "responses": {
+               "204": {},
+               "400": {}
+            }
+         }
+      }
+   },
+   "components": {
+      "schemas": {
+         "RequestTransaction": {
+            "type": "object",
+            "properties": {
+               "value": {
+                  "type": "string",
+                  "description": "Value of the Transaction to be created (IN HEXADECIMAL).",
+                  "example": "-422232.00"
+               },
+               "description": {
+                  "type": "string",
+                  "description": "A description of what this transaction is about.",
+                  "example": "New clothes"
+               },
+               "categoryType": {
+                  "enum": [
+                     "transport",
+                     "food",
+                     "habitation",
+                     "education",
+                     "health",
+                     "leisure",
+                     "products",
+                     "debts",
+                     "Taxes",
+                     "Investments",
+                     "unknown"
+                  ],
+                  "description": "Enter a category for this Transaction.",
+                  "example": "products"
+               },
+               "dueDate": {
+                  "type": "string",
+                  "description": "(EXPENSES ONLY) - Enter a due date for this transaction.",
+                  "example": "2023-06-11"
+               },
+               "filingDate": {
+                  "type": "string",
+                  "description": "(REVENUE ONLY) - Enter a receipt date for this transaction",
+                  "example": "2023-06-11"
+               }
+            }
+         },
+         "ResponseTransaction": {
+            "type": "object",
+            "properties": {
+               "id": {
+                  "type": "string",
+                  "description": "uuid id generated to reference the created transaction",
+                  "format": "uuid"
+               },
+               "value": {
+                  "type": "string",
+                  "description": "Value of the Transaction to be created (IN HEXADECIMAL).",
+                  "example": "-422232.00"
+               },
+               "description": {
+                  "type": "string",
+                  "description": "A description of what this transaction is about.",
+                  "example": "New clothes"
+               },
+               "categoryType": {
+                  "enum": [
+                     "transport",
+                     "food",
+                     "habitation",
+                     "education",
+                     "health",
+                     "leisure",
+                     "products",
+                     "debts",
+                     "Taxes",
+                     "Investments",
+                     "unknown"
+                  ],
+                  "description": "Enter a category for this Transaction.",
+                  "example": "products"
+               },
+               "dueDate": {
+                  "type": "string",
+                  "description": "(EXPENSES ONLY) - Enter a due date for this transaction.",
+                  "example": "2023-06-11"
+               },
+               "filingDate": {
+                  "type": "string",
+                  "description": "(REVENUE ONLY) - Enter a receipt date for this transaction",
+                  "example": "2023-06-11"
+               }
+            }
+         },
+         "ResponseListTransactions": {
+            "type": "object",
+            "properties": {
+               "monthBalense": {
+                  "type": "object",
+                  "properties": {
+                     "expense": {
+                        "type": "string",
+                        "description": "Value of the expenses found referring to the transactions found.",
+                        "example": "-422232.00"
+                     },
+                     "revenue": {
+                        "type": "string",
+                        "description": "Value of the revenues found referring to the transactions found.",
+                        "example": "-2550515.33"
+                     },
+                     "total": {
+                        "type": "string",
+                        "description": "Total amount of revenues/expenses found referring to the transactions found.",
+                        "example": "-2550515.33"
+                     }
+                  }
+               },
+               "transactions": {
+                  "type": "array",
+                  "description": "List of transactions found",
+                  "items": {
+                     "type": "object",
+                     "properties": {
+                        "id": {
+                           "type": "string",
+                           "description": "Id(uuid) unique identification referring to the transaction.",
+                           "format": "uuid"
+                        },
+                        "description": {
+                           "type": "string",
+                           "description": "Transaction Description.",
+                           "example": "New clothes"
+                        },
+                        "value": {
+                           "type": "string",
+                           "description": "Transaction Value.",
+                           "example": "-422232.00"
+                        },
+                        "recurrence": {
+                           "type": ["string", "null"],
+                           "description": "Informs which recurrence the transaction has, if not, it returns null.",
+                           "example": "null"
+                        },
+                        "installments": {
+                           "type": ["string", "null"],
+                           "description": "Informs the number of installments the transaction contains, or returns null if it is a recipe.",
+                           "example": "null"
+                        },
+                        "isSubscription": {
+                           "type": ["boolean", "null"],
+                           "description": "Change a true case if it is an expense and if it is an enrollment, if it is not an enrollment it returns false, if it is an income it returns null.",
+                           "example": "false"
+                        },
+                        "due_date": {
+                           "type": ["string", "null"],
+                           "description": "Returns the due date of the expense in question, if it is not an expense, it returns null.",
+                           "example": "2023-06-11T03:00:00.000Z"
+                        },
+                        "filingDate": {
+                           "type": ["string", "null"],
+                           "description": "Returns the receipt date of the recipe in question, if it is not a recipe, it returns null.",
+                           "example": "false"
+                        },
+                        "resolved": {
+                           "type": "string",
+                           "description": "Returns the status of the transaction if it has been completed or not.",
+                           "example": "2023-04-24T19:53:15.704Z"
+                        },
+                        "created_at": {
+                           "type": "string",
+                           "description": "Indicates the creation date of the transaction in question.",
+                           "example": "2023-04-24T19:53:15.704Z"
+                        },
+                        "updated_at": {
+                           "type": "string",
+                           "description": "Indicates the update date of the transaction in question.",
+                           "example": "2023-04-24T19:53:15.704Z"
+                        },
+                        "type": {
+                           "type": "string",
+                           "description": "Indicates the type of transaction whether it is an income or an expense.",
+                           "example": "expense"
+                        },
+                        "userId": {
+                           "type": "string",
+                           "description": "Indicates the ID of the client that owns the transaction.",
+                           "format": "uuid"
+                        },
+                        "transactionsCategoryId": {
+                           "type": "string",
+                           "description": "Indicates the transaction id.",
+                           "format": "uuid"
+                        },
+                        "category": {
+                           "type": "object",
+                           "description": "Indicates the category in which the transaction belongs, by default the category is 'unknown'",
+                           "properties": {
+                              "id": {
+                                 "type": "string",
+                                 "description": "Indicates the transaction id.",
+                                 "format": "uuid"
+                              },
+                              "name": {
+                                 "type": "string",
+                                 "description": "Indicates the transaction name.",
+                                 "format": "uuid"
+                              },
+                              "created_at": {
+                                 "type": "string",
+                                 "description": "Indicates the creation date of the category in question.",
+                                 "example": "2023-04-24T19:53:15.704Z"
+                              },
+                              "updated_at": {
+                                 "type": "string",
+                                 "description": "Indicates the update date of the category in question.",
+                                 "example": "2023-04-24T19:53:15.704Z"
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         },
+         "ResponseAuth": {
+            "type": "object",
+            "properties": {
+               "user": {
+                  "type": "object",
+                  "properties": {
+                     "name": {
+                        "type": "string",
+                        "description": "User name that just authenticated.",
+                        "example": "Leandro Santos"
+                     },
+                     "email": {
+                        "type": "string",
+                        "description": "Email of the user who has just authenticated.",
+                        "example": "leandro@example.com"
+                     }
+                  }
+               },
+               "token": {
+                  "type": "string",
+                  "description": "Token JWT para autenticação.",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxlYW5kcm9AZ21haWwuY29tIiwiaWF0IjoxNjgyMzc3MDI1LCJleHAiOjE2ODIzODA2MjUsInN1YiI6ImE4YmQ2NDQyLWFjNjktNDFjNy04ZjZmLTgxM2UyM2M0MGUzZiJ9.kFa_H7L93v7HNSL6HvBtQOpGF4RgK48CiHA-9A2w0L8"
+               },
+               "PushNotificationToken": {
+                  "type": "string",
+                  "description": "JWT token for push notification (not implemented yet).",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxlYW5kcm9AZ21haWwuY29tIiwiaWF0IjoxNjgyMzc3MDI1LCJleHAiOjE2ODIzODA2MjUsInN1YiI6ImE4YmQ2NDQyLWFjNjktNDFjNy04ZjZmLTgxM2UyM2M0MGUzZiJ9.kFa_H7L93v7HNSL6HvBtQOpGF4RgK48CiHA-9A2w0L8"
+               }
+            }
+         }
+      },
+      "securitySchemes": {
+         "bearerAuth": {
+            "description": "Authenticate using JWT",
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT"
+         },
+         "basicAuth": {
+            "description": "Login Authentication.",
+            "type": "http",
+            "scheme": "basic"
+         }
+      }
+   }
+}

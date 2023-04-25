@@ -23,7 +23,7 @@ export class ListTransitionsBySubscriptionUseCase {
    private TransactionManagement: TransactionManagement;
    constructor(
       @inject('TransactionsRepository')
-      private TransactionRepository: ITransactionsRepository<Transaction>
+      private TransactionRepository: ITransactionsRepository
    ) {
       this.TransactionManagement = new TransactionManagement();
    }
@@ -58,10 +58,6 @@ export class ListTransitionsBySubscriptionUseCase {
       resolved,
       revenue,
    }: IRequest): Promise<any> {
-      if (month) {
-         this.TransactionManagement.verifyMonth(month);
-      }
-
       if ((resolved || revenue) && !isSubscription) {
          return await this.ListByRevenueOrResolvedTransaction({
             month,

@@ -60,7 +60,6 @@ describe('Create Transaction With Recorrente', () => {
          name: 'test',
          password: 'senha123',
       };
-      await userRepository.create(newUser2);
 
       await expect(
          createTransactionWIthRecorrenteUseCase.execute({

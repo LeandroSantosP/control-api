@@ -70,7 +70,7 @@ export class CreateTransaction {
       @inject('UserRepository')
       private userRepository: IUserRepository,
       @inject('TransactionsRepository')
-      private transactionRepository: ITransactionsRepository<Transaction>
+      private transactionRepository: ITransactionsRepository
    ) {}
 
    private static formattedData(date: string) {
@@ -145,13 +145,12 @@ export class CreateTransaction {
 
          const transactionModel = TransactionCustom.create({
             description: validadeData.description,
-            filingDate: FormateFellingDate || undefined,
-            isSubscription: false,
-            recurrence: 'daily',
             type: 'expense',
+            isSubscription: false,
             value: FormattedValue,
             category: validadeData.categoryType as CategoryProps,
             due_date: FormateDueDate || undefined,
+            filingDate: FormateFellingDate || undefined,
          });
 
          const newTransaction = await this.transactionRepository.create({

@@ -1,11 +1,12 @@
 import * as yup from 'yup';
-import { Category, Transaction } from '@prisma/client';
+import { Category } from '@prisma/client';
 import { inject, injectable } from 'tsyringe';
 
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
-import { TransactionsEntity } from '../../infra/Entity/TransactionsEntity';
 import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
+import { Transaction } from '../../infra/Entity/Transaction';
+import { CategoryProps } from '../../infra/Entity/Category';
 
 interface IRequest {
    isSubscription: boolean;
@@ -64,16 +65,18 @@ const TransactionSchemaWithRecorrente = TransactionSchema.shape({
    recurrence: yup.string().oneOf(['monthly', 'daily', 'yearly']).required(),
 });
 
+type SchemaType = yup.InferType<typeof TransactionSchemaWithRecorrente>;
+
 @injectable()
 export class CreateTransactionWIthRecorrenteUseCase {
    constructor(
       @inject('TransactionsRepository')
-      private transactionRepository: ITransactionsRepository<Transaction>,
+      private transactionRepository: ITransactionsRepository,
       @inject('DateFnsProvider')
       private DateFnsProvider: IDateProvider
    ) {}
 
-   private async transactionManager(validatedData: any) {
+   private async transactionManager(validatedData: SchemaType) {
       if (Number(validatedData.value) >= 0) {
          throw new AppError('This Operation cant not be a revenue!');
       }
@@ -90,18 +93,22 @@ export class CreateTransactionWIthRecorrenteUseCase {
          FinalResult = formattedValue;
       }
 
-      const { id: _, ...transaction } = new TransactionsEntity();
-      Object.assign(transaction, {
-         ...validatedData,
+      const { id: _, ...transaction } = Transaction.create({
+         description: validatedData.description,
          value: FinalResult,
-         Category: validatedData.categoryType,
+         type: 'expense',
+         isSubscription: validatedData.isSubscription,
+         category: (validatedData.categoryType as CategoryProps) || undefined,
+         recurrence: validatedData.recurrence,
+         installments: validatedData.installments,
+         due_date: validatedData.due_date,
       });
 
       let DataFormate = null;
 
       DataFormate = this.DateFnsProvider.formatISO(
          this.DateFnsProvider.parse({
-            dateString: transaction.due_date,
+            dateString: transaction.due_date?.getValue,
             DatePatters: 'yyyy-MM-dd',
             CurrentDate: new Date(),
          })
@@ -109,11 +116,14 @@ export class CreateTransactionWIthRecorrenteUseCase {
 
       const newTransaction =
          await this.transactionRepository.CreateTransactionInstallments({
-            ...transaction,
             dueDate: DataFormate,
             email: validatedData.email,
-            recurrence: transaction.recurrence!,
-            categoryType: transaction.Category,
+            description: transaction.description,
+            isSubscription: transaction.isSubscription,
+            categoryType: transaction.category?.GetCategory,
+            installments: transaction.installments.getValue,
+            recurrence: transaction.recurrence?.GetValue,
+            value: transaction.value.getValue,
          });
 
       return newTransaction;

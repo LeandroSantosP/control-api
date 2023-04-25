@@ -28,11 +28,13 @@ filter todas as traslações ou informe um mes especifico, passo no body o "bySu
 para filtrar pelo inscrições, também com a opção de informar o mes
 */
 
-transactionRoutes.get(
-   '/',
-   UserAuthentication,
-   listTransactionController.handle
-);
+transactionRoutes.get('/', UserAuthentication, async (req, res) => {
+   const { body, statusCode, type } = await listTransactionController.handle(
+      req,
+      res
+   );
+   return res.status(statusCode)[type](body || undefined);
+});
 
 /*
 
@@ -67,11 +69,13 @@ If it's an expense, must be an due date!
 */
 
 /* Fix decimal dot */
-transactionRoutes.post(
-   '/',
-   UserAuthentication,
-   createTransactionController.handle
-);
+transactionRoutes.post('/', UserAuthentication, async (req, res) => {
+   const { body, statusCode, type } = await createTransactionController.handle(
+      req,
+      res
+   );
+   return res.status(statusCode)[type](body || undefined);
+});
 
 /*
 Fields :{
