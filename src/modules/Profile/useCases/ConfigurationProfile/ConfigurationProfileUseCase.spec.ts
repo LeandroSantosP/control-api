@@ -1,7 +1,10 @@
+import 'reflect-metadata';
+
 import { FirebaseStorageProvider } from '@/shared/providers/UploadProvider/implementation/FirebaseStorageProvider';
 import CreateUserTest from '@/utils/CrateUserTEST';
 import { ProfileRepositoryTestDB } from '../../infra/repository/test-db/ProfileRepositoryTestDB';
 import { ConfigurationProfile } from './ConfigurationProfileUseCase';
+import '@/jobs/firebase/firebase-init-test';
 
 let profileRepositoryTestDB: ProfileRepositoryTestDB;
 let configurationsProfile: ConfigurationProfile;
@@ -17,8 +20,9 @@ describe('CreateProfile', () => {
       );
    });
 
-   it('should be possible to create a initial profile config', async () => {
+   it.only('should be possible to create a initial profile config', async () => {
       const newUSER = await CreateUserTest();
+      const newUSER2 = await CreateUserTest();
 
       const file = {
          fieldname: 'avatar',
@@ -29,17 +33,18 @@ describe('CreateProfile', () => {
          size: 1000,
       } as Express.Multer.File | undefined;
 
-      const sut = await configurationsProfile.execute({
-         update: false,
-         profileInfos: {
-            avatar: file,
-            Birthday: '20/09/2000',
-            marital_state: 'test',
-            phonenumber: '(11) 9999-11989',
-            profession: 'test',
-            salary: '100',
-         },
-         user_id: newUSER.id,
-      });
+      await expect(
+         configurationsProfile.execute({
+            update: false,
+            profileInfos: {
+               avatar: file,
+               Birthday: '20/09/2000',
+               phonenumber: '(11) 9999-11989',
+               profession: 'test',
+               salary: '100',
+            },
+            user_id: newUSER.id,
+         })
+      ).resolves.not.toThrowError();
    });
 });

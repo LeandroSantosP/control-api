@@ -32,7 +32,6 @@ export class ResolveTransactionUseCase {
          if (key !== 'resolved') {
             return;
          }
-         console.log(value);
 
          if (value === true) {
             throw new AppError('Transaction AllReady Resolved!');

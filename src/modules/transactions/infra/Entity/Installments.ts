@@ -16,10 +16,6 @@ export class Installments {
          },
       });
 
-      Object.entries(this).forEach(([key, value]) => {
-         console.log(key, value);
-      });
-
       if (value < 2) {
          throw new AppError('Installments must be greater then 1');
       }

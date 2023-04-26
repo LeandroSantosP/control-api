@@ -18,28 +18,32 @@ export class FirebaseStorageProvider implements IUploadProvider {
       file,
       fileName,
    }: mangerBufferProps): Promise<string | Error> {
-      return bufferStream
-         .pipe(
-            file.createWriteStream({
-               metadata: {
-                  contentType: 'image/jpeg',
-               },
-               resumable: false,
-               predefinedAcl: 'publicRead',
-               validation: 'md5',
+      let ref;
+      return new Promise((resolves, rejects) => {
+         bufferStream
+            .pipe(
+               file.createWriteStream({
+                  metadata: {
+                     contentType: 'image/jpeg',
+                  },
+                  resumable: false,
+                  predefinedAcl: 'publicRead',
+                  validation: 'md5',
+               })
+            )
+            .on('error', (erro: Error) => {
+               rejects(erro);
             })
-         )
-         .on('error', (erro: Error) => {
-            return erro;
-         })
-         .on('finish', () => {
-            console.log(`Imagem ${fileName} enviada com sucesso.`);
-            return fileName;
-         });
+            .on('finish', () => {
+               console.log(`Imagem ${fileName} enviada com sucesso.`);
+               resolves(fileName);
+            });
+      });
    }
 
    async save(props: saveInput): Promise<void | string> {
       const fileName = `images/user-?${props.user_id}.jpg`;
+      console.log(fileName);
 
       const file = storage().bucket().file(fileName);
 

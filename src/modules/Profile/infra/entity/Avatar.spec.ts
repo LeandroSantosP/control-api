@@ -35,7 +35,7 @@ test('Must be a possible to create an avatar with a valid type.', () => {
 test('Must not be a possible to create an avatar if size is greater than 1000.', () => {
    const fileWithWrongSize = {
       ...file,
-      size: 2000,
+      size: 99999999999,
    } as Express.Multer.File | undefined;
 
    expect(() => new Avatar(fileWithWrongSize)).toThrow(

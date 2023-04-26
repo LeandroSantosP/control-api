@@ -8,7 +8,7 @@ export class Avatar {
          return;
       }
 
-      if (value.size > 1000) {
+      if (value.size > 217900) {
          throw new AppError('Image size is too large');
       }
 

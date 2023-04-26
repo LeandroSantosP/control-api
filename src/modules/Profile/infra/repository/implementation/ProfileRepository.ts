@@ -3,7 +3,7 @@ import { AppError } from '@/shared/infra/middleware/AppError';
 import { Profile } from '../../entity/Profile';
 import { CreateInput, IProfileModel } from '../IProfileModel';
 
-export class ProfileRepositoryTestDB implements IProfileModel {
+export class ProfileRepository implements IProfileModel {
    private prisma;
    constructor() {
       this.prisma = prisma;
@@ -42,6 +42,3 @@ export class ProfileRepositoryTestDB implements IProfileModel {
       throw new Error('Method not implemented.');
    }
 }
-let test: IProfileModel;
-
-test = new ProfileRepositoryTestDB();

@@ -9,6 +9,8 @@ import { ITransactionsRepository } from '@/modules/transactions/infra/repository
 import { Transaction } from '@prisma/client';
 import { IGoalsRepository } from '@/modules/Goals/infra/repository/IGoalsRepository';
 import { GoalsRepository } from '@/modules/Goals/infra/repository/implementations/GoalsRepository';
+import { ProfileRepository } from '@/modules/Profile/infra/repository/implementation/ProfileRepository';
+import { IProfileModel } from '@/modules/Profile/infra/repository/IProfileModel';
 
 container.registerSingleton<IUserRepository>('UserRepository', UserRepository);
 
@@ -22,7 +24,7 @@ container.registerSingleton<ITransactionsRepository>(
    TransactionsRepository
 );
 
-// container.registerSingleton<>(
-//    'ProfileRepositoryTestDB',
-//    ProfileRepositoryTestDB
-// );
+container.registerSingleton<IProfileModel>(
+   'ProfileRepository',
+   ProfileRepository
+);

@@ -29,8 +29,6 @@ export default async function CreateTransactionTEST({
    dueDate = dataFormatted,
    filingDate,
 }: ICreateTransactionTEST) {
-   console.log(dueDate, filingDate);
-
    const useExits = await prisma.transaction.create({
       data: {
          description: description,
