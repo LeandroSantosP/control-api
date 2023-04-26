@@ -33,8 +33,6 @@ export class FirebaseStorageProvider implements IUploadProvider {
             return erro;
          })
          .on('finish', () => {
-            console.log(fileName);
-
             console.log(`Imagem ${fileName} enviada com sucesso.`);
             return fileName;
          });

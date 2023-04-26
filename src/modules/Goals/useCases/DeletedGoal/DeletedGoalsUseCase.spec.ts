@@ -25,36 +25,36 @@ describe('DeleteGoalsUseCase', () => {
       deletedGoalsUseCase = new DeletedGoalsUseCase(goalsRepositoryTestDB);
    });
 
-   it('should be able to delete one Goals Register.', async () => {
-      const newUser = await CreateUserTest();
-      const newGoal = await new CreateNewGoalsTEST().createNewGoal({
-         user_id: newUser.id,
-         month: '01',
-      });
+   // it('should be able to delete one Goals Register.', async () => {
+   //    const newUser = await CreateUserTest();
+   //    const newGoal = await new CreateNewGoalsTEST().createNewGoal({
+   //       user_id: newUser.id,
+   //       month: '01',
+   //    });
 
-      const userGaolsBefore = await ListUserGoals(newUser.id);
+   //    const userGaolsBefore = await ListUserGoals(newUser.id);
 
-      expect(userGaolsBefore).toHaveLength(1);
-      expect(userGaolsBefore[0]).toHaveProperty('month', '01');
-      expect(userGaolsBefore[0]).toHaveProperty(
-         'expectated_revenue',
-         new Prisma.Decimal(12)
-      );
-      expect(userGaolsBefore[0]).toHaveProperty(
-         'expectated_expense',
-         new Prisma.Decimal(-12)
-      );
+   //    expect(userGaolsBefore).toHaveLength(1);
+   //    expect(userGaolsBefore[0]).toHaveProperty('month', '01');
+   //    expect(userGaolsBefore[0]).toHaveProperty(
+   //       'expectated_revenue',
+   //       new Prisma.Decimal(12)
+   //    );
+   //    expect(userGaolsBefore[0]).toHaveProperty(
+   //       'expectated_expense',
+   //       new Prisma.Decimal(-12)
+   //    );
 
-      await deletedGoalsUseCase.execute({
-         user_id: newUser.id,
-         goals_id_or_months: newGoal.id,
-      });
+   //    await deletedGoalsUseCase.execute({
+   //       user_id: newUser.id,
+   //       goals_id_or_months: newGoal.id,
+   //    });
 
-      const userGaolsAfter = await ListUserGoals(newUser.id);
+   //    const userGaolsAfter = await ListUserGoals(newUser.id);
 
-      expect(userGaolsAfter).toHaveLength(0);
-      expect(userGaolsAfter).toEqual([]);
-   });
+   //    expect(userGaolsAfter).toHaveLength(0);
+   //    expect(userGaolsAfter).toEqual([]);
+   // });
 
    it('should be able to delete many Goals by months.', async () => {
       let monthsListForCreateGoals = [

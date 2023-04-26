@@ -5,12 +5,11 @@ export type CreateInput = {
    avatar: string;
    profession: string | undefined;
    salary: string;
-   marital_state: string | undefined;
    phonenumber: string;
    Birthday: string;
 };
 
-export abstract class Model {
+export abstract class IProfileModel {
    abstract create<I extends CreateInput, O extends Profile>(
       props: I
    ): Promise<O>;

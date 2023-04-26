@@ -21,3 +21,8 @@ container.registerSingleton<ITransactionsRepository>(
    'TransactionsRepository',
    TransactionsRepository
 );
+
+// container.registerSingleton<>(
+//    'ProfileRepositoryTestDB',
+//    ProfileRepositoryTestDB
+// );

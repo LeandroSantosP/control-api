@@ -41,13 +41,12 @@ model adress {
 // Not aplly yet
 
 model Profile {
-   id            String  @id @default(uuid())
-   avatar        String
-   profession    String?
-   salary        Decimal @default(0)
-   marital_state String?
-   phonenumber   String?
-   dateOfBirth   String
+   id          String  @id @default(uuid())
+   avatar      String
+   profession  String?
+   salary      Decimal @default(0)
+   phonenumber String?
+   dateOfBirth String
 
    User User[]
 }

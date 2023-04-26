@@ -1,6 +1,5 @@
 import { inject, injectable } from 'tsyringe';
 import { AppError } from '@/shared/infra/middleware/AppError';
-import { IUserRepository } from '../../infra/repository/IUserRepository';
 import { IUploadProvider } from '@/shared/providers/UploadProvider/IUploadProvider';
 interface IRequest {
    user_id: string;
@@ -10,18 +9,11 @@ interface IRequest {
 @injectable()
 export class UploadUserAvatarUseCase {
    constructor(
-      @inject('UserRepository')
-      private UserRepository: IUserRepository,
       @inject('FirebaseStorageProvider')
       private FirebaseStorageProvider: IUploadProvider
    ) {}
 
    async execute({ image, user_id }: IRequest) {
-      const user = await this.UserRepository.GetUserById(user_id);
-
-      if (!user) {
-         throw new AppError('User not found');
-      }
       if (!image) {
          throw new AppError('Image not found');
       }
@@ -42,10 +34,6 @@ export class UploadUserAvatarUseCase {
          image,
          user_id,
       });
-
-      if (imageRef) {
-         this.UserRepository.updateImage(imageRef, user_id);
-      }
 
       return;
    }

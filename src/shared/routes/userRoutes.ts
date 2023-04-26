@@ -5,7 +5,7 @@ import { CreateUserController } from '@/modules/users/useCases/CreateUser/Create
 import { UserAuthentication } from '../infra/middleware/UserAuthentication';
 import { DeleteUserController } from '@/modules/users/useCases/DeleteUser/DeleteUserController';
 import { UpdatedUserController } from '@/modules/users/useCases/UpdatedUser/UpdatedUserController';
-import { UploadUserAvatarController } from '@/modules/users/useCases/UploadUserAvatar/UploadUserAvatarContoller';
+import { UploadUserAvatarController } from '@/modules/Profile/useCases/UploadUserAvatar/UploadUserAvatarContoller';
 import UploadConfig from '@/config/UploadConfig';
 
 const userRouter = Router();

@@ -59,7 +59,6 @@ export class DeletedGoalsUseCase {
    }
 
    async execute({ goals_id_or_months, user_id }: IRequest): Promise<void> {
-      /* O Usuário pode deletar todos sua metas ou deletar uma em especifica. */
       const userGoals = await this.GoalsRepository.list(user_id);
 
       if (goals_id_or_months === undefined) {
@@ -69,7 +68,7 @@ export class DeletedGoalsUseCase {
       this.VerifyGoals(goals_id_or_months, userGoals);
       await this.SingleGoals(goals_id_or_months, user_id);
 
-      await this.GoalsRepository.deleteSingleOrMúltiplo({
+      const res = await this.GoalsRepository.deleteSingleOrMúltiplo({
          user_id,
          goal_id: goals_id_or_months,
       });

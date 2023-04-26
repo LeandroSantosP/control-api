@@ -1,9 +1,9 @@
 import { prisma } from '@/database/prisma';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { Profile } from '../../entity/Profile';
-import { CreateInput, Model } from '../Model';
+import { CreateInput, IProfileModel } from '../IProfileModel';
 
-export class ProfileRepositoryTestDB implements Model {
+export class ProfileRepositoryTestDB implements IProfileModel {
    private prisma;
    constructor() {
       this.prisma = prisma;
@@ -18,7 +18,6 @@ export class ProfileRepositoryTestDB implements Model {
                   id: props.userId,
                },
             },
-            marital_state: props.marital_state,
             dateOfBirth: props.Birthday,
             avatar: props.avatar!,
             phonenumber: props.phonenumber,
@@ -44,6 +43,6 @@ export class ProfileRepositoryTestDB implements Model {
       throw new Error('Method not implemented.');
    }
 }
-let test: Model;
+let test: IProfileModel;
 
 test = new ProfileRepositoryTestDB();
