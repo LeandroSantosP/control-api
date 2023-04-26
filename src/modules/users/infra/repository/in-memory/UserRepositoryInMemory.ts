@@ -5,6 +5,9 @@ import { UserEntity } from '../../Entity/UserEntity';
 import { IUserRepository, RemoveProps, UpdatedProps } from '../IUserRepository';
 
 export class UserRepositoryInMemory implements IUserRepository {
+   updateImage(imageRef: string, user_id: string): Promise<User> {
+      throw new Error('Method not implemented.');
+   }
    UploadAvatar({
       user_id,
       avatar_ref,

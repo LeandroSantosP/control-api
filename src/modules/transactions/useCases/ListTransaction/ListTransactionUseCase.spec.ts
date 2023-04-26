@@ -224,6 +224,7 @@ describe('List Transactions', () => {
 
       expect(sut.monthBalense?.revenue).toEqual('1222.11');
       expect(sut.monthBalense?.expense).toEqual('-122.00');
+      expect(sut.monthBalense?.total).toEqual('1100.11');
 
       expect(sut.transactions).toHaveLength(2);
       expect(sutTwo.transactions).toHaveLength(0);

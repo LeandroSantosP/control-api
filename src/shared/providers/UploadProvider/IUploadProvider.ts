@@ -1,4 +1,9 @@
+export type saveInput = {
+   user_id: string;
+   image: Express.Multer.File | undefined;
+};
+
 export abstract class IUploadProvider {
-   abstract save(file: string, folder: string): Promise<string>;
-   abstract delete(file: string, folder: string): Promise<void>;
+   abstract save(props: saveInput): Promise<void | string>;
+   abstract delete<I, O>(props: I): Promise<O>;
 }

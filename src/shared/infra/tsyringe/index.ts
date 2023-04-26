@@ -17,7 +17,7 @@ container.registerSingleton<IGoalsRepository>(
    GoalsRepository
 );
 
-container.registerSingleton<ITransactionsRepository<Transaction>>(
+container.registerSingleton<ITransactionsRepository>(
    'TransactionsRepository',
    TransactionsRepository
 );

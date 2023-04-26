@@ -4,12 +4,12 @@ import { UploadUserAvatarUseCase } from './UploadUserAvatarUseCase';
 
 export class UploadUserAvatarController {
    async handle(req: Request, res: Response) {
-      const avatar_ref = req.file?.filename;
+      const image = req.file;
       const { id: user_id } = req.client;
 
       const useCase = container.resolve(UploadUserAvatarUseCase);
       const avatarRef = await useCase.execute({
-         avatar_ref: avatar_ref!,
+         image,
          user_id,
       });
 

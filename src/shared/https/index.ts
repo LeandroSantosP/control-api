@@ -3,6 +3,7 @@ import 'express-async-errors';
 import { NextFunction, Request, Response } from 'express';
 import { AppError, InvalidYupError } from '../infra/middleware/AppError';
 import { app } from './server';
+import '@/jobs/firebase/firebase-init';
 
 const server_post = process.env.SERVER_PORT;
 

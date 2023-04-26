@@ -14,7 +14,7 @@ export interface ITransactionsRepositoryProps {
    description: string;
    email: string;
    dueDate?: string;
-   Category?: any; // RESOLVA
+   Category?: Category;
    resolved?: boolean;
    filingDate?: string;
 }
@@ -44,12 +44,7 @@ export interface ListBYRevenueOrResolvedTransactionsProps {
 }
 
 export abstract class ITransactionsRepository extends Model<any, Transaction> {
-   abstract create({
-      description,
-      value,
-      email,
-      Category,
-   }: ITransactionsRepositoryProps): Promise<
+   abstract create(props: ITransactionsRepositoryProps): Promise<
       Transaction & {
          category: {
             name: Category;

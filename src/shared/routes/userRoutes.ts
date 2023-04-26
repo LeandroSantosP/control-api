@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import multer from 'multer';
-
 import { ListUserController } from '@/modules/users/useCases/ListUser/ListUserController';
 import { CreateUserController } from '@/modules/users/useCases/CreateUser/CreateUserController';
 import { UserAuthentication } from '../infra/middleware/UserAuthentication';

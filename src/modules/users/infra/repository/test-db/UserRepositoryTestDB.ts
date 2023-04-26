@@ -10,6 +10,16 @@ export class UserRepositoryTestDB implements IUserRepository {
       this.prisma = prisma;
    }
 
+   async updateImage(imageRef: string, user_id: string): Promise<User> {
+      const updatedUserInfos = this.prisma.user.update({
+         where: {
+            id: user_id,
+         },
+         data: {},
+      });
+      throw new Error('Method not implemented.');
+   }
+
    async DeleteAllUserX() {
       await this.prisma.user.deleteMany();
    }
@@ -70,24 +80,13 @@ export class UserRepositoryTestDB implements IUserRepository {
       return dataUpdated;
    }
 
-   async UploadAvatar({
+   UploadAvatar({
       user_id,
       avatar_ref,
    }: {
       user_id: string;
       avatar_ref: string;
    }): Promise<{ avatar: string | null }> {
-      const avatar = await this.prisma.user.update({
-         where: {
-            id: user_id,
-         },
-         data: {
-            avatar: avatar_ref,
-         },
-         select: {
-            avatar: true,
-         },
-      });
-      return avatar;
+      throw new Error('Method not implemented.');
    }
 }

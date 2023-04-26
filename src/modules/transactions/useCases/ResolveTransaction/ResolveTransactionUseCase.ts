@@ -1,6 +1,5 @@
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
-import { Transaction } from '@prisma/client';
 import { inject, injectable } from 'tsyringe';
 import { ITransactionsRepository } from '../../infra/repository/ITransactionsRepository';
 

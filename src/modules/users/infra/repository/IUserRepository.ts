@@ -24,6 +24,7 @@ abstract class IUserRepository {
    abstract GetUserById(user_id: string): Promise<User | null>;
    abstract remove({ email, id }: RemoveProps): Promise<void>;
    abstract update(data: UpdatedProps, user_id: string): Promise<User>;
+   abstract updateImage(imageRef: string, user_id: string): Promise<User>;
 
    abstract UploadAvatar({
       user_id,

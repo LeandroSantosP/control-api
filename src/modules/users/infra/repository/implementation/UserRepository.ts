@@ -9,6 +9,9 @@ export class UserRepository implements IUserRepository {
    constructor() {
       this.prisma = prisma;
    }
+   updateImage(imageRef: string, user_id: string): Promise<User> {
+      throw new Error('Method not implemented.');
+   }
 
    async create({ email, name, password }: IUserDTO): Promise<User> {
       const user = await this.prisma.user.create({
@@ -69,17 +72,6 @@ export class UserRepository implements IUserRepository {
       user_id: string;
       avatar_ref: string;
    }): Promise<{ avatar: string | null }> {
-      const avatar = await this.prisma.user.update({
-         where: {
-            id: user_id,
-         },
-         data: {
-            avatar: avatar_ref,
-         },
-         select: {
-            avatar: true,
-         },
-      });
-      return avatar;
+      throw new Error('');
    }
 }
