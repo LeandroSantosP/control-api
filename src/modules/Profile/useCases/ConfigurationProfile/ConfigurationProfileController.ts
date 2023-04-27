@@ -13,7 +13,7 @@ export class ConfigurationProfileController {
 
       const avatarRef = await useCase.execute({
          user_id,
-         update: false,
+         update: dataPassed.update,
          profileInfos: {
             avatar,
             Birthday: dataPassed.Birthday,

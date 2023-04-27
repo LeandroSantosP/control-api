@@ -1,5 +1,5 @@
 import { prisma } from '@/database/prisma';
-import { User } from '@prisma/client';
+import { Profile, User } from '@prisma/client';
 import { IUserDTO } from '../../dtos/IUserDTO';
 import { IUserRepository, RemoveProps, UpdatedProps } from '../IUserRepository';
 
@@ -52,10 +52,19 @@ export class UserRepositoryTestDB implements IUserRepository {
       return user;
    }
 
-   async GetUserById(user_id: string): Promise<User | null> {
+   async GetUserById(user_id: string): Promise<
+      | (User & {
+           profile: Profile | null;
+        })
+      | null
+      | null
+   > {
       const user = await this.prisma.user.findUnique({
          where: {
             id: user_id,
+         },
+         include: {
+            profile: true,
          },
       });
 

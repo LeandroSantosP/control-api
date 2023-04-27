@@ -2,7 +2,7 @@ import { prisma } from '../../../../../database/prisma';
 import { IUserDTO } from '@/modules/users/infra/dtos/IUserDTO';
 import { UserEntity } from '@/modules/users/infra/Entity/UserEntity';
 import { IUserRepository, RemoveProps, UpdatedProps } from '../IUserRepository';
-import { User } from '@prisma/client';
+import { Profile, User } from '@prisma/client';
 
 export class UserRepository implements IUserRepository {
    private prisma;
@@ -36,10 +36,19 @@ export class UserRepository implements IUserRepository {
 
       return user;
    }
-   async GetUserById(user_id: string): Promise<User | null> {
+   async GetUserById(user_id: string): Promise<
+      | (User & {
+           profile: Profile | null;
+        })
+      | null
+      | null
+   > {
       const user = await this.prisma.user.findUnique({
          where: {
             id: user_id,
+         },
+         include: {
+            profile: true,
          },
       });
 

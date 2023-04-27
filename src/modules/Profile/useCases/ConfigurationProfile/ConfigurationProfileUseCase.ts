@@ -1,3 +1,5 @@
+import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
+import { AppError } from '@/shared/infra/middleware/AppError';
 import { IUploadProvider } from '@/shared/providers/UploadProvider/IUploadProvider';
 import { inject, injectable } from 'tsyringe';
 import { Profile } from '../../infra/entity/Profile';
@@ -14,7 +16,7 @@ type profileInfos = {
 type IRequest = {
    user_id: string;
    update: boolean;
-   profileInfos?: profileInfos;
+   profileInfos: profileInfos;
 };
 
 @injectable()
@@ -23,17 +25,44 @@ export class ConfigurationProfile {
       @inject('ProfileRepository')
       private readonly ProfileRepository: IProfileModel,
       @inject('FirebaseStorageProvider')
-      private FirebaseStorageProvider: IUploadProvider
+      private FirebaseStorageProvider: IUploadProvider,
+      @inject('UserRepository')
+      private UserRepository: IUserRepository
    ) {}
 
-   async execute({ update, profileInfos, user_id }: IRequest) {
-      if (update === false && profileInfos !== undefined) {
-         const ProfileEntity = Profile.create({ ...profileInfos });
+   static async UseFireBaseStorage({
+      profileInfos,
+      FirebaseStorageProvider,
 
-         const imageRef = await this.FirebaseStorageProvider.save({
-            image: ProfileEntity.avatar.getValue,
-            user_id,
-         });
+      user_id,
+   }: {
+      FirebaseStorageProvider: IUploadProvider;
+      profileInfos: profileInfos;
+      user_id: string;
+   }): Promise<{ imageRef: string | void; ProfileEntity: Profile }> {
+      const ProfileEntity = Profile.create({ ...profileInfos });
+
+      const imageRef = await FirebaseStorageProvider.save({
+         image: await ProfileEntity.avatar.getValue(),
+         user_id,
+      });
+
+      return { imageRef, ProfileEntity };
+   }
+
+   async execute({ update, profileInfos, user_id }: IRequest) {
+      const user = await this.UserRepository.GetUserById(user_id);
+
+      if (update === false) {
+         if (user?.profile !== null) {
+            throw new AppError('User already has a profile');
+         }
+         const { ProfileEntity, imageRef } =
+            await ConfigurationProfile.UseFireBaseStorage({
+               FirebaseStorageProvider: this.FirebaseStorageProvider,
+               profileInfos,
+               user_id,
+            });
 
          const profile = await this.ProfileRepository.create({
             userId: user_id,
@@ -47,6 +76,26 @@ export class ConfigurationProfile {
          return profile;
       }
 
-      return;
+      if (user?.profile === null) {
+         throw new AppError('User does not have a profile registered!');
+      }
+
+      const { ProfileEntity, imageRef } =
+         await ConfigurationProfile.UseFireBaseStorage({
+            FirebaseStorageProvider: this.FirebaseStorageProvider,
+            user_id,
+            profileInfos,
+         });
+
+      const profile = await this.ProfileRepository.create({
+         userId: user_id,
+         avatar: imageRef as string,
+         Birthday: ProfileEntity.Birthday.getValue,
+         phonenumber: ProfileEntity.phonenumber.getValue,
+         profession: ProfileEntity.profession,
+         salary: ProfileEntity.salary.getValue,
+      });
+
+      return profile;
    }
 }

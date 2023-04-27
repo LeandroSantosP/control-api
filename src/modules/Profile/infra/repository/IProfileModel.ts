@@ -1,4 +1,4 @@
-import { Profile } from '../entity/Profile';
+import { Profile } from '@prisma/client';
 
 export type CreateInput = {
    userId: string;
@@ -9,11 +9,22 @@ export type CreateInput = {
    Birthday: string;
 };
 
+export type UpdateInput = {
+   userId?: string;
+   avatar: string;
+   profession?: string | undefined;
+   salary?: string;
+   phonenumber?: string;
+   Birthday?: string;
+};
+
 export abstract class IProfileModel {
    abstract create<I extends CreateInput, O extends Profile>(
       props: I
    ): Promise<O>;
-   abstract updated<I, O>(props: I): Promise<O>;
+   abstract updated<I extends UpdateInput, O extends Profile>(
+      props: I
+   ): Promise<O>;
 
    abstract delete<I, O>(props: I): Promise<O>;
 }

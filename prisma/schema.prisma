@@ -46,7 +46,7 @@ model Profile {
    profession  String?
    salary      Decimal @default(0)
    phonenumber String?
-   dateOfBirth String
+   dateOfBirth String?
 
    User User[]
 }

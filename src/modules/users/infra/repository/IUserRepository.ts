@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { Profile, User } from '@prisma/client';
 import { IUserDTO } from '../dtos/IUserDTO';
 import { UserEntity } from '../Entity/UserEntity';
 
@@ -21,7 +21,13 @@ abstract class IUserRepository {
    }: IUserDTO): Promise<User | UserEntity>;
    abstract list(): Promise<User[] | UserEntity[]>;
    abstract GetUserByEmail(email: string): Promise<User | null>;
-   abstract GetUserById(user_id: string): Promise<User | null>;
+   abstract GetUserById(user_id: string): Promise<
+      | (User & {
+           profile: Profile | null;
+        })
+      | null
+      | null
+   >;
    abstract remove({ email, id }: RemoveProps): Promise<void>;
    abstract update(data: UpdatedProps, user_id: string): Promise<User>;
 }

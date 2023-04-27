@@ -9,6 +9,9 @@ export default async function CreateUserTest({
 } = {}) {
    const useExits = await prisma.user.findUnique({
       where: { email },
+      include: {
+         profile: true,
+      },
    });
 
    if (!useExits) {
@@ -23,6 +26,9 @@ export default async function CreateUserTest({
       const newUser = await prisma.user.create({
          data: {
             ...user,
+         },
+         include: {
+            profile: true,
          },
       });
 
