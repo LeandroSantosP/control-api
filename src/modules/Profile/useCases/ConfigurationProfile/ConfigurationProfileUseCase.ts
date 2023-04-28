@@ -1,9 +1,9 @@
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
-import { AppError } from '@/shared/infra/middleware/AppError';
 import { IUploadProvider } from '@/shared/providers/UploadProvider/IUploadProvider';
-import { inject, injectable } from 'tsyringe';
-import { Profile } from '../../infra/entity/Profile';
 import { IProfileModel } from '../../infra/repository/IProfileModel';
+import { AppError } from '@/shared/infra/middleware/AppError';
+import { Profile } from '../../infra/entity/Profile';
+import { inject, injectable } from 'tsyringe';
 
 type profileInfos = {
    avatar: Express.Multer.File | undefined;
@@ -15,6 +15,7 @@ type profileInfos = {
 
 type IRequest = {
    user_id: string;
+   profile_id?: string;
    update: boolean;
    profileInfos: profileInfos;
 };
@@ -29,7 +30,7 @@ export class ConfigurationProfile {
       @inject('UserRepository')
       private UserRepository: IUserRepository
    ) {}
-
+   ///	"phonenumber":"(11) 99999-9999",
    static async UseFireBaseStorage({
       profileInfos,
       FirebaseStorageProvider,
@@ -50,10 +51,15 @@ export class ConfigurationProfile {
       return { imageRef, ProfileEntity };
    }
 
-   async execute({ update, profileInfos, user_id }: IRequest) {
+   async execute({ update, profileInfos, user_id, profile_id }: IRequest) {
       const user = await this.UserRepository.GetUserById(user_id);
 
-      if (update === false) {
+      if (update === undefined) {
+         throw new AppError('update is required.');
+      }
+
+      /* Create new Profile */
+      if (update === false && profile_id === undefined) {
          if (user?.profile !== null) {
             throw new AppError('User already has a profile');
          }
@@ -76,9 +82,22 @@ export class ConfigurationProfile {
          return profile;
       }
 
+      /* Updated User Profile */
+
       if (user?.profile === null) {
          throw new AppError('User does not have a profile registered!');
+      } else if (profile_id === undefined) {
+         throw new AppError('profile_id is required.');
       }
+
+      Object.entries(user?.profile!).forEach(([key, value]) => {
+         if (key !== 'id') {
+            return;
+         }
+         if (value !== profile_id) {
+            throw new AppError('Not Authorized.', 401);
+         }
+      });
 
       const { ProfileEntity, imageRef } =
          await ConfigurationProfile.UseFireBaseStorage({
@@ -87,8 +106,8 @@ export class ConfigurationProfile {
             profileInfos,
          });
 
-      const profile = await this.ProfileRepository.create({
-         userId: user_id,
+      const { avatar: _, ...profile } = await this.ProfileRepository.updated({
+         profile_id: profile_id,
          avatar: imageRef as string,
          Birthday: ProfileEntity.Birthday.getValue,
          phonenumber: ProfileEntity.phonenumber.getValue,

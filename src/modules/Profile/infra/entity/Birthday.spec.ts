@@ -12,10 +12,11 @@ it('should return true if age is greater than 16', () => {
    eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
 
    expect(() => new Birthday('21/07/2000')).toBeTruthy();
+   expect(new Birthday('21/07/2000').getValue).toBe('21/07/2000');
 });
 
 it('should be able to create a birthday valid', async () => {
    expect(() => new Birthday('21/06/2007')).toThrow(
-      new AppError('Birthday must be over 18 years old')
+      new AppError('Birthday must be over 16 years old')
    );
 });

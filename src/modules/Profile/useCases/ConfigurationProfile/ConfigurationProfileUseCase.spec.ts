@@ -9,6 +9,7 @@ import { ConfigurationProfile } from './ConfigurationProfileUseCase';
 import { ProfileRepositoryTestDB } from '../../infra/repository/test-db/ProfileRepositoryTestDB';
 import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
 import { FirebaseStorageProvider } from '@/shared/providers/UploadProvider/implementation/FirebaseStorageProvider';
+import { randomUUID } from 'crypto';
 
 type ExpressMulterExpectedFile = Express.Multer.File | undefined;
 
@@ -31,11 +32,13 @@ async function CreateProfileExecuteParams({
    id,
    salary = '100',
    update,
+   profile_id,
 }: {
    update: boolean;
    id: string;
    file: any;
    salary?: string;
+   profile_id?: string;
 }) {
    return {
       update,
@@ -47,6 +50,7 @@ async function CreateProfileExecuteParams({
          salary,
       },
       user_id: id,
+      profile_id: profile_id,
    };
 }
 
@@ -118,6 +122,7 @@ describe('CreateProfile', () => {
          id: newUser.id,
          update: true,
          file,
+         profile_id: 'test',
       });
 
       await expect(
@@ -133,6 +138,7 @@ describe('CreateProfile', () => {
          id: newUser.id,
          update: true,
          file: undefined,
+         profile_id: 'test',
       });
 
       await prisma.profile.create({
@@ -150,13 +156,53 @@ describe('CreateProfile', () => {
          },
       });
 
-      await expect(
-         prisma.user.findFirst({
-            where: { id: newUser.id },
-            include: { profile: true },
-         })
-      ).resolves.toHaveProperty('profile.salary');
+      const user = await prisma.user.findFirst({
+         where: { id: newUser.id },
+         include: { profile: true },
+      });
 
-      const res2 = await configurationsProfile.execute({ ...params });
+      expect(user).toHaveProperty('profile.salary');
+      const profile = await prisma.profile.findFirst({
+         where: { id: user?.profile?.id },
+      });
+
+      const res2 = await configurationsProfile.execute({
+         ...params,
+         profileInfos: {
+            ...params.profileInfos,
+            salary: '9000',
+            profession: 'developer',
+         },
+         profile_id: profile!.id,
+      });
+
+      expect(Number(res2.salary)).toBe(9000);
+      expect(res2.profession).toBe('developer');
+   });
+
+   it('should return an error if profile id is not equal to the user id in question.', async () => {
+      const newUserONE = await CreateUserTest({ email: 'leandro@example.com' });
+
+      const params = await CreateProfileExecuteParams({
+         id: newUserONE.id,
+         update: false,
+         file: undefined,
+      });
+      await configurationsProfile.execute({ ...params });
+
+      const sut = await prisma.user.findFirst({
+         where: { id: newUserONE.id },
+         include: {
+            profile: true,
+         },
+      });
+
+      await expect(
+         configurationsProfile.execute({
+            ...params,
+            update: true,
+            profile_id: randomUUID(),
+         })
+      ).rejects.toThrow(new AppError('Not Authorized.', 401));
    });
 });

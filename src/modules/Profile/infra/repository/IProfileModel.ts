@@ -10,7 +10,7 @@ export type CreateInput = {
 };
 
 export type UpdateInput = {
-   userId?: string;
+   profile_id: string;
    avatar: string;
    profession?: string | undefined;
    salary?: string;

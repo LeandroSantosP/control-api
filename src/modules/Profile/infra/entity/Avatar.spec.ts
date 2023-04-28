@@ -22,14 +22,15 @@ test('Must not be a possible to create an avatar with a valid type.', () => {
    );
 });
 
-test('Must be a possible to create an avatar with a valid type.', () => {
+test('Must be a possible to create an avatar with a valid type.', async () => {
    const sut = new Avatar(file);
-   expect(sut.getValue).toHaveProperty('fieldname', 'avatar');
-   expect(sut.getValue).toHaveProperty('originalname', 'example.png');
-   expect(sut.getValue).toHaveProperty('encoding', '7bit');
-   expect(sut.getValue).toHaveProperty('mimetype', 'image/jpeg');
-   expect(sut.getValue).toHaveProperty('buffer');
-   expect(sut.getValue).toHaveProperty('size', 1000);
+
+   expect(await sut.getValue()).toHaveProperty('fieldname', 'avatar');
+   expect(await sut.getValue()).toHaveProperty('originalname', 'example.png');
+   expect(await sut.getValue()).toHaveProperty('encoding', '7bit');
+   expect(await sut.getValue()).toHaveProperty('mimetype', 'image/jpeg');
+   expect(await sut.getValue()).toHaveProperty('buffer');
+   expect(await sut.getValue()).toHaveProperty('size', 1000);
 });
 
 test('Must not be a possible to create an avatar if size is greater than 1000.', () => {

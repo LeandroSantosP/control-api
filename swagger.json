@@ -183,6 +183,85 @@
                "400": {}
             }
          }
+      },
+      "/user/": {},
+      "/user/profile": {
+         "post": {
+            "tags": ["Profile"],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "description": "Configuration your profile for first time.",
+            "requestBody": {
+               "description": "Create a Profile passing the following data...",
+               "content": {
+                  "multipart/form-data": {
+                     "schema": {
+                        "$ref": "#/components/schemas/RequestProfile"
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "201": {
+                  "description": "Created realized with success."
+               },
+               "400": {
+                  "description": "The User already has a registered profile.",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/ResponseCreateProfile400"
+                        }
+                     }
+                  }
+               },
+
+               "401": {
+                  "description": "Token is missing."
+               }
+            }
+         },
+         "patch": {
+            "tags": ["Profile"],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "description": "Updated your profile settings.",
+            "requestBody": {
+               "description": "Updated a Profile passing the following data...",
+               "content": {
+                  "multipart/form-data": {
+                     "schema": {
+                        "$ref": "#/components/schemas/RequestProfile"
+                     }
+                  }
+               }
+            },
+            "responses": {
+               "201": {
+                  "description": "Created realized with success."
+               },
+               "400": {
+                  "description": "The User already has a registered profile.",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/ResponseUpdatedProfile400"
+                        }
+                     }
+                  }
+               },
+
+               "401": {
+                  "description": "Token is missing."
+               }
+            }
+         }
       }
    },
    "components": {
@@ -435,6 +514,67 @@
                   "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxlYW5kcm9AZ21haWwuY29tIiwiaWF0IjoxNjgyMzc3MDI1LCJleHAiOjE2ODIzODA2MjUsInN1YiI6ImE4YmQ2NDQyLWFjNjktNDFjNy04ZjZmLTgxM2UyM2M0MGUzZiJ9.kFa_H7L93v7HNSL6HvBtQOpGF4RgK48CiHA-9A2w0L8"
                }
             }
+         },
+         "RequestProfile": {
+            "type": "object",
+            "description": "Profile Creation.",
+            "properties": {
+               "props": {
+                  "type": "object",
+                  "description": "Enter the data to create/updated the profile.",
+                  "properties": {
+                     "Birthday": {
+                        "type": "string",
+                        "description": "User's birthday (Must be over 16 years old).",
+                        "example": "20/06/2000"
+                     },
+                     "phonenumber": {
+                        "type": "string",
+                        "description": "User's phone number. (Must follow the following format) (optional).",
+                        "example": "(11) 99999-9999"
+                     },
+                     "profession": {
+                        "type": "string",
+                        "description": "Enter the Profession in which you work (optional).",
+                        "example": "Software Engineer - Back-end."
+                     },
+                     "salary": {
+                        "type": "string",
+                        "description": "Enter the user's salary/income in hexadecimal (optional).",
+                        "example": "1245.22"
+                     },
+                     "profile_id": {
+                        "type": "string",
+                        "description": "Enter the user's profile id. (only on patch request).",
+                        "format": "uuid",
+                        "required": false
+                     }
+                  }
+               },
+               "avatar": {
+                  "type": "string",
+                  "description": "Choose a profile picture (optional).",
+                  "format": "binary"
+               }
+            }
+         },
+         "ResponseCreateProfile400": {
+            "type": "object",
+            "properties": {
+               "status": {
+                  "type": "string",
+                  "example": "Error"
+               },
+               "message": {
+                  "type": "string",
+                  "description": "The User already has a registered profile.",
+                  "example": "User already has a profile"
+               }
+            }
+         },
+         "ResponseUpdatedProfile400": {
+            "type": "string",
+            "example": "err"
          }
       },
       "securitySchemes": {

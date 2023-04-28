@@ -3,7 +3,11 @@ import { AppError } from '@/shared/infra/middleware/AppError';
 export class PhoneNumber {
    private _value: string;
 
-   constructor(value: string) {
+   constructor(value: string | undefined) {
+      if (value === undefined) {
+         this._value = '';
+         return;
+      }
       const dddRegex = /^\((\d{2})\)/;
       const dddMatch = value.match(dddRegex);
 

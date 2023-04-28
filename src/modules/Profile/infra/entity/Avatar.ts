@@ -43,9 +43,9 @@ export class Avatar {
 
       const file = {
          fieldname: 'avatar',
-         originalname: 'example.png',
+         originalname: 'example.jpg',
          encoding: '7bit',
-         mimetype: 'image/png',
+         mimetype: 'image/jpg',
          buffer: imageBuffer,
          size: imageBuffer.length,
       } as Express.Multer.File;
@@ -54,7 +54,9 @@ export class Avatar {
 
    async getValue() {
       if (this._value == undefined) {
-         return (this._value = await this.format());
+         this._value = await this.format();
+
+         return this._value;
       }
       return this._value;
    }

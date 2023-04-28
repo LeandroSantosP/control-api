@@ -5,13 +5,12 @@ import { CreateUserController } from '@/modules/users/useCases/CreateUser/Create
 import { UserAuthentication } from '../infra/middleware/UserAuthentication';
 import { DeleteUserController } from '@/modules/users/useCases/DeleteUser/DeleteUserController';
 import { UpdatedUserController } from '@/modules/users/useCases/UpdatedUser/UpdatedUserController';
-// import { UploadUserAvatarController } from '@/modules/Profile/useCases/UploadUserAvatar/UploadUserAvatarContoller';
-import UploadConfig from '@/config/UploadConfig';
 import { ConfigurationProfileController } from '@/modules/Profile/useCases/ConfigurationProfile/ConfigurationProfileController';
+import { setUpdateField } from '../infra/middleware/UpdatedField';
 
 const userRouter = Router();
 
-const uploadFile = multer(UploadConfig);
+const uploadFile = multer({ storage: multer.memoryStorage() });
 
 const createUserController = new CreateUserController();
 const listUserController = new ListUserController();
@@ -31,6 +30,32 @@ userRouter.patch(
    UserAuthentication,
    uploadFile.single('avatar'),
    configurationProfileController.handle
+);
+
+userRouter.post(
+   '/profile',
+   UserAuthentication,
+   uploadFile.single('avatar'),
+   setUpdateField(false),
+   async (req, res) => {
+      const { body, statusCode, type } =
+         await configurationProfileController.handle(req, res);
+
+      return res.status(statusCode)[type](body);
+   }
+);
+
+userRouter.patch(
+   '/profile',
+   UserAuthentication,
+   uploadFile.single('avatar'),
+   setUpdateField(true),
+   async (req, res) => {
+      const { body, statusCode, type } =
+         await configurationProfileController.handle(req, res);
+
+      return res.status(statusCode)[type](body);
+   }
 );
 
 export { userRouter };

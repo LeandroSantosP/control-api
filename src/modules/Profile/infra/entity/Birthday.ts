@@ -13,8 +13,10 @@ export class Birthday {
       }
 
       if (!this.moreThan16(value)) {
-         throw new AppError('Birthday must be over 18 years old');
+         throw new AppError('Birthday must be over 16 years old');
       }
+
+      this._value = value;
    }
 
    moreThan16(birthday: string): boolean {

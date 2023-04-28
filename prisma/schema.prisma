@@ -61,7 +61,7 @@ model User {
    updated_at DateTime  @updatedAt
    deleted_at DateTime?
 
-   profile   Profile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+   profile   Profile? @relation(fields: [profileId], references: [id], onDelete: SetNull)
    profileId String?
 
    transactions Transaction[]

@@ -37,12 +37,12 @@ export class ProfileRepositoryTestDB implements IProfileModel {
       return convertedProfile;
    }
    async updated<I extends UpdateInput, O extends Profile>({
-      userId,
+      profile_id,
       ...props
    }: I): Promise<O> {
       const profile = await this.prisma.profile.update({
          where: {
-            id: userId,
+            id: profile_id,
          },
          data: {
             dateOfBirth: props.Birthday,
@@ -63,6 +63,3 @@ export class ProfileRepositoryTestDB implements IProfileModel {
       throw new Error('Method not implemented.');
    }
 }
-let test: IProfileModel;
-
-test = new ProfileRepositoryTestDB();
