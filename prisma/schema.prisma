@@ -66,8 +66,23 @@ model User {
 
    transactions Transaction[]
    MonthlyGoals MonthlyGoals[]
+   UserTokens   UserTokens[]
 
    @@map("users")
+}
+
+model UserTokens {
+   id String @id @default(uuid())
+
+   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+   userId String
+
+   token       String
+   expire_date DateTime
+
+   created_at DateTime @default(now())
+
+   @@map("user_token")
 }
 
 model MonthlyGoals {

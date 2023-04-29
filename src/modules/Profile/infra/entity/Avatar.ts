@@ -4,6 +4,7 @@ import fs from 'fs';
 
 export class Avatar {
    private _value: Express.Multer.File | undefined;
+   private static imagesURL: string;
 
    constructor(value: Express.Multer.File | undefined) {
       if (value === undefined) {
@@ -15,7 +16,6 @@ export class Avatar {
       if (value.size > 217900) {
          throw new AppError('Image size is too large');
       }
-      console.log(value.originalname);
 
       const [_, imageFormat] = value?.originalname?.split('.');
 
@@ -30,6 +30,19 @@ export class Avatar {
       }
 
       this._value = value;
+   }
+
+   static set setImageURL(imageURK: string) {
+      if (!imageURK.startsWith('https://storage.googleapis.com')) {
+         throw new AppError('Image URL domain is invalid');
+      }
+
+      Avatar.imagesURL = imageURK;
+      return;
+   }
+
+   static get getImageURL() {
+      return Avatar.imagesURL;
    }
 
    private async format() {

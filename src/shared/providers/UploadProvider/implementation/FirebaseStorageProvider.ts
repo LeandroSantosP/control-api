@@ -6,43 +6,39 @@ import sharp from 'sharp';
 import { getUrlProps, IUploadProvider, saveInput } from '../IUploadProvider';
 
 type mangerBufferProps = {
-   bufferStream: stream.PassThrough;
+   image: Express.Multer.File | undefined;
    fileName: string;
    file: any;
+   bufferToJpg: any;
 };
 
 export class FirebaseStorageProvider implements IUploadProvider {
-   private readonly bufferStream;
-
-   constructor() {
-      this.bufferStream = new stream.PassThrough();
-   }
-
-   static mangerBuffer({
-      bufferStream,
+   static async mangerBuffer({
       file,
       fileName,
+      image,
+      bufferToJpg,
    }: mangerBufferProps): Promise<string | Error> {
-      return new Promise((resolves, rejects) => {
-         bufferStream
-            .pipe(
-               file.createWriteStream({
-                  metadata: {
-                     contentType: 'image/jpg',
-                  },
-                  resumable: false,
-                  predefinedAcl: 'publicRead',
-                  validation: 'md5',
-               })
-            )
-            .on('error', (erro: Error) => {
-               rejects(erro);
-            })
+      const fileStream = file.createWriteStream({
+         metadata: {
+            contentType: image?.mimetype,
+         },
+         validation: 'md5',
+      });
+
+      await new Promise<void>((resolve, reject) => {
+         fileStream
             .on('finish', () => {
                console.log(`Imagem ${fileName} enviada com sucesso.`);
-               resolves(fileName);
-            });
+               resolve();
+            })
+            .on('error', (error: any) => {
+               reject(error);
+            })
+            .end(bufferToJpg);
       });
+
+      return fileStream;
    }
 
    convertedToJpg(
@@ -55,7 +51,7 @@ export class FirebaseStorageProvider implements IUploadProvider {
             .jpeg({ quality: 90 })
             .toBuffer()
             .then((res) => {
-               const fileName = `images/user-?${user_id}.jpg`;
+               const fileName = `images/user-?${user_id}`;
                return resolves(callback(res, fileName));
             })
             .catch((err) => reflect(err));
@@ -66,23 +62,26 @@ export class FirebaseStorageProvider implements IUploadProvider {
       return await this.convertedToJpg(
          props.image?.buffer,
          props.user_id,
-         async (buffer, fileName) => {
-            const file = storage().bucket().file(fileName);
-
+         async (buffer) => {
             try {
-               const imageRef = await FirebaseStorageProvider.mangerBuffer({
-                  bufferStream: this.bufferStream.end(buffer),
+               const fileName = `images/user-?${props.user_id}`;
+               const file = storage().bucket().file(fileName);
+
+               await FirebaseStorageProvider.mangerBuffer({
                   file,
                   fileName,
+                  image: props.image,
+                  bufferToJpg: buffer,
                });
 
-               return typeof imageRef === 'string' ? imageRef : undefined;
+               return fileName;
             } catch (error) {
                throw new Error('Erro ao enviar imagem.');
             }
          }
       );
    }
+
    delete<I, O>(props: I): Promise<O> {
       throw new Error('Method not implemented.');
    }

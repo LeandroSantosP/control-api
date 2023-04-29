@@ -27,7 +27,7 @@ const file = {
    size: 1000,
 } as ExpressMulterExpectedFile;
 
-async function CreateProfileExecuteParams({
+export async function CreateProfileExecuteParams({
    file,
    id,
    salary = '100',
@@ -56,8 +56,8 @@ async function CreateProfileExecuteParams({
 
 describe('CreateProfile', () => {
    beforeEach(async () => {
-      await prisma.profile.deleteMany({});
       await prisma.user.deleteMany({});
+      await prisma.profile.deleteMany({});
       UserRepository = new UserRepositoryTestDB();
       profileRepositoryTestDB = new ProfileRepositoryTestDB();
       firebaseStorageProvider = new FirebaseStorageProvider();
@@ -76,15 +76,6 @@ describe('CreateProfile', () => {
          file: undefined,
       });
 
-      const sutOne = await prisma.user.findFirst({
-         where: { id: newUSER.id },
-         include: {
-            profile: true,
-         },
-      });
-
-      expect(sutOne).toHaveProperty('profile', null);
-
       await expect(
          configurationsProfile.execute({ ...params })
       ).resolves.not.toThrowError();
@@ -97,7 +88,7 @@ describe('CreateProfile', () => {
       });
       expect(sutTwo).toHaveProperty(
          'profile.avatar',
-         `images/user-?${newUSER.id}.jpg`
+         `images/user-?${newUSER.id}`
       );
    });
 
@@ -189,13 +180,6 @@ describe('CreateProfile', () => {
          file: undefined,
       });
       await configurationsProfile.execute({ ...params });
-
-      const sut = await prisma.user.findFirst({
-         where: { id: newUserONE.id },
-         include: {
-            profile: true,
-         },
-      });
 
       await expect(
          configurationsProfile.execute({

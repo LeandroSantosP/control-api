@@ -3,6 +3,7 @@ declare namespace Express {
       client: {
          id: string;
          email: string;
+         profileId: string | null;
       };
    }
 }

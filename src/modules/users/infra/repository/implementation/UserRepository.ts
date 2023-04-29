@@ -1,7 +1,7 @@
 import { prisma } from '../../../../../database/prisma';
 import { IUserDTO } from '@/modules/users/infra/dtos/IUserDTO';
 import { UserEntity } from '@/modules/users/infra/Entity/UserEntity';
-import { IUserRepository, RemoveProps, UpdatedProps } from '../IUserRepository';
+import { IUserRepository, RemoveInput, UpdatedInput } from '../IUserRepository';
 import { Profile, User } from '@prisma/client';
 
 export class UserRepository implements IUserRepository {
@@ -54,14 +54,14 @@ export class UserRepository implements IUserRepository {
 
       return user;
    }
-   async remove({ email, id }: RemoveProps): Promise<void> {
+   async remove({ email, id }: RemoveInput): Promise<void> {
       await this.prisma.user.delete({
          where: {
             id,
          },
       });
    }
-   async update(data: UpdatedProps, user_id: string): Promise<User> {
+   async update(data: UpdatedInput, user_id: string): Promise<User> {
       const dataUpdated = await this.prisma.user.update({
          where: {
             id: user_id,

@@ -186,6 +186,40 @@
       },
       "/user/": {},
       "/user/profile": {
+         "get": {
+            "tags": ["Profile"],
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "description": "Configuration your profile for first time.",
+            "responses": {
+               "200": {
+                  "description": "Created realized with success.",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/ResponseGetProfile200"
+                        }
+                     }
+                  }
+               },
+               "404": {
+                  "description": "The User already has a registered profile.",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "$ref": "#/components/schemas/ResponseGetProfile400"
+                        }
+                     }
+                  }
+               },
+               "401": {
+                  "description": "Token is missing."
+               }
+            }
+         },
          "post": {
             "tags": ["Profile"],
             "security": [
@@ -266,6 +300,72 @@
    },
    "components": {
       "schemas": {
+         "ResponseGetProfile400": {
+            "type": "object",
+            "properties": {
+               "status": {
+                  "type": "string",
+                  "example": "Error"
+               },
+               "message": {
+                  "type": "string",
+                  "description": "When user don't have an profile register.",
+                  "example": "Profile not found"
+               }
+            }
+         },
+         "ResponseGetProfile200": {
+            "type": "object",
+            "properties": {
+               "id": {
+                  "type": "string",
+                  "format": "uuid"
+               },
+               "avatar": {
+                  "type": "string",
+                  "description": "Url obtida do firebase storage para a imagem do avatar.",
+                  "example": "https://storage.googleapis.com/control-cb6dd.appspot.com/images/user-%3F943488fb-ad60-48ff-8eda-13b0963abb92?GoogleAccessId=firebase-adminsdk-cnxr9%40control-cb6dd.iam.gserviceaccount.com&Expires=1742180400&Signature=eIAO4s9FJh3%2F9giFvLKQfW%2FTnnZOPq3y66PAaYaifz74ELUNXMA%2F%2FtteVKI%2FGt7j91FXnBUy9WZg%2Br7CnyDxRyeENy8AVNTWE5mSCFljk0xOUb79XZyMxAXAEPlFjfbcR%2BpxdhRug8goxpI5XBQzchMOK%2FAheQOthaSlSZyFueWg7yxgSMY8mABogdlvZ5I4UFGEyod9csaV6gp5MyVqw5ZaFI2Qayx%2BSp8FKXJcmVeHPaW5HwcZ%2BprxIljkqQRcpvZokQP%2F78LHXtGiFeSPdxtjeuIgNJGJWN8ghmxpmm966Nb4IvTF1D%2Bdrsy5oceicwtLVu79xj%2BEFJbvxCDUFQ%3D%3D"
+               },
+               "profession": {
+                  "type": "string",
+                  "description": "Profission.",
+                  "example": "dev-backend"
+               },
+               "salary": {
+                  "type": "string",
+                  "description": "Salario.",
+                  "example": "1008.99"
+               },
+               "phonenumber": {
+                  "type": "string",
+                  "description": "PhoneNumber.",
+                  "example": "(11) 99999-9999"
+               },
+               "dateOfBirth": {
+                  "type": "string",
+                  "description": "Data de aniversario.",
+                  "example": "20/06/2002"
+               },
+               "user": {
+                  "type": "object",
+                  "description": "Devolve uma obj contendo id,email e nome do usuário.",
+                  "properties": {
+                     "name": {
+                        "type": "string",
+                        "example": "joão"
+                     },
+                     "email": {
+                        "type": "string",
+                        "example": "joão@gmail.com"
+                     },
+                     "id": {
+                        "type": "string",
+                        "format": "uuid"
+                     }
+                  }
+               }
+            }
+         },
          "RequestTransaction": {
             "type": "object",
             "properties": {

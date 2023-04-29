@@ -2,7 +2,7 @@ import { User } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { IUserDTO } from '../../dtos/IUserDTO';
 import { UserEntity } from '../../Entity/UserEntity';
-import { IUserRepository, RemoveProps, UpdatedProps } from '../IUserRepository';
+import { IUserRepository, RemoveInput, UpdatedInput } from '../IUserRepository';
 
 export class UserRepositoryInMemory implements IUserRepository {
    private users: UserEntity[] = [];
@@ -34,7 +34,7 @@ export class UserRepositoryInMemory implements IUserRepository {
       return user ?? null;
    }
 
-   async remove({ email, id }: RemoveProps): Promise<void> {
+   async remove({ email, id }: RemoveInput): Promise<void> {
       const index = this.users.findIndex(
          (user) => user.id === id && user.email === email
       );
@@ -43,7 +43,7 @@ export class UserRepositoryInMemory implements IUserRepository {
       }
       return;
    }
-   async update(data: UpdatedProps, user_id: string): Promise<User> {
+   async update(data: UpdatedInput, user_id: string): Promise<User> {
       throw new Error('Method not implemented.');
    }
 }

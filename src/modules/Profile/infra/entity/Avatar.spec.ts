@@ -43,3 +43,10 @@ test('Must not be a possible to create an avatar if size is greater than 1000.',
       new AppError('Image size is too large')
    );
 });
+
+test('Must not be able to set imageUrl with wrong domain.', () => {
+   const invalidDomain = 'www.google.com/test';
+   expect(() => (Avatar.setImageURL = invalidDomain)).toThrow(
+      new AppError('Image URL domain is invalid')
+   );
+});

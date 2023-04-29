@@ -1,7 +1,12 @@
 import { prisma } from '@/database/prisma';
-import { Profile, User } from '@prisma/client';
+import { Profile, User, UserTokens } from '@prisma/client';
 import { IUserDTO } from '../../dtos/IUserDTO';
-import { IUserRepository, RemoveProps, UpdatedProps } from '../IUserRepository';
+import {
+   IUserRepository,
+   RemoveInput,
+   UpdatedInput,
+   UserCreateTokenInput,
+} from '../IUserRepository';
 
 export class UserRepositoryTestDB implements IUserRepository {
    private prisma;
@@ -9,19 +14,21 @@ export class UserRepositoryTestDB implements IUserRepository {
    constructor() {
       this.prisma = prisma;
    }
-
-   async updateImage(imageRef: string, user_id: string): Promise<User> {
-      const updatedUserInfos = this.prisma.user.update({
+   async userGetTokens(user_id: string): Promise<
+      {
+         token: string;
+         expire_date: Date;
+      }[]
+   > {
+      return await this.prisma.userTokens.findMany({
          where: {
-            id: user_id,
+            userId: user_id,
          },
-         data: {},
+         select: {
+            token: true,
+            expire_date: true,
+         },
       });
-      throw new Error('Method not implemented.');
-   }
-
-   async DeleteAllUserX() {
-      await this.prisma.user.deleteMany();
    }
 
    async create({ email, name, password }: IUserDTO): Promise<User> {
@@ -70,7 +77,7 @@ export class UserRepositoryTestDB implements IUserRepository {
 
       return user;
    }
-   async remove({ email, id }: RemoveProps): Promise<void> {
+   async remove({ email, id }: RemoveInput): Promise<void> {
       await this.prisma.user.delete({
          where: {
             id,
@@ -78,7 +85,7 @@ export class UserRepositoryTestDB implements IUserRepository {
       });
    }
 
-   async update(data: UpdatedProps, user_id: string): Promise<User> {
+   async update(data: UpdatedInput, user_id: string): Promise<User> {
       const dataUpdated = await this.prisma.user.update({
          where: {
             id: user_id,
@@ -89,13 +96,23 @@ export class UserRepositoryTestDB implements IUserRepository {
       return dataUpdated;
    }
 
-   UploadAvatar({
+   async userCreateToken({
+      expire_date,
+      token,
       user_id,
-      avatar_ref,
-   }: {
-      user_id: string;
-      avatar_ref: string;
-   }): Promise<{ avatar: string | null }> {
-      throw new Error('Method not implemented.');
+   }: UserCreateTokenInput): Promise<void> {
+      const res = await this.prisma.userTokens.create({
+         data: {
+            expire_date,
+            user: {
+               connect: {
+                  id: user_id,
+               },
+            },
+            token,
+         },
+      });
+
+      return;
    }
 }

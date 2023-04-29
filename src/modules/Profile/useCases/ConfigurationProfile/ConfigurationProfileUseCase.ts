@@ -20,38 +20,53 @@ type IRequest = {
    profileInfos: profileInfos;
 };
 
+type IResponse = { imageRef: string | void; ProfileEntity: Profile };
+
 @injectable()
 export class ConfigurationProfile {
    constructor(
       @inject('ProfileRepository')
       private readonly ProfileRepository: IProfileModel,
       @inject('FirebaseStorageProvider')
-      private FirebaseStorageProvider: IUploadProvider,
+      private readonly FirebaseStorageProvider: IUploadProvider,
       @inject('UserRepository')
-      private UserRepository: IUserRepository
+      private readonly UserRepository: IUserRepository
    ) {}
-   ///	"phonenumber":"(11) 99999-9999",
+
    static async UseFireBaseStorage({
       profileInfos,
       FirebaseStorageProvider,
-
       user_id,
+      isUpdate = false,
    }: {
       FirebaseStorageProvider: IUploadProvider;
       profileInfos: profileInfos;
       user_id: string;
-   }): Promise<{ imageRef: string | void; ProfileEntity: Profile }> {
+      isUpdate: boolean;
+   }): Promise<IResponse> {
       const ProfileEntity = Profile.create({ ...profileInfos });
 
       const imageRef = await FirebaseStorageProvider.save({
          image: await ProfileEntity.avatar.getValue(),
          user_id,
+         isUpdate,
       });
 
       return { imageRef, ProfileEntity };
    }
 
-   async execute({ update, profileInfos, user_id, profile_id }: IRequest) {
+   async execute({
+      update,
+      profileInfos,
+      user_id,
+      profile_id,
+   }: IRequest): Promise<{
+      id: string;
+      profession: string | null;
+      salary: any;
+      phonenumber: string | null;
+      dateOfBirth: string | null;
+   }> {
       const user = await this.UserRepository.GetUserById(user_id);
 
       if (update === undefined) {
@@ -63,14 +78,16 @@ export class ConfigurationProfile {
          if (user?.profile !== null) {
             throw new AppError('User already has a profile');
          }
+
          const { ProfileEntity, imageRef } =
             await ConfigurationProfile.UseFireBaseStorage({
                FirebaseStorageProvider: this.FirebaseStorageProvider,
                profileInfos,
                user_id,
+               isUpdate: false,
             });
 
-         const profile = await this.ProfileRepository.create({
+         const { avatar: _, ...profile } = await this.ProfileRepository.create({
             userId: user_id,
             profession: ProfileEntity.profession,
             salary: ProfileEntity.salary.getValue,
@@ -104,6 +121,7 @@ export class ConfigurationProfile {
             FirebaseStorageProvider: this.FirebaseStorageProvider,
             user_id,
             profileInfos,
+            isUpdate: true,
          });
 
       const { avatar: _, ...profile } = await this.ProfileRepository.updated({

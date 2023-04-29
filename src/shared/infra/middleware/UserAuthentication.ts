@@ -46,6 +46,7 @@ export async function UserAuthentication(
       req.client = {
          id: client_id,
          email,
+         profileId: user.profileId,
       };
       next();
    } catch (err: any) {

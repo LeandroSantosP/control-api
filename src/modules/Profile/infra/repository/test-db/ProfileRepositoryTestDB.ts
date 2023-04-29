@@ -3,13 +3,19 @@ import { AppError } from '@/shared/infra/middleware/AppError';
 import { Profile } from '@prisma/client';
 import Decimal from 'decimal.js';
 
-import { CreateInput, IProfileModel, UpdateInput } from '../IProfileModel';
+import {
+   CreateInput,
+   getProfile,
+   IProfileModel,
+   UpdateInput,
+} from '../IProfileModel';
 
 export class ProfileRepositoryTestDB implements IProfileModel {
    private prisma;
    constructor() {
       this.prisma = prisma;
    }
+
    async create<I extends CreateInput, O extends Profile>(
       props: I
    ): Promise<O> {
@@ -61,5 +67,43 @@ export class ProfileRepositoryTestDB implements IProfileModel {
 
    delete<I, O>(props: I): Promise<O> {
       throw new Error('Method not implemented.');
+   }
+
+   async getProfile<
+      I extends getProfile,
+      O extends
+         | (Profile & {
+              User: {
+                 id: string;
+                 name: string;
+                 email: string;
+              }[];
+           })
+         | null
+   >(params: I): Promise<O> {
+      const profile = await this.prisma.profile.findFirst({
+         where: {
+            id: params.profile_id,
+            User: {
+               some: {
+                  id: params.user_id,
+               },
+            },
+         },
+         include: {
+            User: {
+               where: {
+                  id: params.user_id,
+               },
+               select: {
+                  name: true,
+                  email: true,
+                  id: true,
+               },
+            },
+         },
+      });
+
+      return profile as O;
    }
 }
