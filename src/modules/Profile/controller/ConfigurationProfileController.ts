@@ -1,7 +1,7 @@
 import { HTTPRequest } from '@/types/HTTPRequest';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import { ConfigurationProfile } from './ConfigurationProfileUseCase';
+import { ConfigurationProfile } from '../useCases/ConfigurationProfileUseCase';
 
 interface UpdatedOutput {
    id: string;

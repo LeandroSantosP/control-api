@@ -6,7 +6,7 @@ import '@/jobs/firebase/firebase-init-test';
 import CreateUserTest from '@/utils/CrateUserTEST';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { ConfigurationProfile } from './ConfigurationProfileUseCase';
-import { ProfileRepositoryTestDB } from '../../infra/repository/test-db/ProfileRepositoryTestDB';
+import { ProfileRepositoryTestDB } from '../infra/repository/test-db/ProfileRepositoryTestDB';
 import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
 import { FirebaseStorageProvider } from '@/shared/providers/UploadProvider/implementation/FirebaseStorageProvider';
 import { randomUUID } from 'crypto';

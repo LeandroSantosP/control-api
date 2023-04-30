@@ -3,8 +3,8 @@ import { AppError } from '@/shared/infra/middleware/AppError';
 import { IUploadProvider } from '@/shared/providers/UploadProvider/IUploadProvider';
 import { Profile } from '@prisma/client';
 import { inject, injectable } from 'tsyringe';
-import { Avatar } from '../../infra/entity/Avatar';
-import { IProfileModel } from '../../infra/repository/IProfileModel';
+import { Avatar } from '../infra/entity/Avatar';
+import { IProfileModel } from '../infra/repository/IProfileModel';
 
 type IRequest = {
    user_id: string;

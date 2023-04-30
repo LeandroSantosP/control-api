@@ -1,7 +1,8 @@
 import { prisma } from '@/database/prisma';
-import { Profile, User, UserTokens } from '@prisma/client';
+import { Profile, User } from '@prisma/client';
 import { IUserDTO } from '../../dtos/IUserDTO';
 import {
+   GetUserByTokenOutput,
    IUserRepository,
    RemoveInput,
    UpdatedInput,
@@ -10,25 +11,8 @@ import {
 
 export class UserRepositoryTestDB implements IUserRepository {
    private prisma;
-
    constructor() {
       this.prisma = prisma;
-   }
-   async userGetTokens(user_id: string): Promise<
-      {
-         token: string;
-         expire_date: Date;
-      }[]
-   > {
-      return await this.prisma.userTokens.findMany({
-         where: {
-            userId: user_id,
-         },
-         select: {
-            token: true,
-            expire_date: true,
-         },
-      });
    }
 
    async create({ email, name, password }: IUserDTO): Promise<User> {
@@ -103,16 +87,53 @@ export class UserRepositoryTestDB implements IUserRepository {
    }: UserCreateTokenInput): Promise<void> {
       const res = await this.prisma.userTokens.create({
          data: {
-            expire_date,
             user: {
                connect: {
                   id: user_id,
                },
             },
+            expire_date,
             token,
          },
       });
 
       return;
+   }
+
+   async GetToken(token: string): Promise<GetUserByTokenOutput> {
+      const res = await this.prisma.userTokens.findMany({
+         where: {
+            token,
+         },
+         select: {
+            userId: true,
+            token: true,
+            expire_date: true,
+            id: true,
+         },
+      });
+
+      return res;
+   }
+
+   async DeleteTokenById(tokenId: string): Promise<string> {
+      await this.prisma.userTokens.delete({
+         where: {
+            id: tokenId,
+         },
+      });
+
+      return Promise.resolve('Token Deleted');
+   }
+
+   async UploadPassword(user_id: string, newPassWord: string): Promise<void> {
+      await this.prisma.user.update({
+         where: {
+            id: user_id,
+         },
+         data: {
+            password: newPassWord,
+         },
+      });
    }
 }

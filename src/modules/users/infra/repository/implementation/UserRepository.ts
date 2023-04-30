@@ -1,7 +1,13 @@
 import { prisma } from '../../../../../database/prisma';
 import { IUserDTO } from '@/modules/users/infra/dtos/IUserDTO';
 import { UserEntity } from '@/modules/users/infra/Entity/UserEntity';
-import { IUserRepository, RemoveInput, UpdatedInput } from '../IUserRepository';
+import {
+   GetUserByTokenOutput,
+   IUserRepository,
+   RemoveInput,
+   UpdatedInput,
+   UserCreateTokenInput,
+} from '../IUserRepository';
 import { Profile, User } from '@prisma/client';
 
 export class UserRepository implements IUserRepository {
@@ -71,13 +77,57 @@ export class UserRepository implements IUserRepository {
 
       return dataUpdated;
    }
-   async UploadAvatar({
+   async userCreateToken({
+      expire_date,
+      token,
       user_id,
-      avatar_ref,
-   }: {
-      user_id: string;
-      avatar_ref: string;
-   }): Promise<{ avatar: string | null }> {
-      throw new Error('');
+   }: UserCreateTokenInput): Promise<void> {
+      await this.prisma.userTokens.create({
+         data: {
+            user: {
+               connect: {
+                  id: user_id,
+               },
+            },
+            expire_date,
+            token,
+         },
+      });
+
+      return;
+   }
+
+   async GetToken(token: string): Promise<GetUserByTokenOutput> {
+      return await this.prisma.userTokens.findMany({
+         where: {
+            token: token,
+         },
+         select: {
+            userId: true,
+            token: true,
+            expire_date: true,
+            id: true,
+         },
+      });
+   }
+   async UploadPassword(user_id: string, newPassWord: string): Promise<void> {
+      await this.prisma.user.update({
+         where: {
+            id: user_id,
+         },
+         data: {
+            password: newPassWord,
+         },
+      });
+   }
+
+   async DeleteTokenById(tokenId: string): Promise<string> {
+      await this.prisma.userTokens.delete({
+         where: {
+            id: tokenId,
+         },
+      });
+
+      return Promise.resolve('Token Deleted');
    }
 }

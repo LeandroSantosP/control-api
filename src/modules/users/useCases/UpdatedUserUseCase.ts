@@ -5,7 +5,7 @@ import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { User } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { inject, injectable } from 'tsyringe';
-import { IUserRepository } from '../../infra/repository/IUserRepository';
+import { IUserRepository } from '../infra/repository/IUserRepository';
 
 interface UpdatedProps {
    name?: string;

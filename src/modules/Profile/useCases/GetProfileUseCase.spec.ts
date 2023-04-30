@@ -1,12 +1,13 @@
 import 'reflect-metadata';
+
 import { prisma } from '@/database/prisma';
 import CreateUserTest from '@/utils/CrateUserTEST';
 import { describe } from 'node:test';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { FirebaseStorageProvider } from '@/shared/providers/UploadProvider/implementation/FirebaseStorageProvider';
-import { ProfileRepositoryTestDB } from '../../infra/repository/test-db/ProfileRepositoryTestDB';
-import { ConfigurationProfile } from '../ConfigurationProfile/ConfigurationProfileUseCase';
-import { CreateProfileExecuteParams } from '../ConfigurationProfile/ConfigurationProfileUseCase.spec';
+import { ProfileRepositoryTestDB } from '../infra/repository/test-db/ProfileRepositoryTestDB';
+import { ConfigurationProfile } from './ConfigurationProfileUseCase';
+import { CreateProfileExecuteParams } from './ConfigurationProfileUseCase.spec';
 import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
 
 import { GetProfileUseCase } from './GetProfileUseCase';

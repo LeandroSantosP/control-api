@@ -1,6 +1,5 @@
 import { getStorage } from 'firebase-admin/storage';
 import { storage } from 'firebase-admin';
-import stream from 'stream';
 import sharp from 'sharp';
 
 import { getUrlProps, IUploadProvider, saveInput } from '../IUploadProvider';
@@ -29,7 +28,7 @@ export class FirebaseStorageProvider implements IUploadProvider {
       await new Promise<void>((resolve, reject) => {
          fileStream
             .on('finish', () => {
-               console.log(`Imagem ${fileName} enviada com sucesso.`);
+               console.log(`Image ${fileName} send with success.`);
                resolve();
             })
             .on('error', (error: any) => {
@@ -46,7 +45,7 @@ export class FirebaseStorageProvider implements IUploadProvider {
       user_id: string,
       callback: (params: Buffer, fileName: string) => unknown
    ): Promise<any> {
-      return new Promise((resolves, reflect) => {
+      return new Promise((resolves, reject) => {
          sharp(buffer)
             .jpeg({ quality: 90 })
             .toBuffer()
@@ -54,7 +53,7 @@ export class FirebaseStorageProvider implements IUploadProvider {
                const fileName = `images/user-?${user_id}`;
                return resolves(callback(res, fileName));
             })
-            .catch((err) => reflect(err));
+            .catch((err) => reject(err));
       });
    }
 
@@ -76,7 +75,7 @@ export class FirebaseStorageProvider implements IUploadProvider {
 
                return fileName;
             } catch (error) {
-               throw new Error('Erro ao enviar imagem.');
+               throw new Error('Error on save image.');
             }
          }
       );

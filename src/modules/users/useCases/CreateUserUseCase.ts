@@ -3,8 +3,8 @@ import { hash } from 'bcrypt';
 import { inject, injectable } from 'tsyringe';
 
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
-import { IUserRepository } from '../../infra/repository/IUserRepository';
-import { UserEntity } from '../../infra/Entity/UserEntity';
+import { IUserRepository } from '../infra/repository/IUserRepository';
+import { UserEntity } from '../infra/Entity/UserEntity';
 import auth from '@/config/auth';
 
 interface IRequest {

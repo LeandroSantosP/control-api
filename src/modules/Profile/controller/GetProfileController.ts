@@ -2,7 +2,7 @@ import { HTTPRequest } from '@/types/HTTPRequest';
 import { Profile } from '@prisma/client';
 import { Request } from 'express';
 import { container } from 'tsyringe';
-import { GetProfileUseCase } from './GetProfileUseCase';
+import { GetProfileUseCase } from '../useCases/GetProfileUseCase';
 
 export class GerProfileController {
    async handle(req: Request): Promise<HTTPRequest<Profile>> {

@@ -26,6 +26,13 @@ export type GetUserByIdOutput =
    | null
    | null;
 
+export type GetUserByTokenOutput = {
+   id: string;
+   expire_date: Date;
+   token: string;
+   userId: string;
+}[];
+
 abstract class IUserRepository {
    abstract create({
       email,
@@ -38,12 +45,9 @@ abstract class IUserRepository {
    abstract remove({ email, id }: RemoveInput): Promise<void>;
    abstract update(data: UpdatedInput, user_id: string): Promise<User>;
    abstract userCreateToken(params: UserCreateTokenInput): Promise<void>;
-   abstract userGetTokens(user_id: string): Promise<
-      {
-         token: string;
-         expire_date: Date;
-      }[]
-   >;
+   abstract GetToken(token: string): Promise<GetUserByTokenOutput>;
+   abstract DeleteTokenById(tokenId: string): Promise<string>;
+   abstract UploadPassword(user_id: string, newPassWord: string): Promise<void>;
 }
 
 export { IUserRepository };

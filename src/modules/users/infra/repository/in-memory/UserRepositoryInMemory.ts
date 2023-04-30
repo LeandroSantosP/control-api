@@ -2,9 +2,21 @@ import { User } from '@prisma/client';
 import { hash } from 'bcrypt';
 import { IUserDTO } from '../../dtos/IUserDTO';
 import { UserEntity } from '../../Entity/UserEntity';
-import { IUserRepository, RemoveInput, UpdatedInput } from '../IUserRepository';
+import {
+   GetUserByTokenOutput,
+   IUserRepository,
+   RemoveInput,
+   UpdatedInput,
+   UserCreateTokenInput,
+} from '../IUserRepository';
 
 export class UserRepositoryInMemory implements IUserRepository {
+   DeleteTokenById(tokenId: string): Promise<string> {
+      throw new Error('Method not implemented.');
+   }
+   UploadPassword(user_id: string, newPassWord: string): Promise<void> {
+      throw new Error('Method not implemented.');
+   }
    private users: UserEntity[] = [];
 
    async create({ email, name, password }: IUserDTO): Promise<UserEntity> {
@@ -44,6 +56,14 @@ export class UserRepositoryInMemory implements IUserRepository {
       return;
    }
    async update(data: UpdatedInput, user_id: string): Promise<User> {
+      throw new Error('Method not implemented.');
+   }
+
+   async userCreateToken(params: UserCreateTokenInput): Promise<void> {
+      throw new Error('Method not implemented.');
+   }
+
+   async GetToken(user_id: string): Promise<GetUserByTokenOutput> {
       throw new Error('Method not implemented.');
    }
 }

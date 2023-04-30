@@ -8,7 +8,6 @@ import {
 
 export class DateFnsProvider implements IDateProvider {
    public readonly now: Date = new Date();
-
    addDays(days: number): Date {
       return addDays(this.now, days);
    }

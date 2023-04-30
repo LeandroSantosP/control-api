@@ -1,8 +1,8 @@
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
 import { IUploadProvider } from '@/shared/providers/UploadProvider/IUploadProvider';
-import { IProfileModel } from '../../infra/repository/IProfileModel';
+import { IProfileModel } from '../infra/repository/IProfileModel';
 import { AppError } from '@/shared/infra/middleware/AppError';
-import { Profile } from '../../infra/entity/Profile';
+import { Profile } from '../infra/entity/Profile';
 import { inject, injectable } from 'tsyringe';
 
 type profileInfos = {

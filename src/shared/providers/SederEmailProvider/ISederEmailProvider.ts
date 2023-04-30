@@ -1,6 +1,6 @@
 export interface ISendEmail {
+   to: string;
    subject: string;
-   html: string;
    variables: any;
    templatePath: string;
 }
