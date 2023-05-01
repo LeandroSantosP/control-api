@@ -1,9 +1,8 @@
 require('dotenv/config');
 const child_process_1 = require('child_process');
-FIREBASE_CURRENT = 'TEST';
 
+FIREBASE_CURRENT = 'TEST';
 process.env.DATABASE_URL = `${process.env.DATABASE_URL}_testdb02?schema=test_schema`;
-// (0, child_process_1.execSync)('yarn prisma migrate reset --force');
 
 (0, child_process_1.execSync)('yarn prisma migrate dev --name init');
 
