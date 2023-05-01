@@ -1,4 +1,3 @@
-import { prisma } from '@/database/prisma';
 import { GoalsRepositoryTestDB } from '@/modules/Goals/infra/repository/test-db/GoalsRepositoryTestDB';
 import { MonthlyGoals } from '@prisma/client';
 
