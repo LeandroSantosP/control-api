@@ -38,8 +38,6 @@ model adress {
    id String @id @default(uuid())
 }
 
-// Not aplly yet
-
 model Profile {
    id          String  @id @default(uuid())
    avatar      String

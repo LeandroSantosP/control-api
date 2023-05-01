@@ -33,6 +33,7 @@ describe('User Updated', () => {
       });
 
       const userListAfterUpdated = await userRepositoryTestDB.list();
+
       let { email, password, name } = userListAfterUpdated[0];
 
       expect(email).toEqual('emailUpdated@example.com');

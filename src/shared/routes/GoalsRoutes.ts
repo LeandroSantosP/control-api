@@ -1,9 +1,9 @@
-import { UserAuthentication } from '../infra/middleware/UserAuthentication';
-import { CreateNewGoalsController } from '@/modules/Goals/useCases/CreateNewGoals/CreateNewGoalsController';
 import { Request, Response, Router } from 'express';
-import { UpdatedGoalsController } from '@/modules/Goals/useCases/UpdateGoals/UpdateGoalController';
-import { ListGoalsController } from '@/modules/Goals/useCases/ListGoals/LIstGoalsController';
-import { DeletedGoalsController } from '@/modules/Goals/useCases/DeletedGoal/DeletedGoalController';
+import { UserAuthentication } from '../infra/middleware/UserAuthentication';
+import { CreateNewGoalsController } from '@/modules/Goals/controller/CreateNewGoalsController';
+import { UpdatedGoalsController } from '@/modules/Goals/controller/UpdateGoalController';
+import { ListGoalsController } from '@/modules/Goals/controller/LIstGoalsController';
+import { DeletedGoalsController } from '@/modules/Goals/controller/DeletedGoalController';
 
 const GoalsRoutes = Router();
 
