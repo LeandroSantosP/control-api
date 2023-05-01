@@ -39,7 +39,7 @@ describe('Delete User', () => {
       expect(allUser[0]).toHaveProperty('password', user.password);
 
       await deleteUserUseCase.execute({
-         email: user.email,
+         email: user.email.GetValue,
          password: userInfos.password,
          user_id: user.id!,
       });

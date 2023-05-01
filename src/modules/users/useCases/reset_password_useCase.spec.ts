@@ -90,7 +90,7 @@ describe('ResetPassword', () => {
       await CreateInitialSetting({
          userSettings: {
             email: 'joão@gmail.com',
-            password: 'XXXXXXXX',
+            password: 'XXXXX3333',
          },
       });
 
@@ -106,7 +106,7 @@ describe('ResetPassword', () => {
       const { token } = await CreateInitialSetting({
          userSettings: {
             email: 'joão@gmail.com',
-            password: 'XXXXXXXX',
+            password: 'XXXXX3333',
          },
          hors: -3,
       });
@@ -123,7 +123,7 @@ describe('ResetPassword', () => {
       const { token } = await CreateInitialSetting({
          userSettings: {
             email: 'joão@gmail.com',
-            password: 'XXXXXXXX',
+            password: 'XXXXX3333',
          },
          hors: -3,
       });

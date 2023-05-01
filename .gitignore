@@ -12,7 +12,7 @@ dist
 .volumes
 .env.backup
 
-/src/config/control-prod.json
-/src/config/controltest.json
-/src/config/auth.ts
+./src/config/control-prod.json
+./src/config/controltest.json
+./src/config/auth
 

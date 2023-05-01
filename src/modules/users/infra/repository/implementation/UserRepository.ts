@@ -1,6 +1,6 @@
+import { Profile, User } from '@prisma/client';
 import { prisma } from '../../../../../database/prisma';
 import { IUserDTO } from '@/modules/users/infra/dtos/IUserDTO';
-import { UserEntity } from '@/modules/users/infra/Entity/UserEntity';
 import {
    GetUserByTokenOutput,
    IUserRepository,
@@ -8,7 +8,6 @@ import {
    UpdatedInput,
    UserCreateTokenInput,
 } from '../IUserRepository';
-import { Profile, User } from '@prisma/client';
 
 export class UserRepository implements IUserRepository {
    private prisma;
@@ -28,7 +27,7 @@ export class UserRepository implements IUserRepository {
       return user;
    }
 
-   async list(): Promise<UserEntity[]> {
+   async list(): Promise<User[]> {
       const allUser = await this.prisma.user.findMany();
 
       return allUser;
