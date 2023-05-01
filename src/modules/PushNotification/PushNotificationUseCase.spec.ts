@@ -7,7 +7,6 @@ import { PushNotificationUseCase } from './PushNotificationUseCase';
 import { JwtAuthProvider } from '@/shared/providers/AuthProvider/implementation/JwtAuthProvider';
 import { hash } from 'bcrypt';
 import auth from '@/config/auth';
-import { addDays } from 'date-fns';
 
 let sessionUseCase: SessionUseCase;
 let userRepository: UserRepositoryTestDB;

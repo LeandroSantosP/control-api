@@ -12,3 +12,6 @@ dist
 .volumes
 .env.backup
 
+/src/config/control-prod.json
+/src/config/controltest.json
+

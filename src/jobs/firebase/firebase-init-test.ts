@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import serviceAccountTEST from '@/config/controltest.json';
 import admin from 'firebase-admin';
 

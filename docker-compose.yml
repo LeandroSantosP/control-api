@@ -10,23 +10,23 @@ services:
       networks:
          - puf_network
 
-   api:
-      stdin_open: true
-      container_name: api
-      image: node:18.15.0
-      build:
-         context: .
-      restart: always
-      ports:
-         - ${SERVER_PORT}:${SERVER_PORT}
-      working_dir: /usr/src/app
-      volumes:
-         - .:/usr/src/app
-      networks:
-         - puf_network
-      depends_on:
-         - db
-      command: yarn start
+   # api:
+   #    stdin_open: true
+   #    container_name: api
+   #    image: node:18.15.0
+   #    build:
+   #       context: .
+   #    restart: always
+   #    ports:
+   #       - ${SERVER_PORT}:${SERVER_PORT}
+   #    working_dir: /usr/src/app
+   #    volumes:
+   #       - .:/usr/src/app
+   #    networks:
+   #       - puf_network
+   #    depends_on:
+   #       - db
+   #    command: yarn start
 
 networks:
    puf_network:

@@ -2,7 +2,7 @@ import express, { response } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
 import '@/shared/infra/tsyringe';
-import swaggerDocument from '../../../swagger.json';
+import swaggerDocument from '../../config/swagger.json';
 
 import { allRoutes } from '../routes';
 import { cwd } from 'process';

@@ -9,7 +9,7 @@ import { Transaction } from '@prisma/client';
 export class PushNotificationUseCase {
    constructor(
       @inject('TransactionsRepository')
-      private TransactionsRepository: ITransactionsRepository<Transaction>,
+      private TransactionsRepository: ITransactionsRepository,
       @inject('JwtAuthProvider')
       private JwtAuthProvider: IAuthProvider
    ) {}

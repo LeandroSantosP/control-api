@@ -93,11 +93,11 @@ describe('List Transactions', () => {
       /* Daqui a dois meses esse test ja era! */
       const newUser = await CreateUserTest();
       const dataFormattedOne = formatISO(
-         parse('2023-05-02' as string, 'yyyy-MM-dd', new Date())
+         parse('2023-06-02' as string, 'yyyy-MM-dd', new Date())
       );
 
       const dataFormattedTwo = formatISO(
-         parse('2023-06-02' as string, 'yyyy-MM-dd', new Date())
+         parse('2023-07-02' as string, 'yyyy-MM-dd', new Date())
       );
 
       await TransactionsRepository.CreateTransactionInstallments({
@@ -154,7 +154,7 @@ describe('List Transactions', () => {
       const newUser = await CreateUserTest();
 
       const dataFormattedOne = formatISO(
-         parse('2023-05-02' as string, 'yyyy-MM-dd', new Date())
+         parse('2023-06-02' as string, 'yyyy-MM-dd', new Date())
       );
 
       await TransactionsRepository.CreateTransactionInstallments({
@@ -178,7 +178,7 @@ describe('List Transactions', () => {
 
       const sut = await listTransactionUseCase.execute({
          user_id: newUser.id,
-         month: 5,
+         month: 6,
       });
 
       expect(sut.transactions.some((i) => Number(i.value) > 0)).toBeTruthy();

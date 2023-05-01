@@ -53,7 +53,7 @@ describe('listTransitionsBySubscriptionUseCase', () => {
 
       const sut = await listTransitionsBySubscriptionUseCase.execute({
          user_id: newUser.id,
-         month: 4,
+         month: new Date().getMonth() + 1,
       });
 
       sut.transactions.forEach((transaction: any) => {
