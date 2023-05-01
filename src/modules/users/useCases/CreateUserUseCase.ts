@@ -1,11 +1,9 @@
 import * as yup from 'yup';
-import { hash } from 'bcrypt';
 import { inject, injectable } from 'tsyringe';
 
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { IUserRepository } from '../infra/repository/IUserRepository';
-import { UserEntity } from '../infra/Entity/UserEntity';
-import auth from '@/config/auth';
+import { User } from '../infra/Entity/User';
 
 interface IRequest {
    name: string;
@@ -35,22 +33,17 @@ export class CreateUserUseCase {
       this.dados = {};
    }
 
-   async CreateUser(validateData: IRequest) {
-      let { saltRounds } = auth;
-
-      const passwordHash = await hash(validateData.password, saltRounds);
-
-      const newUser = new UserEntity();
-      Object.assign(newUser, {
-         name: validateData.name,
-         email: validateData.email,
-         password: passwordHash,
+   async CreateUser({ email, name, password }: IRequest) {
+      const newUser = await User.create({
+         name,
+         email,
+         password,
       });
 
       await this.UserRepository.create({
-         email: newUser.email,
-         name: newUser.name,
-         password: newUser.password,
+         email: newUser.email.GetValue,
+         name: newUser.name.GetValue,
+         password: newUser.password.GetPassWordHash,
       });
    }
 

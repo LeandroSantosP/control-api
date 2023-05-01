@@ -1,6 +1,5 @@
-import { Profile, User, UserTokens } from '@prisma/client';
+import { Profile, User } from '@prisma/client';
 import { IUserDTO } from '../dtos/IUserDTO';
-import { UserEntity } from '../Entity/UserEntity';
 
 export interface RemoveInput {
    email: string;
@@ -34,12 +33,8 @@ export type GetUserByTokenOutput = {
 }[];
 
 abstract class IUserRepository {
-   abstract create({
-      email,
-      name,
-      password,
-   }: IUserDTO): Promise<User | UserEntity>;
-   abstract list(): Promise<User[] | UserEntity[]>;
+   abstract create({ email, name, password }: IUserDTO): Promise<User>;
+   abstract list(): Promise<User[]>;
    abstract GetUserByEmail(email: string): Promise<User | null>;
    abstract GetUserById(user_id: string): Promise<GetUserByIdOutput>;
    abstract remove({ email, id }: RemoveInput): Promise<void>;

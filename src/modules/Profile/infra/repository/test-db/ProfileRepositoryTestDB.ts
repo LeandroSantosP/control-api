@@ -1,7 +1,6 @@
 import { prisma } from '@/database/prisma';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { Profile } from '@prisma/client';
-import Decimal from 'decimal.js';
 
 import {
    CreateInput,
