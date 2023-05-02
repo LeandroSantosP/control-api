@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
-import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
+import { AppError } from '@/shared/infra/middleware/AppError';
 import { inject, injectable } from 'tsyringe';
 import { IGoalsRepository } from '../infra/repository/IGoalsRepository';
 import { CreateNewGoalsUseCase } from './CreateNewGoalsUseCase';

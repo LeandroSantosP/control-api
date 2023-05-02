@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-
 import { prisma } from '@/database/prisma';
+
 import CreateUserTest from '@/utils/CrateUserTEST';
 import { describe } from 'node:test';
 import { AppError } from '@/shared/infra/middleware/AppError';
@@ -35,6 +35,10 @@ describe('GetProfileUseCase', () => {
          profileRepositoryTestDB,
          firebaseStorageProvider
       );
+   });
+
+   afterAll(async () => {
+      await firebaseStorageProvider.deleteAll();
    });
 
    it('should return new erro if user not have a profile.', async () => {
@@ -74,6 +78,7 @@ describe('GetProfileUseCase', () => {
       await configurationsProfile.execute({ ...params });
       const SUT = await getProfileUseCase.execute({ user_id: newUSER.id });
 
+      expect(SUT.avatar).toBeTruthy();
       expect(SUT.user.email).toBe('joão@gmail.com');
       expect(SUT.user.name).toBe('joão');
       expect(SUT.user.id).toBe(newUSER.id);

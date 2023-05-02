@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { Prisma } from '@prisma/client';
+import '@/jobs/firebase/firebase-init-test';
 
 import { prisma } from '@/database/prisma';
-import '@/jobs/firebase/firebase-init-test';
 import CreateUserTest from '@/utils/CrateUserTEST';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { ConfigurationProfile } from './ConfigurationProfileUseCase';
@@ -53,6 +53,10 @@ export async function CreateProfileExecuteParams({
       profile_id: profile_id,
    };
 }
+
+afterAll(async () => {
+   await firebaseStorageProvider.deleteAll();
+});
 
 describe('CreateProfile', () => {
    beforeEach(async () => {

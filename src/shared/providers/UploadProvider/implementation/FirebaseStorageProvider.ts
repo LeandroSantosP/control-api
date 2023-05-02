@@ -81,8 +81,18 @@ export class FirebaseStorageProvider implements IUploadProvider {
       );
    }
 
-   delete<I, O>(props: I): Promise<O> {
-      throw new Error('Method not implemented.');
+   async deleteAll(): Promise<void | Error> {
+      return new Promise(async (resolve, reject) => {
+         try {
+            await storage().bucket().deleteFiles({
+               force: true,
+            });
+
+            return resolve(undefined);
+         } catch (error: any) {
+            return reject(error);
+         }
+      });
    }
 
    async getUrl({ imageRef, options }: getUrlProps): Promise<any> {

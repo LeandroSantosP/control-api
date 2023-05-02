@@ -1,6 +1,7 @@
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { IUploadProvider } from '@/shared/providers/UploadProvider/IUploadProvider';
+import { GetCurrentDate } from '@/utils/GetCurrentDate';
 import { Profile } from '@prisma/client';
 import { inject, injectable } from 'tsyringe';
 import { Avatar } from '../infra/entity/Avatar';
@@ -11,7 +12,7 @@ type IRequest = {
 };
 
 @injectable()
-export class GetProfileUseCase {
+export class GetProfileUseCase extends GetCurrentDate {
    private readonly Avatar: typeof Avatar = Avatar;
 
    constructor(
@@ -21,9 +22,23 @@ export class GetProfileUseCase {
       private readonly ProfileRepository: IProfileModel,
       @inject('FirebaseStorageProvider')
       private readonly FirebaseStorageProvider: IUploadProvider
-   ) {}
+   ) {
+      super();
+   }
 
-   async execute(params: IRequest) {
+   async execute(params: IRequest): Promise<{
+      avatar: string;
+      user: {
+         id: string;
+         name: string;
+         email: string;
+      };
+      id: string;
+      profession: string | null;
+      salary: any;
+      phonenumber: string | null;
+      dateOfBirth: string | null;
+   }> {
       const user = await this.UserRepository.GetUserById(params.user_id);
       if (!user?.profile) {
          throw new AppError('Profile not found', 404);
@@ -38,12 +53,14 @@ export class GetProfileUseCase {
       }
       const { avatar: imageRef } = profile satisfies Profile;
 
+      const { year } = super.getDayMonthYear();
+
       const imageUrl = await this.FirebaseStorageProvider.getUrl({
          imageRef,
          options: {
             action: 'read',
             content_type: 'image/png',
-            expires: '03-17-2025',
+            expires: `03-17-${year + 1}`,
          },
       });
 

@@ -2,8 +2,11 @@
   "cSpell.words": [
     "bodyparser",
     "dtos",
+    "expectated",
+    "phonenumber",
     "testdb",
-    "tsyringe"
+    "tsyringe",
+    "usecases"
   ],
   "typescript.tsdk": "node_modules/typescript/lib"
 }
