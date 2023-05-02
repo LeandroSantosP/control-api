@@ -1,5 +1,5 @@
 import { hash, compare } from 'bcrypt';
-import auth from '@/config/auth';
+import auth from '@/settings/auth';
 import { AppError } from '@/shared/infra/middleware/AppError';
 
 export class Password {

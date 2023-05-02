@@ -1,5 +1,5 @@
 import { verify } from 'jsonwebtoken';
-import auth from '@/config/auth';
+import auth from '@/settings/auth';
 import { AppError } from './AppError';
 import { NextFunction, Request, Response } from 'express';
 import { UserRepository } from '@/modules/users/infra/repository/implementation/UserRepository';

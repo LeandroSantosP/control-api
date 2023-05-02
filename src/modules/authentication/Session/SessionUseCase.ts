@@ -2,7 +2,7 @@ import { IUserRepository } from '@/modules/users/infra/repository/IUserRepositor
 import { IAuthProvider } from '@/shared/providers/AuthProvider/IAuthProvider';
 import { inject, injectable } from 'tsyringe';
 
-import auth from '@/config/auth';
+import auth from '@/settings/auth';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { DecodedMethods } from '@/utils/DecodedMethods';
 

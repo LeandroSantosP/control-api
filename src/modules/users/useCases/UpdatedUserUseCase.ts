@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import auth from '@/config/auth';
+import auth from '@/settings/auth';
 
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { User } from '@prisma/client';

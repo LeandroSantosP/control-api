@@ -6,7 +6,7 @@ import { UserRepositoryTestDB } from '../users/infra/repository/test-db/UserRepo
 import { PushNotificationUseCase } from './PushNotificationUseCase';
 import { JwtAuthProvider } from '@/shared/providers/AuthProvider/implementation/JwtAuthProvider';
 import { hash } from 'bcrypt';
-import auth from '@/config/auth';
+import auth from '@/settings/auth';
 
 let sessionUseCase: SessionUseCase;
 let userRepository: UserRepositoryTestDB;
