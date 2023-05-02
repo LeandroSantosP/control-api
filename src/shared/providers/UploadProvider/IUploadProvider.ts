@@ -15,6 +15,6 @@ export type getUrlProps = {
 
 export abstract class IUploadProvider {
    abstract save(props: saveInput): Promise<void | string>;
-   abstract delete<I, O>(props: I): Promise<O>;
+   abstract deleteAll(): Promise<void | Error>;
    abstract getUrl(props: getUrlProps): Promise<string>;
 }

@@ -72,15 +72,3 @@ type Input = {
    updated_at?: Date;
    deleted_at?: Date | null;
 };
-/*
-  id: string
-  email: string
-  name: string
-  password: string
-  admin: boolean
-  created_at: Date
-  updated_at: Date
-  deleted_at: Date | null
-  profileId: string | null
-
-*/

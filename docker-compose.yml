@@ -2,13 +2,13 @@ version: '3'
 
 services:
    db:
-      container_name: db-puf
+      container_name: db
       image: postgres:15.2
       restart: always
       ports:
          - ${DB_PORT}:5432
       networks:
-         - puf_network
+         - control_network
 
    # api:
    #    stdin_open: true
@@ -23,12 +23,12 @@ services:
    #    volumes:
    #       - .:/usr/src/app
    #    networks:
-   #       - puf_network
+   #       - control_network
    #    depends_on:
    #       - db
    #    command: yarn start
 
 networks:
-   puf_network:
+   control_network:
       driver: bridge
 
