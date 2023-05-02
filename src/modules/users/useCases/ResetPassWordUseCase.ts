@@ -1,4 +1,4 @@
-import auth from '@/config/auth';
+import auth from '@/settings/auth';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { hash } from 'bcrypt';
 import { inject, injectable } from 'tsyringe';

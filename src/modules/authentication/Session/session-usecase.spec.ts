@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import auth from '@/config/auth';
+import auth from '@/config2/auth';
 import { UserRepositoryInMemory } from '@/modules/users/infra/repository/in-memory/UserRepositoryInMemory';
 import { IAuthProvider } from '@/shared/providers/AuthProvider/IAuthProvider';
 import { JwtAuthProvider } from '@/shared/providers/AuthProvider/implementation/JwtAuthProvider';

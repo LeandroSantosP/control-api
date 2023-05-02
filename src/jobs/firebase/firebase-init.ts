@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import serviceAccountPROD from '@/config/control-prod.json';
+import serviceAccountPROD from '@/settings/control-prod.json';
 import admin from 'firebase-admin';
 
 admin.initializeApp({

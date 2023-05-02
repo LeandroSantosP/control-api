@@ -1,6 +1,6 @@
 import 'dotenv/config';
 //
-import serviceAccountTEST from '@/config/controltest.json';
+import serviceAccountTEST from '@/settings/controltest.json';
 import admin from 'firebase-admin';
 
 admin.initializeApp({

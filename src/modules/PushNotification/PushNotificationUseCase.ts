@@ -1,4 +1,4 @@
-import auth from '@/config/auth';
+import auth from '@/settings/auth';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { IAuthProvider } from '@/shared/providers/AuthProvider/IAuthProvider';
 import { ITransactionsRepository } from '../transactions/infra/repository/ITransactionsRepository';
