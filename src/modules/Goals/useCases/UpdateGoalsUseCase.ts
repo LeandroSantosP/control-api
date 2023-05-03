@@ -129,16 +129,24 @@ export class UpdateGoalsUseCase {
       revenue,
       month,
    }: {
-      expense: number;
-      revenue: number;
+      expense?: number;
+      revenue?: number;
       month?: string;
    }) {
-      const expenseRes = new ExpectatedExpense(expense).GetValue;
-      const revenueRes = new ExpectatedRevenue(revenue).GetValue;
-
       let monthRes: string | undefined;
+      let expenseRes: string | undefined;
+      let revenueRes: string | undefined;
+
       if (month) {
          monthRes = new Month(month).getValue;
+      }
+
+      if (revenue) {
+         new ExpectatedRevenue(revenue).GetValue;
+      }
+
+      if (expense) {
+         new ExpectatedExpense(expense).GetValue;
       }
 
       return {
@@ -287,7 +295,7 @@ export class UpdateGoalsUseCase {
          if (expectated_expense || expectated_revenue) {
             this.verifyFormat({
                expense: Number(expectated_expense),
-               revenue: Number(expectated_expense),
+               revenue: Number(expectated_revenue),
             });
          }
 

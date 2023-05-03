@@ -3,7 +3,7 @@ import { AppError } from '@/shared/infra/middleware/AppError';
 export class ExpectatedRevenue {
    constructor(private readonly _value: number) {
       if (this._value < 0) {
-         throw new Error(
+         throw new AppError(
             'The value of the expected revenue cannot be negative.'
          );
       }
