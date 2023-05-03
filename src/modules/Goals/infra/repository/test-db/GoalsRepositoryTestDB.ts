@@ -50,7 +50,6 @@ export class GoalsRepositoryTestDB implements IGoalsRepository {
       expectated_expense,
       expectated_revenue,
    }: updateRequest): Promise<any> {
-      let result;
       if (!month) {
          let expectated_expenseForDecimal;
          let expectated_revenueForDecimal;
@@ -82,7 +81,8 @@ export class GoalsRepositoryTestDB implements IGoalsRepository {
                },
             },
          });
-         result = goalUpdated;
+
+         return goalUpdated;
       } else {
          let expectated_expenseForDecimal;
          let expectated_revenueForDecimal;
@@ -98,7 +98,7 @@ export class GoalsRepositoryTestDB implements IGoalsRepository {
             );
          }
 
-         const goalUpdated = await this.prisma.user.update({
+         const goalsUpdated = await prisma.user.update({
             where: {
                id: user_id,
             },
@@ -106,7 +106,7 @@ export class GoalsRepositoryTestDB implements IGoalsRepository {
                MonthlyGoals: {
                   update: {
                      where: {
-                        month,
+                        id: goal_id,
                      },
                      data: {
                         expectated_expense: expectated_expenseForDecimal,
@@ -124,10 +124,8 @@ export class GoalsRepositoryTestDB implements IGoalsRepository {
             },
          });
 
-         result = goalUpdated.MonthlyGoals[0];
+         return goalsUpdated;
       }
-
-      return result;
    }
 
    async deleteSingleOrMúltiplo(

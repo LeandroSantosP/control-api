@@ -68,7 +68,7 @@ export class DeletedGoalsUseCase {
       this.VerifyGoals(goals_id_or_months, userGoals);
       await this.SingleGoals(goals_id_or_months, user_id);
 
-      const res = await this.GoalsRepository.deleteSingleOrMúltiplo({
+      await this.GoalsRepository.deleteSingleOrMúltiplo({
          user_id,
          goal_id: goals_id_or_months,
       });

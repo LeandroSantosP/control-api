@@ -18,7 +18,7 @@ export class ListGoalsUseCase {
          user_id
       )) as User;
 
-      //validacoes
+      //validations
 
       const MonthFormatted = UserGoals.map((goal) => {
          type monthNamesProps = {

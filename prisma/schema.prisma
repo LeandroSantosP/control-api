@@ -69,6 +69,22 @@ model User {
    @@map("users")
 }
 
+model MonthlyGoals {
+   id    String @id @default(uuid())
+   month String
+
+   expectated_revenue Decimal
+   expectated_expense Decimal
+
+   created_at DateTime @default(now())
+   updated_at DateTime @updatedAt
+
+   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+   userId String
+
+   @@map("monthly_goals")
+}
+
 model UserTokens {
    id String @id @default(uuid())
 
@@ -81,22 +97,6 @@ model UserTokens {
    created_at DateTime @default(now())
 
    @@map("user_token")
-}
-
-model MonthlyGoals {
-   id    String @id @default(uuid())
-   month String @unique
-
-   expectated_revenue Decimal
-   expectated_expense Decimal
-
-   created_at DateTime @default(now())
-   updated_at DateTime @updatedAt
-
-   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-   userId String
-
-   @@map("monthly_goals")
 }
 
 model Transaction {

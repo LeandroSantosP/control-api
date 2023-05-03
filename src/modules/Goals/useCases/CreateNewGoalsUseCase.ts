@@ -1,9 +1,9 @@
+import * as yup from 'yup';
 import { inject, injectable } from 'tsyringe';
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { IGoalsRepository } from '../infra/repository/IGoalsRepository';
-import { GoalEntity } from '../infra/entity/Goals';
-import * as yup from 'yup';
+import { GoalEntity, Input } from '../infra/entity/Goals';
 import { ValidationYup } from '@/utils/ValidationYup';
 
 interface IRequest {
@@ -101,20 +101,22 @@ export class CreateNewGoalsUseCase {
          const validadeData = await createGoalsSchema.validate(dados, {
             abortEarly: false,
          });
-         const goal = new GoalEntity();
 
+         const goal = {} as Input;
          Object.assign(goal, {
-            user_id: validadeData.user_id,
+            expected_expense: Number(validadeData.expectated_expense),
+            expected_revenue: Number(validadeData.expectated_revenue),
             month: validadeData.month,
-            expectated_expense: validadeData.expectated_expense,
-            expectated_revenue: validadeData.expectated_revenue,
+            user_id: validadeData.user_id,
          });
 
+         const sut = GoalEntity.create({ ...goal });
+
          await this.GoalsRepository.create({
-            user_id: goal.user_id,
-            expectated_expense: goal.expectated_expense.toString(),
-            expectated_revenue: goal.expectated_revenue.toString(),
-            month: goal.month,
+            expectated_expense: sut.ExpectatedExpense.GetValue.toString(),
+            expectated_revenue: sut.ExpectatedRevenue.GetValue.toString(),
+            user_id: sut.userId,
+            month: sut.month.getValue,
          });
 
          return;
