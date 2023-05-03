@@ -1,9 +1,9 @@
 import 'reflect-metadata';
-import auth from '@/config2/auth';
+import auth from '@/settings/auth';
 import { UserRepositoryInMemory } from '@/modules/users/infra/repository/in-memory/UserRepositoryInMemory';
 import { IAuthProvider } from '@/shared/providers/AuthProvider/IAuthProvider';
 import { JwtAuthProvider } from '@/shared/providers/AuthProvider/implementation/JwtAuthProvider';
-import { SessionUseCase, IResponse } from './SessionUseCase';
+import { SessionUseCase } from './SessionUseCase';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { verify } from 'jsonwebtoken';
 import { describe } from 'node:test';

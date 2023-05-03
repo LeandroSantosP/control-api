@@ -5,6 +5,9 @@ import { inject, injectable } from 'tsyringe';
 import { IGoalsRepository } from '../infra/repository/IGoalsRepository';
 import { CreateNewGoalsUseCase } from './CreateNewGoalsUseCase';
 import { ValidationYup } from '@/utils/ValidationYup';
+import { ExpectatedExpense } from '../infra/entity/ExpectatedExpense';
+import { ExpectatedRevenue } from '../infra/entity/ExpectatedRevenue';
+import { Month } from '../infra/entity/Month';
 
 type IRequestSingle = {
    user_id: string;
@@ -23,6 +26,15 @@ type IRequestMúltiplo = {
       expectated_revenue?: string;
    }>;
 };
+
+interface UpdatedGoalsProps {
+   dataForUpdate: {
+      month: string;
+      expectated_expense?: string | undefined;
+      expectated_revenue?: string | undefined;
+   }[];
+   user_id: string;
+}
 
 const updatedSingleGoal = yup.object().shape({
    goal_id: yup.string().required(),
@@ -112,6 +124,70 @@ export class UpdateGoalsUseCase {
     * Validation Revenue expectation does not be a negative value.
     */
 
+   verifyFormat({
+      expense,
+      revenue,
+      month,
+   }: {
+      expense: number;
+      revenue: number;
+      month?: string;
+   }) {
+      const expenseRes = new ExpectatedExpense(expense).GetValue;
+      const revenueRes = new ExpectatedRevenue(revenue).GetValue;
+
+      let monthRes: string | undefined;
+      if (month) {
+         monthRes = new Month(month).getValue;
+      }
+
+      return {
+         expense: expenseRes,
+         revenue: revenueRes,
+         month: monthRes,
+      };
+   }
+
+   async updatedGoals({
+      dataForUpdate,
+      user_id,
+   }: UpdatedGoalsProps): Promise<any[]> {
+      const userGoalsListAll = await this.GoalsRepository.list(user_id);
+
+      const goalsIdForUpdated = userGoalsListAll
+         .map((goal) => {
+            const goalForUpdated = dataForUpdate.find(
+               (e) => e.month === goal.month
+            );
+
+            if (goalForUpdated === undefined) {
+               return;
+            }
+
+            return {
+               goalId: goal.id,
+               expectated_expense: goalForUpdated?.expectated_expense,
+               expectated_revenue: goalForUpdated?.expectated_revenue,
+            };
+         })
+         .filter((i) => i !== undefined);
+
+      const updatedGoals = await Promise.all(
+         goalsIdForUpdated.map(
+            async ({ goalId, expectated_expense, expectated_revenue }: any) => {
+               const dataUpdated = (await this.GoalsRepository.update({
+                  expectated_expense,
+                  expectated_revenue,
+                  goal_id: goalId,
+               })) as any;
+               return dataUpdated;
+            }
+         )
+      );
+
+      return updatedGoals;
+   }
+
    async execute(request: IRequestMúltiplo | IRequestSingle): Promise<any> {
       const { user_id } = request;
       const userGoalsList = await this.GoalsRepository.list(user_id);
@@ -128,6 +204,16 @@ export class UpdateGoalsUseCase {
                { dataForUpdate, user_id },
                { abortEarly: false }
             );
+
+            for (let i = 0; i < validateData.dataForUpdate.length; i++) {
+               const { expectated_expense, expectated_revenue } =
+                  validateData.dataForUpdate[i];
+
+               this.verifyFormat({
+                  expense: Number(expectated_expense),
+                  revenue: Number(expectated_revenue),
+               });
+            }
 
             const goalsNotRegistered = validateData.dataForUpdate.filter(
                (data) => {
@@ -180,19 +266,10 @@ export class UpdateGoalsUseCase {
                }
             }
 
-            const updatedGoals = await Promise.all(
-               dataForUpdate.map(
-                  async ({ month, expectated_expense, expectated_revenue }) => {
-                     const dataUpdated = await this.GoalsRepository.update({
-                        month,
-                        user_id,
-                        expectated_expense,
-                        expectated_revenue,
-                     });
-                     return dataUpdated;
-                  }
-               )
-            );
+            const updatedGoals = await this.updatedGoals({
+               dataForUpdate,
+               user_id,
+            });
 
             return updatedGoals;
          } catch (err: any) {
@@ -202,9 +279,17 @@ export class UpdateGoalsUseCase {
          /**
           *  its about the only one request!
           * @return returns the modify data about
-          */
+
+         */
 
          const { expectated_expense, expectated_revenue, goal_id } = request;
+
+         if (expectated_expense || expectated_revenue) {
+            this.verifyFormat({
+               expense: Number(expectated_expense),
+               revenue: Number(expectated_expense),
+            });
+         }
 
          try {
             const valetedDate = await updatedSingleGoal.validate(

@@ -15,7 +15,6 @@ let goalsRepositoryTestDB: GoalsRepositoryTestDB;
 describe('UpdatedUseCase', () => {
    beforeEach(async () => {
       await prisma.user.deleteMany({});
-      await prisma.monthlyGoals.deleteMany();
       createNewGoalsTEST = new CreateNewGoalsTEST();
       userRepositoryTestDB = new UserRepositoryTestDB();
       goalsRepositoryTestDB = new GoalsRepositoryTestDB();
@@ -119,18 +118,37 @@ describe('UpdatedUseCase', () => {
          dataForUpdate: [
             {
                month: '02',
-               expectated_expense: '-124',
                expectated_revenue: '122',
+               expectated_expense: '-111',
             },
             {
                month: '04',
-               expectated_expense: '-124',
                expectated_revenue: '122',
+               expectated_expense: '-444.22',
+            },
+
+            {
+               month: '10',
+               expectated_revenue: '3333.33',
+               expectated_expense: '-444.22',
             },
          ],
       });
 
-      expect(sut).toHaveLength(2);
+      expect(sut).toHaveLength(3);
+      expect(sut[0]).toHaveProperty('month', '02');
+      expect(sut[0]).toHaveProperty('expectated_revenue');
+      expect(sut[0]).toHaveProperty('expectated_expense');
+
+      expect(Number(sut[0].expectated_revenue)).toEqual(122);
+      expect(Number(sut[0].expectated_expense)).toBe(-111);
+
+      expect(sut[2]).toHaveProperty('month', '10');
+      expect(sut[2]).toHaveProperty('expectated_revenue');
+      expect(sut[2]).toHaveProperty('expectated_expense');
+
+      expect(Number(sut[2].expectated_revenue)).toEqual(3333.33);
+      expect(Number(sut[2].expectated_expense)).toBe(-444.22);
    });
 
    it('should throw a new exception if data is in invalid format(single).', async () => {
@@ -187,7 +205,7 @@ describe('UpdatedUseCase', () => {
    it('should be able to create a new goal if the goal the user is trying to updated does not exits!(múltiplo)', async () => {
       const newUser = await CreateUserTest();
 
-      const PrimaryGoal = await createNewGoalsTEST.createNewGoal({
+      await createNewGoalsTEST.createNewGoal({
          month: '03',
          user_id: newUser.id,
       });
@@ -200,7 +218,7 @@ describe('UpdatedUseCase', () => {
 
       expect(listBefore).toHaveLength(2);
 
-      const sut = (await updateGoalsUseCase.execute({
+      const sut = await updateGoalsUseCase.execute({
          user_id: newUser.id,
          createIfNotExist: true,
          dataForUpdate: [
@@ -215,7 +233,7 @@ describe('UpdatedUseCase', () => {
                expectated_revenue: '122',
             },
          ],
-      })) as any[];
+      });
 
       const listAfter = await goalsRepositoryTestDB.list(newUser.id);
 
@@ -225,7 +243,7 @@ describe('UpdatedUseCase', () => {
       let newGoalsAddForDataBase = [] as any[];
 
       listAfter.forEach((item) => {
-         const itemUpdated = sut.find((i) => i.id === item.id);
+         const itemUpdated = sut.find((i: any) => i.id === item.id);
          if (itemUpdated !== undefined) {
             newGoalsAddForDataBase.push(itemUpdated);
          }
