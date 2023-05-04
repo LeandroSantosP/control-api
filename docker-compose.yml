@@ -1,15 +1,6 @@
 version: '3'
 
 services:
-   db:
-      container_name: db
-      image: postgres:15.2
-      restart: always
-      ports:
-         - ${DB_PORT}:5432
-      networks:
-         - control_network
-
    # api:
    #    stdin_open: true
    #    container_name: api
@@ -19,6 +10,7 @@ services:
    #    restart: always
    #    ports:
    #       - ${SERVER_PORT}:${SERVER_PORT}
+   #       - 3232:5432
    #    working_dir: /usr/src/app
    #    volumes:
    #       - .:/usr/src/app
@@ -27,6 +19,23 @@ services:
    #    depends_on:
    #       - db
    #    command: yarn start
+
+
+
+   db:
+      container_name: db
+      image: postgres:15.2
+      restart: always
+      ports:
+         - 9090:5432
+      networks:
+         - control_network
+      environment:
+         POSTGRES_USER: ${DB_USER}
+         POSTGRES_PASSWORD: ${DB_PASS}
+         POSTGRES_DB: ${DB_NAME}
+
+
 
 networks:
    control_network:

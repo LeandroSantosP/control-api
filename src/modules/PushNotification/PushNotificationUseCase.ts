@@ -3,7 +3,6 @@ import { AppError } from '@/shared/infra/middleware/AppError';
 import { IAuthProvider } from '@/shared/providers/AuthProvider/IAuthProvider';
 import { ITransactionsRepository } from '../transactions/infra/repository/ITransactionsRepository';
 import { inject, injectable } from 'tsyringe';
-import { Transaction } from '@prisma/client';
 
 @injectable()
 export class PushNotificationUseCase {
