@@ -11,9 +11,9 @@ COPY tsconfig.json /usr/src/app
 RUN apt-get update && apt-get install -y wget
 RUN apt-get update && apt-get install -y telnet
 
+
 COPY . .
 
 EXPOSE 3002
-EXPOSE 5432
 
 

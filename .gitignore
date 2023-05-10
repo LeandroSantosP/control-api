@@ -1,4 +1,5 @@
 node_modules
+db_backup
 tmp
 *.tmp*
 *.log
