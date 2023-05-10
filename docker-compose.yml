@@ -1,40 +1,43 @@
 version: '3'
 
 services:
-   # api:
-   #    stdin_open: true
-   #    container_name: api
-   #    image: node:18.15.0
-   #    build:
-   #       context: .
-   #    restart: always
-   #    ports:
-   #       - ${SERVER_PORT}:${SERVER_PORT}
-   #       - 3232:5432
-   #    working_dir: /usr/src/app
-   #    volumes:
-   #       - .:/usr/src/app
-   #    networks:
-   #       - control_network
-   #    depends_on:
-   #       - db
-   #    command: yarn start
-
+   api:
+      stdin_open: true
+      container_name: api
+      image: node:18.15.0
+      build:
+         context: .
+         dockerfile: Dockerfile
+      restart: always
+      ports:
+         - ${SERVER_PORT}:${SERVER_PORT}
+      working_dir: /usr/src/app
+      volumes:
+         - .:/usr/src/app
+      networks:
+         - control_network
+      depends_on:
+         - db
+      command: yarn start
 
 
    db:
-      container_name: db
+      container_name: postgress
       image: postgres:15.2
       restart: always
       ports:
-         - 9090:5432
-      networks:
-         - control_network
+         - '5432:5432'
+      volumes:
+         - ./db_backup:/var/lib/postgresql/data/
+      expose:
+         - '5432'
       environment:
          POSTGRES_USER: ${DB_USER}
          POSTGRES_PASSWORD: ${DB_PASS}
          POSTGRES_DB: ${DB_NAME}
 
+      networks:
+         - control_network
 
 
 networks:

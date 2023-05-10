@@ -19,6 +19,7 @@ export class ConfigurationProfileController {
       const avatar = req.file;
       const data = req.body;
       const { id: user_id, profileId } = req.client;
+      console.log({ avatar });
 
       const useCase = container.resolve(ConfigurationProfile);
 

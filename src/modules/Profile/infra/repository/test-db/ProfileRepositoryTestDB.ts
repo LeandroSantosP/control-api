@@ -26,7 +26,7 @@ export class ProfileRepositoryTestDB implements IProfileModel {
                },
             },
             dateOfBirth: props.Birthday,
-            avatar: props.avatar!,
+            avatar: props.avatar,
             phonenumber: props.phonenumber,
             profession: props.profession,
             salary: props.salary,
