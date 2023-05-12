@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 
+import { getDate, format } from 'date-fns';
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
 import { UserRepositoryTestDB } from '../../users/infra/repository/test-db/UserRepositoryTestDB';
 import { CreateTransaction } from './CreateTransactionUseCase';
@@ -109,6 +110,7 @@ describe('Create Transaction', () => {
             description: 'Desc',
             value: '111.1',
             dueDate: '2023-09-22',
+            categoryType: 'Taxes',
          });
       } catch (error: any) {
          expect(error.message).toEqual('Revenue does not have due date!');
@@ -122,6 +124,7 @@ describe('Create Transaction', () => {
             description: 'Desc',
             value: '111.1',
             dueDate: '2023-09-22',
+            // @ts-ignore
             categoryType: 'InvalidCategory',
          });
       } catch (error: any) {
@@ -163,5 +166,41 @@ describe('Create Transaction', () => {
             value: 'wrong format',
          })
       ).rejects.toThrow(InvalidYupError);
+   });
+   it('should return the current date based on the given value(revenue/expense).', async () => {
+      /* expense(due-date) */
+      await userRepositoryTestDB.create({
+         email: 'ana@example.com',
+         name: 'Ana doe',
+         password: 'senha123',
+      });
+
+      const sutExpense = await createTransaction.execute({
+         description: 'Compras',
+         email: 'ana@example.com',
+         value: '-100',
+         categoryType: 'leisure',
+         dueDate: '2023-09-22',
+      });
+
+      const dateReturnsExpense = format(sutExpense?.due_date!, 'yyyy-MM-dd');
+
+      expect(dateReturnsExpense).toBe('2023-09-22');
+      expect(sutExpense?.due_date).toBeTruthy();
+
+      /* revenue(filing-date) */
+
+      const sutRevenue = await createTransaction.execute({
+         description: 'Compras',
+         email: 'ana@example.com',
+         value: '100',
+         categoryType: 'leisure',
+         filingDate: '2023-09-22',
+      });
+
+      const dateReturnsRevenue = format(sutRevenue?.filingDate!, 'yyyy-MM-dd');
+
+      expect(dateReturnsRevenue).toBe('2023-09-22');
+      expect(sutRevenue?.filingDate).toBeTruthy();
    });
 });

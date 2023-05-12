@@ -97,6 +97,7 @@ export class FirebaseStorageProvider implements IUploadProvider {
 
    async getUrl({ imageRef, options }: getUrlProps): Promise<any> {
       const file = getStorage().bucket().file(imageRef);
+
       return new Promise((resolve, reject) => {
          file.getSignedUrl({ ...options }, (err, url) => {
             if (err) {

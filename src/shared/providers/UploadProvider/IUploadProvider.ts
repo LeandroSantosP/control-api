@@ -2,6 +2,7 @@ export type saveInput = {
    user_id: string;
    image: Express.Multer.File | undefined;
    isUpdate: boolean;
+   alreadyImageExits?: boolean;
 };
 
 export type getUrlProps = {

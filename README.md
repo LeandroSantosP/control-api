@@ -1,3 +1,8 @@
+<!--
+# Quando o usuário atualizar uma informação do perfil dele a api deve verificar se o avatar veio como undefiled
+# caso venha como undefined verifique se o usuário ja tem uma image cadastrada
+ -->
+
 # Deve ser possível gerar um relatório com todas as transações entrei determinado período (RabbitMq)
 
 # Trazer Receitas quando filtrar pelo mes.

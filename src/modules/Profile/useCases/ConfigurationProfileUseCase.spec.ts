@@ -10,6 +10,8 @@ import { ProfileRepositoryTestDB } from '../infra/repository/test-db/ProfileRepo
 import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
 import { FirebaseStorageProvider } from '@/shared/providers/UploadProvider/implementation/FirebaseStorageProvider';
 import { randomUUID } from 'crypto';
+import path from 'path';
+import fs from 'fs';
 
 type ExpressMulterExpectedFile = Express.Multer.File | undefined;
 
@@ -192,5 +194,56 @@ describe('CreateProfile', () => {
             profile_id: randomUUID(),
          })
       ).rejects.toThrow(new AppError('Not Authorized.', 401));
+   });
+
+   it('should not delete current user profile picture if the user has one in updated method.', async () => {
+      const newUser = await CreateUserTest({
+         email: 'ana@example.com',
+      });
+      const imagePath = path.resolve(
+         __dirname,
+         '..',
+         '..',
+         'Profile/avatar/profilePic.jpg'
+      );
+
+      const buffer = (await new Promise((resolve, reject) => {
+         fs.readFile(imagePath, (err, data) => {
+            if (data) {
+               resolve(data);
+               return;
+            }
+            reject(err);
+         });
+      })) as any;
+
+      const file = {
+         fieldname: 'avatar',
+         originalname: 'example.jpg',
+         encoding: '7bit',
+         mimetype: 'image/jpg',
+         buffer: buffer,
+         size: buffer.length,
+      } as Express.Multer.File;
+
+      const params = await CreateProfileExecuteParams({
+         id: newUser.id,
+         update: false,
+         file,
+      });
+
+      const sut = await configurationsProfile.execute({ ...params });
+
+      const sutUpdated = await configurationsProfile.execute({
+         ...params,
+         update: true,
+         profile_id: sut.id,
+         profileInfos: {
+            ...params.profileInfos,
+            avatar: undefined,
+         },
+      });
+
+      expect(sutUpdated.avatar).toBe(`images/user-?${newUser.id}`);
    });
 });

@@ -56,6 +56,28 @@ export const TransactionSchema = yup.object().shape({
       ]),
 });
 
+type CategoryTypes =
+   | 'transport'
+   | 'food'
+   | 'habitation'
+   | 'education'
+   | 'health'
+   | 'leisure'
+   | 'products'
+   | 'debts'
+   | 'Taxes'
+   | 'Investments'
+   | 'unknown';
+
+interface IRequest {
+   description: string;
+   value: string;
+   email: string;
+   categoryType?: CategoryTypes;
+   dueDate?: string;
+   filingDate?: string;
+}
+
 @injectable()
 export class CreateTransaction {
    constructor(
@@ -73,10 +95,10 @@ export class CreateTransaction {
       description,
       value,
       email,
-      categoryType,
+      categoryType = 'unknown',
       dueDate,
       filingDate,
-   }: any) {
+   }: IRequest) {
       if (!description || !value || !email) {
          throw new AppError('Invalid Data', 400);
       }
@@ -120,15 +142,12 @@ export class CreateTransaction {
             throw new AppError('Revenue should have filling date!');
          }
 
-         let FormateDueDate = null;
-         let FormateFellingDate = null;
+         let FormateDate = null;
 
          if (validadeData.dueDate) {
-            FormateFellingDate = CreateTransaction.formattedData(
-               validadeData.dueDate
-            );
+            FormateDate = CreateTransaction.formattedData(validadeData.dueDate);
          } else if (validadeData.filingDate) {
-            FormateFellingDate = CreateTransaction.formattedData(
+            FormateDate = CreateTransaction.formattedData(
                validadeData.filingDate
             );
          }
@@ -141,8 +160,9 @@ export class CreateTransaction {
             isSubscription: false,
             value: FormattedValue,
             category: validadeData.categoryType as CategoryProps,
-            due_date: FormateDueDate || undefined,
-            filingDate: FormateFellingDate || undefined,
+            due_date: Number(validadeData.value) < 0 ? FormateDate! : undefined,
+            filingDate:
+               Number(validadeData.value) > 0 ? FormateDate! : undefined,
          });
 
          const newTransaction = await this.transactionRepository.create({
