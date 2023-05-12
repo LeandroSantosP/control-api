@@ -16,6 +16,7 @@ import {
    ITransactionsRepositoryProps,
    ListBYRevenueOrResolvedTransactionsProps,
    ListBySubscription,
+   UpdatedProps,
 } from '../ITransactionsRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { GetCurrentDate } from '@/utils/GetCurrentDate';
@@ -31,9 +32,6 @@ export class TransactionsRepositoryTestDB
       this.prisma = prisma;
    }
 
-   updated(props: any): Promise<any> {
-      throw new Error('Method not implemented.');
-   }
    async list({ user_id }: { user_id: string }): Promise<
       (Transaction & {
          category: TransactionsCategory;
@@ -420,5 +418,34 @@ export class TransactionsRepositoryTestDB
       });
 
       return transactions;
+   }
+
+   async updated({
+      category,
+      description,
+      category_id,
+      transaction_id,
+   }: UpdatedProps): Promise<
+      Transaction & {
+         category: TransactionsCategory;
+      }
+   > {
+      const UpdatedTransaction = await this.prisma.transaction.update({
+         where: {
+            id: transaction_id,
+         },
+         data: {
+            category: {
+               update: {
+                  name: category,
+               },
+            },
+            description,
+         },
+         include: {
+            category: true,
+         },
+      });
+      return UpdatedTransaction;
    }
 }

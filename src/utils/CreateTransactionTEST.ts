@@ -1,9 +1,14 @@
 import { prisma } from '@/database/prisma';
 import { Prisma } from '@prisma/client';
-import { formatISO, parse } from 'date-fns';
+import { formatISO, parse, format, addMonths } from 'date-fns';
+
+const dateFormateWithOneMoreMonth = format(
+   addMonths(new Date(), 1),
+   'yyyy-MM-dd'
+);
 
 const dataFormatted = formatISO(
-   parse('2023-04-23' as string, 'yyyy-MM-dd', new Date())
+   parse(dateFormateWithOneMoreMonth as string, 'yyyy-MM-dd', new Date())
 );
 
 interface ICreateTransactionTEST {
