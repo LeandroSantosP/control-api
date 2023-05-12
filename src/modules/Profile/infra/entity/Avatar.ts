@@ -46,7 +46,12 @@ export class Avatar {
    }
 
    private async format() {
-      const imagePath = path.resolve(__dirname, '..', '..', 'avatar/robot.png');
+      const imagePath = path.resolve(
+         __dirname,
+         '..',
+         '..',
+         'avatar/profilePic.jpg'
+      );
       const imageBuffer = await new Promise<Buffer>((resolve, rejects) => {
          fs.readFile(imagePath, (err, data) => {
             if (err) return rejects(err);

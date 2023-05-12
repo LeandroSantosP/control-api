@@ -167,7 +167,9 @@ describe('UpdatedUseCase', () => {
             expectated_revenue: '88',
          })
       ).rejects.toEqual(
-         new InvalidYupError('Must be a negative value and a decimal value! \n')
+         new InvalidYupError(
+            'The value of the expected expense cannot be positive.'
+         )
       );
    });
 

@@ -33,23 +33,34 @@ export class ConfigurationProfile {
       private readonly UserRepository: IUserRepository
    ) {}
 
-   static async UseFireBaseStorage({
+   async UseFireBaseStorage({
       profileInfos,
       FirebaseStorageProvider,
       user_id,
-      isUpdate = false,
+      isUpdate,
+      profileId,
    }: {
       FirebaseStorageProvider: IUploadProvider;
       profileInfos: profileInfos;
       user_id: string;
+      profileId?: string;
       isUpdate: boolean;
    }): Promise<IResponse> {
       const ProfileEntity = Profile.create({ ...profileInfos });
+      const profile = await this.ProfileRepository.getProfile({
+         profile_id: profileId!,
+         user_id,
+      });
+
+      if (!profileInfos.avatar && isUpdate === true) {
+         return { imageRef: profile?.avatar, ProfileEntity };
+      }
 
       const imageRef = await FirebaseStorageProvider.save({
          image: await ProfileEntity.avatar.getValue(),
          user_id,
          isUpdate,
+         alreadyImageExits: !profileInfos.avatar ? true : false,
       });
 
       return { imageRef, ProfileEntity };
@@ -66,6 +77,7 @@ export class ConfigurationProfile {
       salary: any;
       phonenumber: string | null;
       dateOfBirth: string | null;
+      avatar?: string;
    }> {
       const user = await this.UserRepository.GetUserById(user_id);
 
@@ -79,13 +91,12 @@ export class ConfigurationProfile {
             throw new AppError('User already has a profile');
          }
 
-         const { ProfileEntity, imageRef } =
-            await ConfigurationProfile.UseFireBaseStorage({
-               FirebaseStorageProvider: this.FirebaseStorageProvider,
-               profileInfos,
-               user_id,
-               isUpdate: false,
-            });
+         const { ProfileEntity, imageRef } = await this.UseFireBaseStorage({
+            FirebaseStorageProvider: this.FirebaseStorageProvider,
+            profileInfos,
+            user_id,
+            isUpdate: false,
+         });
 
          const { avatar: _, ...profile } = await this.ProfileRepository.create({
             userId: user_id,
@@ -116,15 +127,15 @@ export class ConfigurationProfile {
          }
       });
 
-      const { ProfileEntity, imageRef } =
-         await ConfigurationProfile.UseFireBaseStorage({
-            FirebaseStorageProvider: this.FirebaseStorageProvider,
-            user_id,
-            profileInfos,
-            isUpdate: true,
-         });
+      const { ProfileEntity, imageRef } = await this.UseFireBaseStorage({
+         FirebaseStorageProvider: this.FirebaseStorageProvider,
+         user_id,
+         profileInfos,
+         isUpdate: true,
+         profileId: profile_id,
+      });
 
-      const { avatar: _, ...profile } = await this.ProfileRepository.updated({
+      const { ...profile } = await this.ProfileRepository.updated({
          profile_id: profile_id,
          avatar: imageRef as string,
          Birthday: ProfileEntity.Birthday.getValue,
