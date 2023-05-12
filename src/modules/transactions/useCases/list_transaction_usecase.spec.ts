@@ -61,7 +61,7 @@ describe('List Transactions', () => {
 
       const transactionByMount = await listTransactionUseCase.execute({
          user_id: newUser.id,
-         month: 4,
+         month: 6,
       });
 
       expect(transactionByMount?.transactions).toHaveLength(2);

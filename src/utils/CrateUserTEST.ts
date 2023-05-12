@@ -12,7 +12,6 @@ export default async function CreateUserTest({
          profile: true,
       },
    });
-
    if (!useExits) {
       const props = await User.create({ email, name, password });
 

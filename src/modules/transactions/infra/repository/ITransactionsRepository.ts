@@ -43,6 +43,12 @@ export interface ListBYRevenueOrResolvedTransactionsProps {
    month?: number;
 }
 
+export interface UpdatedProps {
+   transaction_id: string;
+   description?: string;
+   category?: Category;
+   category_id?: string;
+}
 export abstract class ITransactionsRepository extends Model<any, Transaction> {
    abstract create(props: ITransactionsRepositoryProps): Promise<
       Transaction & {
@@ -76,7 +82,9 @@ export abstract class ITransactionsRepository extends Model<any, Transaction> {
 
    abstract delete(transaction_id: string): Promise<Transaction>;
 
-   abstract GetTransactionById(transaction_id: string): Promise<any | null>;
+   abstract GetTransactionById(
+      transaction_id: string
+   ): Promise<Transaction | null>;
 
    abstract ListByMonth({
       user_id,
@@ -117,5 +125,11 @@ export abstract class ITransactionsRepository extends Model<any, Transaction> {
       (Transaction & {
          category: TransactionsCategory;
       })[]
+   >;
+
+   abstract updated(params: UpdatedProps): Promise<
+      Transaction & {
+         category: TransactionsCategory;
+      }
    >;
 }
