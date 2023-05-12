@@ -26,6 +26,8 @@ describe('EditTransactionCategoryAndDescription UseCase', () => {
          editTransactionCategoryAndDescription.execute({
             transaction_id: 'invalid_ID',
             user_id: newUser.id,
+            category: 'leisure',
+            description: 'new Desc',
          })
       ).rejects.toThrow(new AppError('Invalid Transaction!'));
    });
@@ -48,11 +50,13 @@ describe('EditTransactionCategoryAndDescription UseCase', () => {
          editTransactionCategoryAndDescription.execute({
             user_id: newUser.id,
             transaction_id: newTransactionTwo.id,
+            category: 'leisure',
+            description: 'new Desc',
          })
       ).rejects.toThrow(new AppError('Not Authorized!', 401));
    });
 
-   it.only('should be Able Updated category of a transaction.', async () => {
+   it('should be Able Updated category of a transaction.', async () => {
       const newUser = await CreateUserTest();
       const newTransaction = await CreateTransactionTEST({
          email: newUser.email,
@@ -72,5 +76,21 @@ describe('EditTransactionCategoryAndDescription UseCase', () => {
       });
       expect(sut.description).toBe('new Desc');
       expect(sut.category.name).toBe('leisure');
+   });
+
+   it('should be throw new erro if both category and description is not provider!', async () => {
+      const newUser = await CreateUserTest();
+      const newTransaction = await CreateTransactionTEST({
+         email: newUser.email,
+      });
+
+      await expect(() =>
+         editTransactionCategoryAndDescription.execute({
+            transaction_id: newTransaction.id,
+            user_id: newUser.id,
+         })
+      ).rejects.toThrow(
+         new AppError('Category or description must be provider!')
+      );
    });
 });
