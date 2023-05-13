@@ -452,8 +452,8 @@ export class TransactionsRepositoryTestDB
 
    async GetPDFInfosFromTransaction({
       user_id,
-      end_date,
       options,
+      end_date,
       start_date,
    }: GetPDFInfosFromTransaction): Promise<any> {
       let finalOptions = {
@@ -506,7 +506,6 @@ export class TransactionsRepositoryTestDB
 
       console.log(finalOptions);
 
-      const infos = await prisma.transaction.findMany(finalOptions);
-      return infos;
+      return await prisma.transaction.findMany(finalOptions);
    }
 }

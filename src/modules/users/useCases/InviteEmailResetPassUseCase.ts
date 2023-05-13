@@ -41,6 +41,7 @@ export class InviteEmailResetPassUseCase {
       const templatePath = resolve(
          __dirname,
          '..',
+         'infra',
          'views',
          'emails',
          'ForgetPasswordTemplate.hbs'

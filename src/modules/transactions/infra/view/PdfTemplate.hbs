@@ -1,0 +1,9 @@
+<script id='small-template' type='text/x-handlebars-template'>
+   <section> <h1>{name}</h1> <p>{subject}</p> </section> <table> <thead>
+   <th>Transaction</th> </thead> <tbody>
+   {{#transactions}}
+      <tr> <td>{{name}}
+      </td> <td>{{value}}</td> </tr>
+   {{/transactions}}
+   </tbody> </table>
+</script>
