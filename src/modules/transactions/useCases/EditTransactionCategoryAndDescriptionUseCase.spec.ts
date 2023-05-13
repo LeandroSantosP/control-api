@@ -1,13 +1,16 @@
+import 'reflect-metadata';
 import { prisma } from '@/database/prisma';
 import { ITransactionsRepository } from '../infra/repository/ITransactionsRepository';
 import { TransactionsRepositoryTestDB } from '../infra/repository/test-db/TransactionsTestDB';
-import { EditTransactionCategoryAndDescription } from './EditTransactionCategoryAndDescription';
-import CreateTransactionTEST from '@/utils/CreateTransactionTEST';
+import { EditTransactionCategoryAndDescriptionUseCase } from './EditTransactionCategoryAndDescriptionUseCase';
+import CreateTransactionTEST, {
+   dataFormatted,
+} from '@/utils/CreateTransactionTEST';
 import CreateUserTest from '@/utils/CrateUserTEST';
 import { AppError } from '@/shared/infra/middleware/AppError';
 
 let transactionRepositoryTest: ITransactionsRepository;
-let editTransactionCategoryAndDescription: EditTransactionCategoryAndDescription;
+let editTransactionCategoryAndDescription: EditTransactionCategoryAndDescriptionUseCase;
 
 describe('EditTransactionCategoryAndDescription UseCase', () => {
    beforeEach(async () => {
@@ -16,7 +19,9 @@ describe('EditTransactionCategoryAndDescription UseCase', () => {
       await prisma.user.deleteMany({});
       transactionRepositoryTest = new TransactionsRepositoryTestDB();
       editTransactionCategoryAndDescription =
-         new EditTransactionCategoryAndDescription(transactionRepositoryTest);
+         new EditTransactionCategoryAndDescriptionUseCase(
+            transactionRepositoryTest
+         );
    });
 
    it('should throw new erro if transaction does not exits', async () => {
@@ -44,6 +49,7 @@ describe('EditTransactionCategoryAndDescription UseCase', () => {
 
       const newTransactionTwo = await CreateTransactionTEST({
          email: newUserTwo.email,
+         dueDate: dataFormatted,
       });
 
       await expect(() =>
@@ -60,6 +66,7 @@ describe('EditTransactionCategoryAndDescription UseCase', () => {
       const newUser = await CreateUserTest();
       const newTransaction = await CreateTransactionTEST({
          email: newUser.email,
+         dueDate: dataFormatted,
       });
 
       const response = await prisma.transactionsCategory.findFirst({
@@ -74,14 +81,20 @@ describe('EditTransactionCategoryAndDescription UseCase', () => {
          category: 'leisure',
          description: 'new Desc',
       });
-      expect(sut.description).toBe('new Desc');
-      expect(sut.category.name).toBe('leisure');
+
+      expect(sut).toBe(undefined);
+      const responseEdit = await transactionRepositoryTest.list({
+         user_id: newUser.id,
+      });
+      expect(responseEdit[0].description).toBe('new Desc');
+      expect(responseEdit[0].category.name).toBe('leisure');
    });
 
    it('should be throw new erro if both category and description is not provider!', async () => {
       const newUser = await CreateUserTest();
       const newTransaction = await CreateTransactionTEST({
          email: newUser.email,
+         dueDate: dataFormatted,
       });
 
       await expect(() =>

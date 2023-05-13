@@ -1,7 +1,9 @@
 import 'reflect-metadata';
 import { prisma } from '@/database/prisma';
 import CreateUserTest from '@/utils/CrateUserTEST';
-import CreateTransactionTEST from '@/utils/CreateTransactionTEST';
+import CreateTransactionTEST, {
+   dataFormatted,
+} from '@/utils/CreateTransactionTEST';
 import { ListTransitionsBySubscriptionUseCase } from './ListTransitionsBySubscriptionUseCase';
 import { TransactionsRepositoryTestDB } from '../infra/repository/test-db/TransactionsTestDB';
 
@@ -28,6 +30,7 @@ const CreateTransactions = async ({
             isSubscription,
             value,
             resolved,
+            dueDate: dataFormatted,
          });
       })
    );

@@ -7,7 +7,7 @@ const dateFormateWithOneMoreMonth = format(
    'yyyy-MM-dd'
 );
 
-const dataFormatted = formatISO(
+export const dataFormatted = formatISO(
    parse(dateFormateWithOneMoreMonth as string, 'yyyy-MM-dd', new Date())
 );
 
@@ -30,18 +30,18 @@ export default async function CreateTransactionTEST({
    categoryType = 'Investments',
    recurrence = 'daily',
    isSubscription,
-   resolved = false,
-   dueDate = dataFormatted,
+   resolved,
+   dueDate,
    filingDate,
 }: ICreateTransactionTEST) {
    const useExits = await prisma.transaction.create({
       data: {
          description: description,
          value: new Prisma.Decimal(value),
-         due_date: !filingDate && dueDate,
+         due_date: !filingDate ? dueDate : undefined,
          recurrence,
          isSubscription,
-         filingDate,
+         filingDate: !dueDate ? filingDate : undefined,
          resolved,
          author: {
             connect: {

@@ -6,9 +6,12 @@ import { ListTransactionController } from '@/modules/transactions/controller/Lis
 import { CreateTransactionWIthRecorrenteController } from '@/modules/transactions/controller/CreateTransactionWIthRecorrenteController';
 import { ResolveTransactionController } from '@/modules/transactions/controller/ResolveTransactionController';
 import { ListTransactionsBySubscriptionController } from '@/modules/transactions/controller/ListTransitionsBySubscriptionController';
+import { EditTransactionsCategoryAndDescriptionController } from '@/modules/transactions/controller/EditTransactionsCategoryAndDescription';
 
 const transactionRoutes = Router();
 
+const editTransactionsCategoryAndDescriptionController =
+   new EditTransactionsCategoryAndDescriptionController();
 const createTransactionController = new CreateTransactionsController();
 const createTransactionWIthRecorrenteController =
    new CreateTransactionWIthRecorrenteController();
@@ -50,6 +53,20 @@ transactionRoutes.delete(
    '/:transaction_id',
    UserAuthentication,
    deleteTransactionController.handle
+);
+
+transactionRoutes.patch(
+   '/edit/:transaction_id',
+   UserAuthentication,
+   async (req, res) => {
+      const { body, statusCode, type } =
+         await editTransactionsCategoryAndDescriptionController.handle(
+            req,
+            res
+         );
+
+      return res.status(statusCode)[type](body);
+   }
 );
 
 transactionRoutes.patch(

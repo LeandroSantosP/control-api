@@ -6,7 +6,9 @@ import { prisma } from '@/database/prisma';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { formatISO, parse } from 'date-fns';
 import CreateUserTest from '@/utils/CrateUserTEST';
-import CreateTransactionTEST from '@/utils/CreateTransactionTEST';
+import CreateTransactionTEST, {
+   dataFormatted,
+} from '@/utils/CreateTransactionTEST';
 
 let userRepository: UserRepositoryTestDB;
 let TransactionsRepository: TransactionsRepositoryTestDB;
@@ -55,6 +57,7 @@ describe('List Transactions', () => {
             return CreateTransactionTEST({
                email: newUser.email,
                isSubscription: false,
+               dueDate: dataFormatted,
             });
          })
       );

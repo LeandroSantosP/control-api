@@ -1,5 +1,7 @@
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { Transaction, TransactionsCategory } from '@prisma/client';
+
+import { inject, injectable } from 'tsyringe';
 import { Category, CategoryProps } from '../infra/Entity/Category';
 import { ITransactionsRepository } from '../infra/repository/ITransactionsRepository';
 
@@ -10,8 +12,10 @@ interface IRequest {
    category?: CategoryProps;
 }
 
-export class EditTransactionCategoryAndDescription {
+@injectable()
+export class EditTransactionCategoryAndDescriptionUseCase {
    constructor(
+      @inject('TransactionsRepository')
       private readonly TransactionRepository: ITransactionsRepository
    ) {}
 
@@ -20,11 +24,7 @@ export class EditTransactionCategoryAndDescription {
       user_id,
       category,
       description,
-   }: IRequest): Promise<
-      Transaction & {
-         category: TransactionsCategory;
-      }
-   > {
+   }: IRequest): Promise<void> {
       const transaction = await this.TransactionRepository.GetTransactionById(
          transaction_id
       );
@@ -40,10 +40,11 @@ export class EditTransactionCategoryAndDescription {
       }
 
       const newCategory = new Category(category);
-      return await this.TransactionRepository.updated({
+      await this.TransactionRepository.updated({
          transaction_id,
          description,
          category: newCategory.GetCategory,
       });
+      return;
    }
 }

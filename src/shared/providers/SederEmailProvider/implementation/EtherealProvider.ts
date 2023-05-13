@@ -20,6 +20,9 @@ export class EtherealProvider implements ISederEmailProvider {
                user: account.user,
                pass: account.pass,
             },
+            tls: {
+               rejectUnauthorized: false,
+            },
          });
 
          this.transporter = transporter;

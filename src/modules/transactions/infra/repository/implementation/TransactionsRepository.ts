@@ -17,6 +17,7 @@ import {
    ITransactionsRepositoryProps,
    ListBYRevenueOrResolvedTransactionsProps,
    ListBySubscription,
+   UpdatedProps,
 } from '../ITransactionsRepository';
 
 export class TransactionsRepository
@@ -30,9 +31,6 @@ export class TransactionsRepository
       this.prisma = prisma;
    }
 
-   updated(props: any): Promise<any> {
-      throw new Error('Method not implemented.');
-   }
    async list({ user_id }: { user_id: string }): Promise<
       (Transaction & {
          category: TransactionsCategory;
@@ -413,5 +411,33 @@ export class TransactionsRepository
       });
 
       return transactions;
+   }
+   async updated({
+      category,
+      description,
+      category_id,
+      transaction_id,
+   }: UpdatedProps): Promise<
+      Transaction & {
+         category: TransactionsCategory;
+      }
+   > {
+      const UpdatedTransaction = await this.prisma.transaction.update({
+         where: {
+            id: transaction_id,
+         },
+         data: {
+            category: {
+               update: {
+                  name: category,
+               },
+            },
+            description,
+         },
+         include: {
+            category: true,
+         },
+      });
+      return UpdatedTransaction;
    }
 }

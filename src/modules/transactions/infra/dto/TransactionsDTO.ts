@@ -1,6 +1,5 @@
 import { CategoryProps } from '../Entity/Category';
-import { Installments } from '../Entity/Installments';
-import { RecurrenceProps } from '../Entity/Recurrence';
+import { Recurrence } from '../Entity/Recurrence';
 
 export type CreatePropsDTO = {
    id?: string | undefined;
@@ -10,7 +9,7 @@ export type CreatePropsDTO = {
    isSubscription: boolean;
    resolved?: boolean;
    type: 'revenue' | 'expense';
-   recurrence?: RecurrenceProps | undefined;
+   recurrence?: Recurrence | undefined;
    filingDate?: string | undefined;
    category?: CategoryProps | undefined;
    due_date?: string | undefined;
