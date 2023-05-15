@@ -1,5 +1,3 @@
-import { prisma } from '@/database/prisma';
-
 export abstract class Model<I, O> {
    constructor() {}
 

@@ -12,6 +12,7 @@ import {
 } from '@prisma/client';
 
 import {
+   GetPDFInfosFromTransaction,
    ICreateTransactionInstallments,
    ITransactionsRepository,
    ITransactionsRepositoryProps,
@@ -439,5 +440,64 @@ export class TransactionsRepository
          },
       });
       return UpdatedTransaction;
+   }
+
+   async GetPDFInfosFromTransaction({
+      user_id,
+      options,
+      end_date,
+      start_date,
+   }: GetPDFInfosFromTransaction): Promise<Transaction[]> {
+      let finalOptions = {
+         where: {
+            userId: user_id,
+         },
+         orderBy: {
+            created_at: 'desc',
+         },
+      } as { where: {}; orderBy: {} };
+
+      if (!options) {
+         finalOptions = {
+            ...finalOptions,
+         };
+      } else if (options && options.ByExpense) {
+         finalOptions = {
+            ...finalOptions,
+            where: {
+               ...finalOptions.where,
+               AND: [
+                  { due_date: { gte: start_date } },
+                  { due_date: { lte: end_date } },
+               ],
+            },
+         };
+      } else if (options && options.ByRevenue) {
+         finalOptions = {
+            ...finalOptions,
+            where: {
+               ...finalOptions.where,
+               AND: [
+                  { filingDate: { gte: start_date } },
+                  { filingDate: { lte: end_date } },
+               ],
+            },
+         };
+      } else if (options && options.BySubscription) {
+         finalOptions = {
+            ...finalOptions,
+            where: {
+               ...finalOptions.where,
+               AND: [
+                  { filingDate: { gte: start_date } },
+                  { filingDate: { lte: end_date } },
+               ],
+            },
+         };
+      }
+
+      console.log(finalOptions);
+
+      return await prisma.transaction.findMany(finalOptions);
    }
 }

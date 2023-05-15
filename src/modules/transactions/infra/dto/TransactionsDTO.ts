@@ -1,5 +1,5 @@
 import { CategoryProps } from '../Entity/Category';
-import { Recurrence } from '../Entity/Recurrence';
+import { Recurrence as RecurrenceProps } from '@prisma/client';
 
 export type CreatePropsDTO = {
    id?: string | undefined;
@@ -9,7 +9,7 @@ export type CreatePropsDTO = {
    isSubscription: boolean;
    resolved?: boolean;
    type: 'revenue' | 'expense';
-   recurrence?: Recurrence | undefined;
+   recurrence?: RecurrenceProps | undefined;
    filingDate?: string | undefined;
    category?: CategoryProps | undefined;
    due_date?: string | undefined;

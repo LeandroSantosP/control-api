@@ -1,18 +1,28 @@
+import 'reflect-metadata';
+import { addMonths } from 'date-fns';
+import fs from 'fs';
 import { prisma } from '@/database/prisma';
 import CreateUserTest from '@/utils/CrateUserTEST';
-import { addDays, addMonths } from 'date-fns';
-import { TransactionsRepositoryTestDB } from '../infra/repository/test-db/TransactionsTestDB';
+import { AppError } from '@/shared/infra/middleware/AppError';
 import { TransactionPdfUseCase } from './TransactionPdfUseCase';
+import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
+import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
+import { IPdfProviderProvider } from '@/shared/providers/PdfProvider/IPdfProviderProvider';
+import { TransactionsRepositoryTestDB } from '../infra/repository/test-db/TransactionsTestDB';
+import { HtmlPdfProvider } from '@/shared/providers/PdfProvider/implementation/HtmlPdfProvider';
+import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
+import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
+
 import CreateTransactionTEST, {
    dataFormatted,
 } from '@/utils/CreateTransactionTEST';
-import { AppError } from '@/shared/infra/middleware/AppError';
-import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
-import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
 
 let useRepositoryTest: IUserRepository;
 let TransactionRepository: TransactionsRepositoryTestDB;
 let transactionPdfUseCase: TransactionPdfUseCase;
+let HtmlPdfProviderTEST: IPdfProviderProvider;
+
+let dateFnsProvider: IDateProvider;
 
 async function CreateUserAndTransaction() {
    const { email, id } = await CreateUserTest();
@@ -47,11 +57,15 @@ async function CreateUserAndTransaction() {
 describe('TransactionPdfUseCase', () => {
    beforeEach(async () => {
       await prisma.user.deleteMany({});
+      dateFnsProvider = new DateFnsProvider();
       useRepositoryTest = new UserRepositoryTestDB();
+      HtmlPdfProviderTEST = new HtmlPdfProvider();
       TransactionRepository = new TransactionsRepositoryTestDB();
       transactionPdfUseCase = new TransactionPdfUseCase(
          useRepositoryTest,
-         TransactionRepository
+         TransactionRepository,
+         HtmlPdfProviderTEST,
+         dateFnsProvider
       );
    });
 
@@ -61,6 +75,10 @@ describe('TransactionPdfUseCase', () => {
          transactionPdfUseCase.execute({
             user_id,
             options: {},
+            body: {
+               subject: 'teste',
+               title: 'titulo',
+            },
          })
       ).rejects.toThrow(new AppError('Invalid Options!'));
    });
@@ -70,31 +88,30 @@ describe('TransactionPdfUseCase', () => {
 
       const sut = await transactionPdfUseCase.execute({
          user_id,
+         body: {
+            subject: 'teste',
+            title: 'titulo',
+         },
       });
-
-      expect(sut).toHaveLength(4);
-      expect(String(sut[0].value)).toBe('-100');
-      expect(String(sut[1].value)).toBe('-100');
-      expect(String(sut[2].value)).toBe('100');
-      expect(String(sut[3].value)).toBe('100');
+      expect(sut).toBeInstanceOf(fs.ReadStream);
    });
 
    it('should be able to get just revenue transactions infos to create a pdf ', async () => {
-      const { user_email, user_id } = await CreateUserAndTransaction();
-
-      let options = {
-         ByRevenue: true,
-      };
+      const { user_id } = await CreateUserAndTransaction();
 
       const sut = await transactionPdfUseCase.execute({
          user_id,
          start_date: new Date(),
          end_date: addMonths(new Date(), 5),
+         body: {
+            subject: 'teste',
+            title: 'titulo',
+         },
          options: {
             ByRevenue: true,
          },
       });
 
-      expect(sut).toHaveLength(2);
+      expect(sut).toBeInstanceOf(fs.ReadStream);
    });
 });

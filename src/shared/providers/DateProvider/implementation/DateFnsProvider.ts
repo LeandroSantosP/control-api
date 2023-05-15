@@ -1,9 +1,10 @@
-import { IDateProvider } from '../IDateProvider';
+import { formatParams, IDateProvider } from '../IDateProvider';
 import {
    formatISO,
    parse,
    addHours,
    addDays,
+   format,
 } from 'date-fns'; /* Criar um provider */
 
 export class DateFnsProvider implements IDateProvider {
@@ -16,6 +17,10 @@ export class DateFnsProvider implements IDateProvider {
    }
    formatISO(props: any): string {
       return formatISO(props);
+   }
+
+   format(params: formatParams): string {
+      return format(params.date, params.format, params.options);
    }
 
    parse(props: any): Date {

@@ -1,8 +1,15 @@
-interface settingsPros {
-   name: string;
+import fs from 'fs';
+export interface settingsPros {
+   author: string;
    title: string;
    subject: string;
-   transactions: any[];
+   transactions: Array<{
+      value: string;
+      type: string;
+      filingDate: string | null;
+      dueDate: string | null;
+      createAt: string;
+   }>;
 }
 
 export interface SendPdfProps {
@@ -11,5 +18,5 @@ export interface SendPdfProps {
 }
 
 export abstract class IPdfProviderProvider {
-   abstract SendPdf(params: SendPdfProps): Promise<any>;
+   abstract SendPdf(params: SendPdfProps): Promise<fs.ReadStream | Error>;
 }

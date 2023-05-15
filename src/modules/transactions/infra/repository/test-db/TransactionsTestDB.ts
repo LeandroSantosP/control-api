@@ -455,7 +455,7 @@ export class TransactionsRepositoryTestDB
       options,
       end_date,
       start_date,
-   }: GetPDFInfosFromTransaction): Promise<any> {
+   }: GetPDFInfosFromTransaction): Promise<Transaction[]> {
       let finalOptions = {
          where: {
             userId: user_id,
@@ -503,8 +503,6 @@ export class TransactionsRepositoryTestDB
             },
          };
       }
-
-      console.log(finalOptions);
 
       return await prisma.transaction.findMany(finalOptions);
    }

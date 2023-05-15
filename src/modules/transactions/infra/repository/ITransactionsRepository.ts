@@ -154,5 +154,5 @@ export abstract class ITransactionsRepository extends Model<any, Transaction> {
 
    abstract GetPDFInfosFromTransaction(
       params: GetPDFInfosFromTransaction
-   ): Promise<any>;
+   ): Promise<Transaction[]>;
 }

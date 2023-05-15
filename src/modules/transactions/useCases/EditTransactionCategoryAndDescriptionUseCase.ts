@@ -1,5 +1,4 @@
 import { AppError } from '@/shared/infra/middleware/AppError';
-import { Transaction, TransactionsCategory } from '@prisma/client';
 
 import { inject, injectable } from 'tsyringe';
 import { Category, CategoryProps } from '../infra/Entity/Category';

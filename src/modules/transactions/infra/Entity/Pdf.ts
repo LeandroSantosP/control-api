@@ -1,44 +1,52 @@
-import { resolve } from 'path';
-
-interface settingsPros {
-   name: string;
-   title: string;
-   subject: string;
-   transactions: any[];
-}
-
-interface SendPdfProps {
-   variables: settingsPros;
-   templatePath: string;
-}
+import fs from 'fs';
+import { AppError } from '@/shared/infra/middleware/AppError';
+import {
+   IPdfProviderProvider,
+   settingsPros,
+} from '@/shared/providers/PdfProvider/IPdfProviderProvider';
 
 export class Pdf {
-   private _pdf: any;
+   private _pdfStream: fs.ReadStream | undefined;
 
-   constructor(private readonly settings: settingsPros) {}
+   constructor(
+      private readonly HtmlPdfProvider: IPdfProviderProvider,
+      private readonly settings: settingsPros
+   ) {
+      if (this.settings.transactions.length === 0) {
+         throw new AppError('No transactions provided');
+      } else if (this.settings.author === '') {
+         throw new AppError('Author is required');
+      } else if (this.settings.title === '') {
+         throw new AppError('Title is required');
+      } else if (this.settings.subject === '') {
+         throw new AppError('Subject is required');
+      }
+   }
 
    async create({
-      SendPdf,
+      templatePath,
    }: {
-      SendPdf(params: SendPdfProps): Promise<any>;
-   }): Promise<void> {
-      const templatePath = resolve(
-         __dirname,
-         '..',
-         'views',
-         'emails',
-         'PdfTemplate.hbs'
-      );
-
-      const pdf = await SendPdf({
+      templatePath: string;
+   }): Promise<this | AppError> {
+      const pdf = await this.HtmlPdfProvider.SendPdf({
          templatePath,
          variables: { ...this.settings },
       });
 
-      this._pdf = pdf;
+      if (pdf instanceof fs.ReadStream) {
+         this._pdfStream = pdf;
+      } else {
+         throw new AppError('Error creating pdf');
+      }
+
+      return this;
    }
 
    get getPdf() {
-      return this._pdf;
+      if (this._pdfStream === undefined) {
+         throw new AppError('No pdf created');
+      }
+
+      return this._pdfStream as fs.ReadStream;
    }
 }
