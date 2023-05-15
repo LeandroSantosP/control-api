@@ -1,4 +1,3 @@
-import '@/shared/infra/tsyringe';
 import { Transaction } from '@prisma/client';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
@@ -8,6 +7,7 @@ import { container, inject, injectable } from 'tsyringe';
 import { FormateDate } from '@/utils/FormattedDate';
 import { Pdf } from '../infra/PdfEntity/Pdf';
 import { PdfDate } from '../infra/PdfEntity/PdfDate';
+
 import {
    IPdfProviderProvider,
    settingsPros,
@@ -70,12 +70,19 @@ export class TransactionPdfUseCase {
             format: 'dd/MM/yyyy',
          });
 
+         const value = new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+         })
+            .format(Number(transaction.value))
+            .toString();
+
          return {
-            value: transaction.value.toString(),
-            type: transaction.type!,
+            value,
             filingDate,
             dueDate,
             createAt,
+            type: transaction.type!,
          };
       });
       return {

@@ -5,7 +5,7 @@ import {
 } from '@/shared/providers/PdfProvider/IPdfProviderProvider';
 
 export class Pdf {
-   private _pdfStream: Buffer | undefined;
+   private _pdfBuffer: Buffer | undefined;
 
    constructor(
       private readonly HtmlPdfProvider: IPdfProviderProvider,
@@ -33,7 +33,7 @@ export class Pdf {
       });
 
       if (pdf instanceof Buffer) {
-         this._pdfStream = pdf;
+         this._pdfBuffer = pdf;
       } else {
          throw new AppError('Error creating pdf');
       }
@@ -42,10 +42,10 @@ export class Pdf {
    }
 
    get getPdf() {
-      if (this._pdfStream === undefined) {
+      if (this._pdfBuffer === undefined) {
          throw new AppError('No pdf created');
       }
 
-      return this._pdfStream as Buffer;
+      return this._pdfBuffer;
    }
 }

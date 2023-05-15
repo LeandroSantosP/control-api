@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { addMonths } from 'date-fns';
+import '@/shared/infra/tsyringe';
 import { prisma } from '@/database/prisma';
 import CreateUserTest from '@/utils/CrateUserTEST';
 import { AppError } from '@/shared/infra/middleware/AppError';
@@ -29,25 +29,25 @@ async function CreateUserAndTransaction() {
    await CreateTransactionTEST({
       email,
       filingDate: dataFormatted,
-      value: '100',
+      value: '4300.11',
    });
 
    await CreateTransactionTEST({
       email,
       filingDate: dataFormatted,
-      value: '100',
+      value: '1000.22',
    });
 
    await CreateTransactionTEST({
       email,
       dueDate: dataFormatted,
-      value: '-100',
+      value: '-1021.33',
    });
 
    await CreateTransactionTEST({
       email,
       dueDate: dataFormatted,
-      value: '-100',
+      value: '-102220.00',
    });
 
    return { user_id: id, user_email: email };
@@ -136,7 +136,6 @@ describe('TransactionPdfUseCase', () => {
    it('should be able to get just expense transactions infos to create a pdf ', async () => {
       const { user_id } = await CreateUserAndTransaction();
 
-      // 05-05-2001
       const sut = await transactionPdfUseCase.execute({
          user_id,
          body: {

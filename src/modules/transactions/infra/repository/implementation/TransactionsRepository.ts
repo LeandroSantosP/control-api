@@ -490,6 +490,7 @@ export class TransactionsRepository
             ...finalOptions,
             where: {
                ...finalOptions.where,
+               isSubscription: true,
                AND: [
                   { filingDate: { gte: start_date } },
                   { filingDate: { lte: end_date } },
