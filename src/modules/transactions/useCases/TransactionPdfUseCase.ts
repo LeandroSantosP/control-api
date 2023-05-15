@@ -1,16 +1,17 @@
+import '@/shared/infra/tsyringe';
 import { Transaction } from '@prisma/client';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
 import { ITransactionsRepository } from '../infra/repository/ITransactionsRepository';
-import { Pdf } from '../infra/Entity/Pdf';
+import { container, inject, injectable } from 'tsyringe';
+import { FormateDate } from '@/utils/FormattedDate';
+import { Pdf } from '../infra/PdfEntity/Pdf';
+import { PdfDate } from '../infra/PdfEntity/PdfDate';
 import {
    IPdfProviderProvider,
    settingsPros,
 } from '@/shared/providers/PdfProvider/IPdfProviderProvider';
-import { inject, injectable } from 'tsyringe';
-import { start } from 'repl';
-import { FormateDate } from '@/utils/FormmatedDate';
 
 interface IRequest {
    user_id: string;
@@ -101,20 +102,27 @@ export class TransactionPdfUseCase {
       ) {
          throw new AppError('Invalid Options!');
       }
+
       let end_date: Date | undefined;
       if (body.end_date) {
-         this.FormateDate = new FormateDate(body.end_date);
+         const response = container.resolve(PdfDate);
+         response.setDate = body.end_date;
+         response.verify();
+         this.FormateDate = new FormateDate(response.getDate!);
          end_date = this.FormateDate.formate('yyyy-MM-dd');
       }
 
       let start_date: Date | undefined;
       if (body.start_date) {
-         this.FormateDate = new FormateDate(body.start_date);
+         const response = container.resolve(PdfDate);
+         response.setDate = body.start_date;
+         response.verify();
+         this.FormateDate = new FormateDate(response.getDate!);
          start_date = this.FormateDate.formate('yyyy-MM-dd');
       }
 
       const data = await this.TransactionRepository.GetPDFInfosFromTransaction({
-         user_id: user_id,
+         user_id,
          options,
          end_date,
          start_date,

@@ -1,4 +1,3 @@
-import fs from 'fs';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import {
    IPdfProviderProvider,

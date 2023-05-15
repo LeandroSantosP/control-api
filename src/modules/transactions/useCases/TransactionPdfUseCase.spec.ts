@@ -142,7 +142,7 @@ describe('TransactionPdfUseCase', () => {
          body: {
             subject: 'teste',
             title: 'titulo',
-            start_date: '2010-05-05',
+            start_date: '2010-01-05',
             end_date: '2024-05-05',
          },
          options: {
