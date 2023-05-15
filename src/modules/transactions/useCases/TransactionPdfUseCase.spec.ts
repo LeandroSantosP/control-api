@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { addMonths } from 'date-fns';
-import fs from 'fs';
 import { prisma } from '@/database/prisma';
 import CreateUserTest from '@/utils/CrateUserTEST';
 import { AppError } from '@/shared/infra/middleware/AppError';
@@ -93,7 +92,7 @@ describe('TransactionPdfUseCase', () => {
             title: 'titulo',
          },
       });
-      expect(sut).toBeInstanceOf(fs.ReadStream);
+      expect(sut).toBeInstanceOf(Buffer);
    });
 
    it('should be able to get just revenue transactions infos to create a pdf ', async () => {
@@ -101,17 +100,56 @@ describe('TransactionPdfUseCase', () => {
 
       const sut = await transactionPdfUseCase.execute({
          user_id,
-         start_date: new Date(),
-         end_date: addMonths(new Date(), 5),
          body: {
             subject: 'teste',
             title: 'titulo',
+            start_date: '2010-05-05',
+            end_date: '2024-05-05',
          },
          options: {
             ByRevenue: true,
          },
       });
 
-      expect(sut).toBeInstanceOf(fs.ReadStream);
+      expect(sut).toBeInstanceOf(Buffer);
+   });
+
+   it('should be able to get just expense transactions infos to create a pdf ', async () => {
+      const { user_id } = await CreateUserAndTransaction();
+
+      const sut = await transactionPdfUseCase.execute({
+         user_id,
+         body: {
+            subject: 'teste',
+            title: 'titulo',
+            start_date: '2010-05-05',
+            end_date: '2024-05-05',
+         },
+         options: {
+            ByExpense: true,
+         },
+      });
+
+      expect(sut).toBeInstanceOf(Buffer);
+   });
+
+   it('should be able to get just expense transactions infos to create a pdf ', async () => {
+      const { user_id } = await CreateUserAndTransaction();
+
+      // 05-05-2001
+      const sut = await transactionPdfUseCase.execute({
+         user_id,
+         body: {
+            subject: 'teste',
+            title: 'titulo',
+            start_date: '2010-05-05',
+            end_date: '2024-05-05',
+         },
+         options: {
+            BySubscription: true,
+         },
+      });
+
+      expect(sut).toBeInstanceOf(Buffer);
    });
 });

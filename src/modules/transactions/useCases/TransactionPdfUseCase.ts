@@ -9,14 +9,16 @@ import {
    settingsPros,
 } from '@/shared/providers/PdfProvider/IPdfProviderProvider';
 import { inject, injectable } from 'tsyringe';
+import { start } from 'repl';
+import { FormateDate } from '@/utils/FormmatedDate';
 
 interface IRequest {
    user_id: string;
-   start_date?: Date;
-   end_date?: Date;
    body: {
       title: string;
       subject: string;
+      start_date?: string;
+      end_date?: string;
    };
    options?: {
       ByRevenue?: boolean;
@@ -27,6 +29,7 @@ interface IRequest {
 
 @injectable()
 export class TransactionPdfUseCase {
+   private FormateDate: FormateDate | null = null;
    constructor(
       @inject('UserRepository')
       private readonly UserRepository: IUserRepository,
@@ -82,13 +85,7 @@ export class TransactionPdfUseCase {
       };
    }
 
-   async execute({
-      body,
-      user_id,
-      end_date,
-      options,
-      start_date,
-   }: IRequest): Promise<any> {
+   async execute({ body, user_id, options }: IRequest): Promise<Buffer> {
       const user = await this.UserRepository.GetUserById(user_id);
 
       if (!user) {
@@ -104,13 +101,24 @@ export class TransactionPdfUseCase {
       ) {
          throw new AppError('Invalid Options!');
       }
-      const response =
-         await this.TransactionRepository.GetPDFInfosFromTransaction({
-            user_id: user_id,
-            end_date: end_date,
-            start_date: start_date,
-            options: options,
-         });
+      let end_date: Date | undefined;
+      if (body.end_date) {
+         this.FormateDate = new FormateDate(body.end_date);
+         end_date = this.FormateDate.formate('yyyy-MM-dd');
+      }
+
+      let start_date: Date | undefined;
+      if (body.start_date) {
+         this.FormateDate = new FormateDate(body.start_date);
+         start_date = this.FormateDate.formate('yyyy-MM-dd');
+      }
+
+      const data = await this.TransactionRepository.GetPDFInfosFromTransaction({
+         user_id: user_id,
+         options,
+         end_date,
+         start_date,
+      });
 
       const pdf = new Pdf(
          this.HtmlPdfProvider,
@@ -120,21 +128,12 @@ export class TransactionPdfUseCase {
                tittle: body.title,
                subject: body.subject,
             },
-            response
+            data
          )
       );
 
       await pdf.create({
          templatePath: 'public/view/pdfTemplate.hbs',
-      });
-      await new Promise((resolve, reject) => {
-         pdf.getPdf.on('data', (res) => {
-            resolve(res);
-         });
-      }).then((res: any) => {
-         console.log(typeof res === 'object');
-
-         return;
       });
 
       return pdf.getPdf;

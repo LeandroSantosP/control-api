@@ -6,7 +6,7 @@ import {
 } from '@/shared/providers/PdfProvider/IPdfProviderProvider';
 
 export class Pdf {
-   private _pdfStream: fs.ReadStream | undefined;
+   private _pdfStream: Buffer | undefined;
 
    constructor(
       private readonly HtmlPdfProvider: IPdfProviderProvider,
@@ -33,7 +33,7 @@ export class Pdf {
          variables: { ...this.settings },
       });
 
-      if (pdf instanceof fs.ReadStream) {
+      if (pdf instanceof Buffer) {
          this._pdfStream = pdf;
       } else {
          throw new AppError('Error creating pdf');
@@ -47,6 +47,6 @@ export class Pdf {
          throw new AppError('No pdf created');
       }
 
-      return this._pdfStream as fs.ReadStream;
+      return this._pdfStream as Buffer;
    }
 }

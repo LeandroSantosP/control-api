@@ -8,6 +8,7 @@ import { AppError } from '@/shared/infra/middleware/AppError';
 import { CategoryProps } from '../infra/Entity/Category';
 import { ValidationYup } from '@/utils/ValidationYup';
 import { inject, injectable } from 'tsyringe';
+import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
 
 export const decimalValidate = () => {
    return yup
@@ -82,13 +83,26 @@ interface IRequest {
 export class CreateTransaction {
    constructor(
       @inject('UserRepository')
-      private userRepository: IUserRepository,
+      private readonly userRepository: IUserRepository,
       @inject('TransactionsRepository')
-      private transactionRepository: ITransactionsRepository
+      private readonly transactionRepository: ITransactionsRepository,
+      @inject('DateFnsProvider')
+      private readonly dateFnsProvider: IDateProvider
    ) {}
 
-   private static formattedData(date: string) {
-      return formatISO(parse(date, 'yyyy-MM-dd', new Date()));
+   private formattedData(date: string): string {
+      console.log(date);
+
+      const res = this.dateFnsProvider.formatISO(
+         this.dateFnsProvider.parse({
+            dateString: date,
+            DatePatters: 'yyyy-MM-dd',
+            CurrentDate: new Date(),
+         })
+      );
+      console.log(res);
+
+      return res;
    }
 
    async execute({
@@ -145,11 +159,9 @@ export class CreateTransaction {
          let FormateDate = null;
 
          if (validadeData.dueDate) {
-            FormateDate = CreateTransaction.formattedData(validadeData.dueDate);
+            FormateDate = this.formattedData(validadeData.dueDate);
          } else if (validadeData.filingDate) {
-            FormateDate = CreateTransaction.formattedData(
-               validadeData.filingDate
-            );
+            FormateDate = this.formattedData(validadeData.filingDate);
          }
 
          const FormattedValue = String(Number(validadeData.value).toFixed(2));

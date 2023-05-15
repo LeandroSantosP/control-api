@@ -43,6 +43,7 @@ export default async function CreateTransactionTEST({
          isSubscription,
          filingDate: !dueDate ? filingDate : undefined,
          resolved,
+         type: Number(value) < 0 ? 'expense' : 'revenue',
          author: {
             connect: {
                email,

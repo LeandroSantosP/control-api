@@ -1,4 +1,4 @@
-import { formatParams, IDateProvider } from '../IDateProvider';
+import { formatParams, IDateProvider, parseProps } from '../IDateProvider';
 import {
    formatISO,
    parse,
@@ -23,7 +23,7 @@ export class DateFnsProvider implements IDateProvider {
       return format(params.date, params.format, params.options);
    }
 
-   parse(props: any): Date {
+   parse(props: parseProps): Date {
       return parse(props.dateString, props.DatePatters, props.CurrentDate);
    }
 }

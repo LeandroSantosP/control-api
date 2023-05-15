@@ -466,6 +466,7 @@ export class TransactionsRepository
             ...finalOptions,
             where: {
                ...finalOptions.where,
+               type: 'expense',
                AND: [
                   { due_date: { gte: start_date } },
                   { due_date: { lte: end_date } },
@@ -477,6 +478,7 @@ export class TransactionsRepository
             ...finalOptions,
             where: {
                ...finalOptions.where,
+               type: 'revenue',
                AND: [
                   { filingDate: { gte: start_date } },
                   { filingDate: { lte: end_date } },
@@ -495,8 +497,6 @@ export class TransactionsRepository
             },
          };
       }
-
-      console.log(finalOptions);
 
       return await prisma.transaction.findMany(finalOptions);
    }

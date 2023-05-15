@@ -7,10 +7,13 @@ import { CreateTransaction } from './CreateTransactionUseCase';
 import { TransactionsRepositoryTestDB } from '../infra/repository/test-db/TransactionsTestDB';
 import { prisma } from '@/database/prisma';
 import CreateUserTest from '@/utils/CrateUserTEST';
+import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
+import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
 
 let transactionRepositoryTestDB: TransactionsRepositoryTestDB;
 let userRepositoryTestDB: UserRepositoryTestDB;
 let createTransaction: CreateTransaction;
+let dateFnsProvider: IDateProvider;
 
 describe('Create Transaction', () => {
    beforeAll(async () => {
@@ -18,11 +21,13 @@ describe('Create Transaction', () => {
       await prisma.transaction.deleteMany();
    });
    beforeEach(async () => {
+      dateFnsProvider = new DateFnsProvider();
       transactionRepositoryTestDB = new TransactionsRepositoryTestDB();
       userRepositoryTestDB = new UserRepositoryTestDB();
       createTransaction = new CreateTransaction(
          userRepositoryTestDB,
-         transactionRepositoryTestDB
+         transactionRepositoryTestDB,
+         dateFnsProvider
       );
    });
 

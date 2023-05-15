@@ -1,4 +1,3 @@
-import fs from 'fs';
 export interface settingsPros {
    author: string;
    title: string;
@@ -18,5 +17,5 @@ export interface SendPdfProps {
 }
 
 export abstract class IPdfProviderProvider {
-   abstract SendPdf(params: SendPdfProps): Promise<fs.ReadStream | Error>;
+   abstract SendPdf(params: SendPdfProps): Promise<string | Buffer>;
 }

@@ -7,7 +7,7 @@ export class HtmlPdfProvider implements IPdfProviderProvider {
    async SendPdf({
       templatePath,
       variables,
-   }: SendPdfProps): Promise<fs.ReadStream | Error> {
+   }: SendPdfProps): Promise<string | Buffer> {
       const template = fs.readFileSync(templatePath).toString();
 
       const templateParse = Handlebars.compile(template);
@@ -34,9 +34,12 @@ export class HtmlPdfProvider implements IPdfProviderProvider {
                },
             },
          } as any).toStream((err, res) => {
-            if (err) reject(err);
-
-            return resolve(res);
+            if (err) {
+               reject(err);
+            }
+            res.on('data', (buffer) => resolve(buffer)).on('error', (err) =>
+               reject(err)
+            );
          });
       });
    }
