@@ -1,11 +1,11 @@
+import { prisma } from '@/database/prisma';
+import { AppError } from '@/shared/infra/middleware/AppError';
+import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
+import { EmailProviderInMemory } from '@/shared/providers/SederEmailProvider/implementation/EtherealProviderInMemory';
+import CreateUserTest from '@/utils/CrateUserTEST';
 import 'reflect-metadata';
 import { UserRepositoryTestDB } from '../infra/repository/test-db/UserRepositoryTestDB';
 import { InviteEmailResetPassUseCase } from './InviteEmailResetPassUseCase';
-import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
-import CreateUserTest from '@/utils/CrateUserTEST';
-import { EmailProviderInMemory } from '@/shared/providers/SederEmailProvider/implementation/EtherealProviderInMemory';
-import { AppError } from '@/shared/infra/middleware/AppError';
-import { prisma } from '@/database/prisma';
 
 let userRepository: UserRepositoryTestDB;
 let dayFnsProvider: DateFnsProvider;

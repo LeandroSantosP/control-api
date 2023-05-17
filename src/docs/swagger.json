@@ -184,6 +184,52 @@
             }
          }
       },
+      "/transaction/pdf": {
+         "post":{
+            "tags": ["Transactions"],
+            "description": "Authentication rote.",
+            "security": [
+               {
+                  "bearerAuth": []
+               }
+            ],
+            "requestBody": {
+               "description": "Create a new Transaction passing the following data...",
+               "content": {
+                  "application/json": {
+                     "schema": {
+                        "$ref": "#/components/schemas/RequestPdf"
+                     }
+                  }
+               }
+            },
+            "responses":{
+               "200":{
+                  "description": "Pdf created with success."
+               },
+               "400": {
+                  "description": "When the User is not found in the database.",
+                  "content": {
+                     "application/json": {
+                        "schema": {
+                           "type": "object",
+                           "properties": {
+                              "status": {
+                                 "type": "string",
+                                 "example": "Error"
+                              },
+                              "message": {
+                                 "type": "string",
+                                 "example": "Authentication Failed"
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      },
       "/user/": {},
       "/user/profile": {
          "get": {
@@ -364,6 +410,37 @@
                      }
                   }
                }
+            }
+         },
+         "RequestPdf":{
+            "type":"object",
+            "properties":{
+               "subject":{
+                  "type":"string",
+                  "description": "Subject about pdf.",
+                  "example":"Revenue transactions"
+               },
+               "title":{
+                  "type":"string",
+                  "description": "Title about pdf.",
+                  "example":"Transactions"
+               },
+            "options":{
+               "properties":{
+                  "BySubscription":{
+                     "type":"boolean",
+                     "description": "Only transactions where it is inscriptions (optional)."
+                  },
+                   "ByRevenue":{
+                     "type":"boolean",
+                     "description": "Only transactions where it is revenue(optional)."
+                  },
+                    "ByExpense":{
+                     "type":"boolean",
+                     "description": "Only transactions where expenses are incurred(optional)."
+                  }
+               }
+            }
             }
          },
          "RequestTransaction": {

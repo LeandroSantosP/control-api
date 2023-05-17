@@ -1,9 +1,9 @@
-import 'reflect-metadata';
+import { prisma } from '@/database/prisma';
 import { IAuthProvider } from '@/shared/providers/AuthProvider/IAuthProvider';
 import { JwtAuthProvider } from '@/shared/providers/AuthProvider/implementation/JwtAuthProvider';
+import 'reflect-metadata';
 import { UserRepositoryInMemory } from '../infra/repository/in-memory/UserRepositoryInMemory';
 import { DeleteUserUseCase } from './DeleteUserUseCase';
-import { prisma } from '@/database/prisma';
 
 let userRepositoryInMemory: UserRepositoryInMemory;
 let jwtAuthProvider: IAuthProvider;

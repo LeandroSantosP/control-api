@@ -1,14 +1,14 @@
 import 'reflect-metadata';
 
-import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
-import { UserRepositoryTestDB } from '../infra/repository/test-db/UserRepositoryTestDB';
-import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
-import { ResetPasswordUseCase } from './ResetPassWordUseCase';
-import CreateUserTest from '@/utils/CrateUserTEST';
 import { prisma } from '@/database/prisma';
-import { randomUUID } from 'crypto';
-import { compare } from 'bcrypt';
 import { AppError } from '@/shared/infra/middleware/AppError';
+import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
+import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
+import CreateUserTest from '@/utils/CrateUserTEST';
+import { compare } from 'bcrypt';
+import { randomUUID } from 'crypto';
+import { UserRepositoryTestDB } from '../infra/repository/test-db/UserRepositoryTestDB';
+import { ResetPasswordUseCase } from './ResetPassWordUseCase';
 
 let dayFnsProvider: IDateProvider;
 let userRepository: UserRepositoryTestDB;
