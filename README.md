@@ -1,19 +1,8 @@
-<<<<<<< HEAD
-
-<!--
-# Quando o usuário atualizar uma informação do perfil dele a api deve verificar se o avatar veio como undefiled
-# caso venha como undefined verifique se o usuário ja tem uma image cadastrada
- -->
-
-# Deve ser possível gerar um relatório com todas as transações entrei determinado período (RabbitMq)
-
-=======
+### CONTROL
 
 <div align="center">
 <img src="public/assets/main.png"/>
 </div>
-
-### CONTROL
 
 OLA ME CHAMO LEANDRO E UM PROJETO QUE FIZ PARA COLOCAR NA PRATICA CONCEITOS E TECNOLOGIAS QUE EU VINHA ESTUDANDO **AINDA NAO ESTA FINALIZADO** porem queria lançar essa v1.0, GOSTO DE CRIAR COISAS DE PODE AJUDAR DE PODE REALMENTE FAZER A DIFERENÇA DE ALGUM FORMA NA VIDA DE ALGUÉM. ESTOU ESTUDANDO MAJORITARIAMENTE DESENVOLVIMENTO BACK-END QUE EU OQUE EU REALMENTE ME IDENTIFIQUEI, ME VIRO NO FRONT POREM OQUE NAO E MEU FORTE,
 
