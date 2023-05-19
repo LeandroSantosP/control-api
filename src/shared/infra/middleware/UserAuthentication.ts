@@ -38,7 +38,6 @@ export async function UserAuthentication(
       const repository = new UserRepository();
 
       const user = await repository.GetUserById(client_id);
-      console.log(user);
 
       if (!user) {
          throw new AppError('User Not Found!', 404);
