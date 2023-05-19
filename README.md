@@ -9,6 +9,9 @@
 
 =======
 
+<div align="center">
+<img src="public/assets/graphsGoalsImg.png"/>
+</div>
 ### CONTROL
 
 > > > > > > > dev
