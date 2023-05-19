@@ -1,4 +1,3 @@
-import { addDays, endOfMonth, startOfMonth, isBefore } from 'date-fns';
 import { prisma } from '@/database/prisma';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { GetCurrentDate } from '@/utils/GetCurrentDate';
@@ -10,6 +9,7 @@ import {
    TransactionsCategory,
    User,
 } from '@prisma/client';
+import { addDays, endOfMonth, isBefore, startOfMonth } from 'date-fns';
 
 import {
    GetPDFInfosFromTransaction,
@@ -66,6 +66,7 @@ export class TransactionsRepository
       dueDate,
       Category,
       filingDate,
+      resolved,
    }: ITransactionsRepositoryProps): Promise<
       Transaction & {
          category: {
@@ -79,13 +80,8 @@ export class TransactionsRepository
       const newTransaction = await this.prisma.transaction.create({
          data: {
             category: {
-               connectOrCreate: {
-                  where: {
-                     name: Category || 'unknown',
-                  },
-                  create: {
-                     name: Category || 'unknown',
-                  },
+               create: {
+                  name: Category || 'unknown',
                },
             },
             description,
@@ -93,6 +89,7 @@ export class TransactionsRepository
             due_date: dueDate,
             value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
+            resolved,
             author: {
                connect: {
                   email,
@@ -123,33 +120,30 @@ export class TransactionsRepository
    }: ICreateTransactionInstallments): Promise<{
       description: string;
       value: Prisma.Decimal;
+      resolved: boolean;
       recurrence: Recurrence | null;
       installments: number | null;
       isSubscription: boolean | null;
-      due_date: Date | null;
-      resolved: boolean;
       created_at: Date;
       category: any;
+      due_date: Date | null;
+      filingDate: Date | null;
    }> {
       this.verifyFutureDate(dueDate);
 
       const newTransaction = await this.prisma.transaction.create({
          data: {
-            installments,
-            recurrence,
             description,
-            isSubscription,
             due_date: dueDate,
+            installments,
+            isSubscription,
+            recurrence: recurrence,
             value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
+            resolved: Number(value) > 0 ? true : false,
             category: {
-               connectOrCreate: {
-                  where: {
-                     name: categoryType || 'unknown',
-                  },
-                  create: {
-                     name: categoryType || 'unknown',
-                  },
+               create: {
+                  name: categoryType || 'unknown',
                },
             },
             author: {

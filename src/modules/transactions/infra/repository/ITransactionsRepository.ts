@@ -1,10 +1,10 @@
 import {
+   Category,
    Prisma,
+   Recurrence as RecurrenceProps,
    Transaction,
    TransactionsCategory,
    User,
-   Category,
-   Recurrence as RecurrenceProps,
 } from '@prisma/client';
 import { CategoryProps } from '../Entity/Category';
 import { Model } from '../Entity/Model';

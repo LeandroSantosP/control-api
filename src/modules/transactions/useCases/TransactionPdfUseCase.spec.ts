@@ -1,16 +1,16 @@
 import 'reflect-metadata';
-import '@/shared/infra/tsyringe';
 import { prisma } from '@/database/prisma';
-import CreateUserTest from '@/utils/CrateUserTEST';
-import { AppError } from '@/shared/infra/middleware/AppError';
-import { TransactionPdfUseCase } from './TransactionPdfUseCase';
-import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
-import { IPdfProviderProvider } from '@/shared/providers/PdfProvider/IPdfProviderProvider';
-import { TransactionsRepositoryTestDB } from '../infra/repository/test-db/TransactionsTestDB';
-import { HtmlPdfProvider } from '@/shared/providers/PdfProvider/implementation/HtmlPdfProvider';
-import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
 import { UserRepositoryTestDB } from '@/modules/users/infra/repository/test-db/UserRepositoryTestDB';
+import { AppError } from '@/shared/infra/middleware/AppError';
+import '@/shared/infra/tsyringe';
+import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
+import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/DateFnsProvider';
+import { HtmlPdfProvider } from '@/shared/providers/PdfProvider/implementation/HtmlPdfProvider';
+import { IPdfProviderProvider } from '@/shared/providers/PdfProvider/IPdfProviderProvider';
+import CreateUserTest from '@/utils/CrateUserTEST';
+import { TransactionsRepositoryTestDB } from '../infra/repository/test-db/TransactionsTestDB';
+import { TransactionPdfUseCase } from './TransactionPdfUseCase';
 
 import CreateTransactionTEST, {
    dataFormatted,
@@ -42,6 +42,7 @@ async function CreateUserAndTransaction() {
       email,
       dueDate: dataFormatted,
       value: '-1021.33',
+      isSubscription: true,
    });
 
    await CreateTransactionTEST({
@@ -136,13 +137,17 @@ describe('TransactionPdfUseCase', () => {
    it('should be able to get just expense transactions infos to create a pdf ', async () => {
       const { user_id } = await CreateUserAndTransaction();
 
+      const data = await prisma.transaction.findMany({
+         where: {
+            userId: user_id,
+         },
+      });
+
       const sut = await transactionPdfUseCase.execute({
          user_id,
          body: {
             subject: 'teste',
             title: 'titulo',
-            start_date: '2010-01-05',
-            end_date: '2024-05-05',
          },
          options: {
             BySubscription: true,

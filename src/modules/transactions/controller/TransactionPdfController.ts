@@ -5,7 +5,7 @@ import { TransactionPdfUseCase } from '../useCases/TransactionPdfUseCase';
 
 class TransactionPdfController {
    async handle(req: Request): Promise<HTTPRequest<Buffer>> {
-      const { options, subject, title } = req.body;
+      const { options, subject, title, end_date, start_date } = req.body;
       const { id } = req.client;
 
       const useCase = container.resolve(TransactionPdfUseCase);
@@ -14,6 +14,8 @@ class TransactionPdfController {
          body: {
             subject,
             title,
+            end_date,
+            start_date,
          },
          options,
          user_id: id,

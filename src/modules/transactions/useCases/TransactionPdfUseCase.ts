@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { IUserRepository } from '@/modules/users/infra/repository/IUserRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
@@ -99,6 +100,7 @@ export class TransactionPdfUseCase {
       if (!user) {
          throw new AppError('User not found!');
       }
+
       /* ctrl + X */ /* recortar uma linha e guardar ela no ctrl + v */
       /* ctrl + 1 */ /* abrir o terminal integrado do vsCode */
       if (
@@ -120,8 +122,10 @@ export class TransactionPdfUseCase {
       }
 
       let start_date: Date | undefined;
+
       if (body.start_date) {
          const response = container.resolve(PdfDate);
+
          response.setDate = body.start_date;
          response.verify();
          this.FormateDate = new FormateDate(response.getDate!);

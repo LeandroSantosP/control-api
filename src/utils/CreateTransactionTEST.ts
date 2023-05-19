@@ -1,6 +1,6 @@
 import { prisma } from '@/database/prisma';
 import { Prisma } from '@prisma/client';
-import { formatISO, parse, format, addMonths } from 'date-fns';
+import { addMonths, format, formatISO, parse } from 'date-fns';
 
 const dateFormateWithOneMoreMonth = format(
    addMonths(new Date(), 1),
@@ -50,13 +50,8 @@ export default async function CreateTransactionTEST({
             },
          },
          category: {
-            connectOrCreate: {
-               create: {
-                  name: categoryType,
-               },
-               where: {
-                  name: categoryType,
-               },
+            create: {
+               name: categoryType,
             },
          },
       },

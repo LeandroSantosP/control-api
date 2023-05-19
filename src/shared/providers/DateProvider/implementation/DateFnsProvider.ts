@@ -1,14 +1,15 @@
-import { formatParams, IDateProvider, parseProps } from '../IDateProvider';
 import {
+   addDays,
+   addHours,
+   format,
    formatISO,
    parse,
-   addHours,
-   addDays,
-   format,
 } from 'date-fns'; /* Criar um provider */
+import { formatParams, IDateProvider, parseProps } from '../IDateProvider';
 
 export class DateFnsProvider implements IDateProvider {
    public readonly now: Date = new Date();
+
    addDays(days: number): Date {
       return addDays(this.now, days);
    }

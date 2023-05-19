@@ -1,13 +1,13 @@
-import Router from 'express';
 import { CreateTransactionsController } from '@/modules/transactions/controller/CreateTransactionsController';
-import { DeleteTransactionController } from '@/modules/transactions/controller/DeleteTransactionController';
-import { UserAuthentication } from '../infra/middleware/UserAuthentication';
-import { ListTransactionController } from '@/modules/transactions/controller/ListTransactionController';
 import { CreateTransactionWIthRecorrenteController } from '@/modules/transactions/controller/CreateTransactionWIthRecorrenteController';
-import { ResolveTransactionController } from '@/modules/transactions/controller/ResolveTransactionController';
-import { ListTransactionsBySubscriptionController } from '@/modules/transactions/controller/ListTransitionsBySubscriptionController';
+import { DeleteTransactionController } from '@/modules/transactions/controller/DeleteTransactionController';
 import { EditTransactionsCategoryAndDescriptionController } from '@/modules/transactions/controller/EditTransactionsCategoryAndDescription';
+import { ListTransactionController } from '@/modules/transactions/controller/ListTransactionController';
+import { ListTransactionsBySubscriptionController } from '@/modules/transactions/controller/ListTransitionsBySubscriptionController';
+import { ResolveTransactionController } from '@/modules/transactions/controller/ResolveTransactionController';
 import { TransactionPdfController } from '@/modules/transactions/controller/TransactionPdfController';
+import Router from 'express';
+import { UserAuthentication } from '../infra/middleware/UserAuthentication';
 
 const transactionRoutes = Router();
 
@@ -84,6 +84,6 @@ transactionRoutes.post('/pdf', UserAuthentication, async (req, res) => {
    res.status(statusCode)
       .set('Content-Type', 'application/pdf')
       .set('Content-Disposition', 'attachment; filename=arquivo.pdf')
-      .send(body);
+      .json(body);
 });
 export { transactionRoutes };

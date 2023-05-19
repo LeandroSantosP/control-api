@@ -14,18 +14,6 @@
             "ignoreReadBeforeAssign": true
          }
       ],
-      "@typescript-eslint/no-non-null-assertion": "false",
-      "linebreak-style": [
-         "error",
-         "unix"
-      ],
-      "quotes": [
-         "error",
-         "double"
-      ],
-      "semi": [
-         "error",
-         "always"
-      ]
+      "@typescript-eslint/no-non-null-assertion": "off"
    }
 }

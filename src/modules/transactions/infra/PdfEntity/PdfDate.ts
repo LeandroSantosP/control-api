@@ -1,12 +1,10 @@
 import { AppError } from '@/shared/infra/middleware/AppError';
-import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
 import { inject, injectable } from 'tsyringe';
 
 @injectable()
 export class PdfDate {
    constructor(
       @inject('DateFnsProvider')
-      private readonly dateFnsProvider: IDateProvider,
       public data: string | undefined
    ) {}
 

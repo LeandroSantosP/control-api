@@ -124,7 +124,7 @@ model Transaction {
 
 model TransactionsCategory {
    id   String   @id @default(uuid())
-   name Category @unique @default(unknown)
+   name Category @default(unknown)
 
    created_at  DateTime      @default(now())
    updated_at  DateTime      @updatedAt

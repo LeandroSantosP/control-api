@@ -7,7 +7,6 @@ import { ITransactionsRepository } from '../infra/repository/ITransactionsReposi
 import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
 import { Transaction } from '../infra/Entity/Transaction';
 import { CategoryProps } from '../infra/Entity/Category';
-import { formatISO } from 'date-fns';
 
 interface IRequest {
    isSubscription: boolean;

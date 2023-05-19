@@ -1,5 +1,4 @@
 import { prisma } from '@/database/prisma';
-import { addDays, isBefore } from 'date-fns';
 import {
    Category,
    Prisma,
@@ -8,8 +7,10 @@ import {
    TransactionsCategory,
    User,
 } from '@prisma/client';
-import { startOfMonth, endOfMonth } from 'date-fns';
+import { addDays, endOfMonth, isBefore, startOfMonth } from 'date-fns';
 
+import { AppError } from '@/shared/infra/middleware/AppError';
+import { GetCurrentDate } from '@/utils/GetCurrentDate';
 import {
    GetPDFInfosFromTransaction,
    ICreateTransactionInstallments,
@@ -19,8 +20,6 @@ import {
    ListBySubscription,
    UpdatedProps,
 } from '../ITransactionsRepository';
-import { AppError } from '@/shared/infra/middleware/AppError';
-import { GetCurrentDate } from '@/utils/GetCurrentDate';
 
 export class TransactionsRepositoryTestDB
    extends GetCurrentDate
@@ -81,13 +80,8 @@ export class TransactionsRepositoryTestDB
       const newTransaction = await this.prisma.transaction.create({
          data: {
             category: {
-               connectOrCreate: {
-                  where: {
-                     name: Category || 'unknown',
-                  },
-                  create: {
-                     name: Category || 'unknown',
-                  },
+               create: {
+                  name: Category || 'unknown',
                },
             },
             description,
@@ -113,6 +107,7 @@ export class TransactionsRepositoryTestDB
 
       return newTransaction;
    }
+
    async CreateTransactionInstallments({
       categoryType,
       description,
@@ -147,13 +142,8 @@ export class TransactionsRepositoryTestDB
             type: Number(value) < 0 ? 'expense' : 'revenue',
             resolved: Number(value) > 0 ? true : false,
             category: {
-               connectOrCreate: {
-                  where: {
-                     name: categoryType || 'unknown',
-                  },
-                  create: {
-                     name: categoryType || 'unknown',
-                  },
+               create: {
+                  name: categoryType || 'unknown',
                },
             },
             author: {

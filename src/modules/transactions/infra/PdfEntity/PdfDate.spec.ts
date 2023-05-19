@@ -4,19 +4,17 @@ import { DateFnsProvider } from '@/shared/providers/DateProvider/implementation/
 import { PdfDate } from './PdfDate';
 
 test('should not be able te create a date with invalid format!', () => {
-   expect(() => new PdfDate(new DateFnsProvider(), 'leandro').verify()).toThrow(
+   expect(() => new PdfDate(new DateFnsProvider() as any).verify()).toThrow(
       new AppError('Invalid date format.')
    );
 });
 
 test('should be able te create a date with valid format!', () => {
    expect(() =>
-      new PdfDate(new DateFnsProvider(), '2000-03-22').verify()
+      new PdfDate(new DateFnsProvider() as any).verify()
    ).toBeTruthy();
 });
 
 test('should be able get date!', () => {
-   expect(
-      new PdfDate(new DateFnsProvider(), '2000-03-22').verify().getDate
-   ).toBe('2000-03-22');
+   expect(new PdfDate('2000-03-22').verify().getDate).toBe('2000-03-22');
 });
