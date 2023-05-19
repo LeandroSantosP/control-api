@@ -1,19 +1,9 @@
 node_modules
 db_backup
-tmp
-*.tmp*
-*.log
-.changelog
 coverage
-.nyc_output/
 .env
-*.progress-estimator*
-*.docker-volumes
 dist
-.volumes
 .env.backup
 
 
 src/settings/**
-
-
