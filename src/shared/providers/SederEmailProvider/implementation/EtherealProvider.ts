@@ -52,7 +52,7 @@ export class EtherealProvider implements ISederEmailProvider {
          return this.Transporter?.sendMail(
             {
                from: 'Control <spsconttrol@gmail.com>',
-               to: 'LeandroBuy5@gmail.com',
+               to,
                subject,
                html: templateHTML,
             },

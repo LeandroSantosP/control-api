@@ -2,13 +2,13 @@ import { prisma } from '@/database/prisma';
 import { Prisma } from '@prisma/client';
 import { addMonths, format, formatISO, parse } from 'date-fns';
 
-const dateFormateWithOneMoreMonth = format(
+const dateFormattedWithOneMoreMonth = format(
    addMonths(new Date(), 1),
    'yyyy-MM-dd'
 );
 
 export const dataFormatted = formatISO(
-   parse(dateFormateWithOneMoreMonth as string, 'yyyy-MM-dd', new Date())
+   parse(dateFormattedWithOneMoreMonth as string, 'yyyy-MM-dd', new Date())
 );
 
 interface ICreateTransactionTEST {
@@ -34,7 +34,7 @@ export default async function CreateTransactionTEST({
    dueDate,
    filingDate,
 }: ICreateTransactionTEST) {
-   const useExits = await prisma.transaction.create({
+   const useExists = await prisma.transaction.create({
       data: {
          description: description,
          value: new Prisma.Decimal(value),
@@ -57,5 +57,5 @@ export default async function CreateTransactionTEST({
       },
    });
 
-   return useExits;
+   return useExists;
 }

@@ -33,8 +33,6 @@ export class Category {
       }
 
       if (!Category.verityCategory(category)) {
-         console.log('ok');
-
          const validCategory = Object.keys(CategoryPropsModel);
          throw new AppError(
             `Invalid category must be one of [${validCategory}]`
