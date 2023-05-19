@@ -4,7 +4,6 @@ import { CreateNewGoalsTEST } from '@/utils/CreateNewGoalsTEST';
 import { GoalsRepositoryTestDB } from '../infra/repository/test-db/GoalsRepositoryTestDB';
 import { DeletedGoalsUseCase } from './DeletedGoalsUseCase';
 import { prisma } from '@/database/prisma';
-import { Prisma } from '@prisma/client';
 import { AppError } from '@/shared/infra/middleware/AppError';
 
 let goalsRepositoryTestDB: GoalsRepositoryTestDB;
