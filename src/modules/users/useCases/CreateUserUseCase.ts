@@ -1,9 +1,8 @@
-import * as yup from 'yup';
-import { inject, injectable } from 'tsyringe';
-
 import { AppError, InvalidYupError } from '@/shared/infra/middleware/AppError';
-import { IUserRepository } from '../infra/repository/IUserRepository';
+import { inject, injectable } from 'tsyringe';
+import * as yup from 'yup';
 import { User } from '../infra/Entity/User';
+import { IUserRepository } from '../infra/repository/IUserRepository';
 
 interface IRequest {
    name: string;

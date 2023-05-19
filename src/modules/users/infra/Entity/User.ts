@@ -1,4 +1,3 @@
-import { User as UserPrisma } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { Email } from './Email';
 import { Name } from './Name';

@@ -5,7 +5,9 @@ import { AppError, InvalidYupError } from '../infra/middleware/AppError';
 import { app } from './server';
 import '@/jobs/firebase/firebase-init';
 
-const server_post = process.env.SERVER_PORT;
+const server_post = process.env.PORT
+   ? Number(process.env.PORT)
+   : process.env.SERVER_PORT;
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
    if (err instanceof AppError) {

@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+
 <!--
 # Quando o usuário atualizar uma informação do perfil dele a api deve verificar se o avatar veio como undefiled
 # caso venha como undefined verifique se o usuário ja tem uma image cadastrada
@@ -5,360 +7,92 @@
 
 # Deve ser possível gerar um relatório com todas as transações entrei determinado período (RabbitMq)
 
-# Trazer Receitas quando filtrar pelo mes.
+=======
 
-**account**
+### CONTROL
 
-Roles administrador, gerente // middlewares for do this
-crie metades para manipular as entidades.
+> > > > > > > dev
 
-status = ativo / inativo
+OLA ME CHAMO LEANDRO E UM PROJETO QUE FIZ PARA COLOCAR NA PRATICA CONCEITOS E TECNOLOGIAS QUE EU VINHA ESTUDANDO **AINDA NAO ESTA FINALIZADO** porem queria lançar essa v1.0, GOSTO DE CRIAR COISAS DE PODE AJUDAR DE PODE REALMENTE FAZER A DIFERENÇA DE ALGUM FORMA NA VIDA DE ALGUÉM. ESTOU ESTUDANDO MAJORITARIAMENTE DESENVOLVIMENTO BACK-END QUE EU OQUE EU REALMENTE ME IDENTIFIQUEI, ME VIRO NO FRONT POREM OQUE NAO E MEU FORTE,
 
-**Novas Ideia de features**
+## TECHS QUE UTILIZEI
 
-# O usuário passe uma data onde ele informe uma data(futura) para saber os gastos que ele tera ate a data informada, e gere um relatório com o quanto ele tera gato com as transações ja cadastradas
+**FRONT-END**
+// REACT // ZUSTAND // STYLED-COMPONENTS
+// APEXCHARTS // RADIX-UI // DATA-FNS
+// VANILA-MASKER // ZOD // REACT-HOOK-FORM
+// AXIOS // ENTRE OUTRAS..
 
-# Monster nos gráficos mais um item em series onde mostre os gastos acumulados ate aquela data.
+**BACK-END**
+// NODEJS // EXPRESS // FIREBASE(STORAGE)
+// JSON-WEB-TOKEN // JEST // PRISMA
+// HANDLEBARS // HTML-PDF // NODEMAILER
+// YUP // ENTRE OUTRAS..
 
-# retorne na rota de list transaction novos field onde mostre o valor total(soma) de despesas e receita ate aquele determinado período. baseado no dueDate e filingDate
+## FUNCIONALIDADES
 
-# Nodejs FES Template
+**PAINEL PRINCIPAL**
+LISTAGEM DE TODAS AS TRANSAÇÕES PODENDO VER INFORMAÇÕES COMO POR EXEMPLO(TIPO/FINALIZAÇÃO/CATEGORIA...) E COM A OPÇÃO DE DELETAR.
 
-# Environment vars
+FILTRAGEM POR (MES/INSCRIÇÕES/RECORRENTES/RECEITAS/FINALIZADAS)
 
-This project uses the following environment variables:
+CADASTRAR SUAS TRANSAÇÕES JUNTAMENTE COM A DATA DE VENCIMENTO CASO SEJA UMA DESPESA E DATA DE RECEBIMENTO CASSO SEJA RECEITA VOCE PODERÁ ADICIONA UMA CATEGORIA COM JUNTAMENTE COM UMA RECORRÊNCIA DE CADA UMA, E INFORMAR SE ELA E UMA INSCRIÇÃO.
 
-| Name | Description          | Default Value |
-| ---- | -------------------- | ------------- |
-| CORS | Cors accepted values | "\*"          |
+UM PAINEL ONDE APARECE UM GRÁFICO COM TODOS OS MESES JUNTAMENTE COM A MAIOR E A MENOR TRANSAÇÕES CADASTRADA PARA CADA MES(DESPESA/RECEITA).
 
-# Pre-requisites
+GERAR UM PDF ONDE TERA TODAS AS TRANSAÇÕES, PODENDO ESPECIFICAR UMA DATA DE INICIO E TERMINO (BASEADO NO DATA DE VENCIMENTO PARA DESPESA E DATA DE RECEBIMENTO PARA RECEITAS), FILTRA POR DISPENSAS/RECEITAS/INSCRIÇÕES
 
--  Install [Node.js](https://nodejs.org/en/) version 8.0.0
+**SISTEMA DE METAS(OBJETIVOS)**
+O USUÁRIO PODERÃO CRIAR/DELETA ESSA METAS INDIVIDUAIS PARA CADA MES, E TER UM GRÁFICO ONDE O USUÁRIO PODERÁ VER AS METAS CADASTRADAS JUNTAMENTE O VALOR ATUA DE DAS TRANSCOES JA CRIADAS
 
-# Getting started
+**SISTEMA DE PERFIL(NAO FINALIZADO)**
+O USUÁRIO PODE COLOCAR ALGUNS INFORMAÇÕES ADICIONAL SOBRE ELE COMO NUMERO DE TELEFONEM,SALARIO, DATA DE ANIVERSARIO, PROFISSÃO E FOTO DE PERFIL ONDE UTILIZO O FIREBASE-STORAGE PARA GUARDAR AS IMAGES.
 
--  Clone the repository
+## COMO EXECUTAR O PROJETO
 
-```
-git clone  <git lab template url> <project_name>
-```
+node: v18.14.2
 
--  Install dependencies
+**FRONT-END**
+yarn para instalar todos as dependência
+yarn dev
 
-```
-cd <project_name>
-npm install
-```
+.env
+url para comunicação com backend
 
--  Build and run the project
+**BACK-END**
 
-```
-npm start
-```
+**yarn** para instalar todos as dependência
 
-Navigate to `http://localhost:8001`
+utilizei prisma juntamente com Postgres para banco de dados
+subo o docker compose **com docker-compose up -d** para
+subir o banco de dados juntamente com a aplicação. Caso queria
+rodar a aplicação localmente basta dar um **docker stop api** e
+rodas **yarn dev**
 
--  API Document endpoints
+## configuração do .env
 
-   swagger Spec Endpoint : http://localhost:8001/api-docs
+coloque a porta
+SERVER_PORT=
+FORGET_EMAIL_URL=
 
-   swagger-ui Endpoint : http://localhost:8001/docs
+#postgress
 
-# TypeScript + Node
+<!-- Configura as credenciais do banco de dados -->
 
-The main purpose of this repository is to show a project setup and workflow for writing microservice. The Rest APIs will be using the Swagger (OpenAPI) Specification.
+DB_HOST=
+DB_PORT=
+DB_NAME=
+DB_USER=
+DB_PASS=
 
-## Getting TypeScript
+DATABASE_URL="postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public"
 
-Add Typescript to project `npm`.
+# nodemailer
 
-```
-npm install -D typescript
-```
+<!-- Configura o smtp para o nodemailer vou deixar um exemplo no smtp no g-mail -->
 
-## Project Structure
-
-The folder structure of this app is explained below:
-
-| Name                            | Description                                                                                      |
-| ------------------------------- | ------------------------------------------------------------------------------------------------ | ------------- | -------------------------------------------------------------------- |
-| **dist**                        | Contains the distributable (or output) from your TypeScript build.                               |
-| **node_modules**                | Contains all npm dependencies                                                                    |
-| **src**                         | Contains source code that will be compiled to the dist dir                                       |               |
-| **src/modules/**/controller\*\* | Controllers define functions to serve various express routes.                                    |
-| **src/lib**                     | Common libraries to be used across your app.                                                     |
-| **src/shared/infra/middleware** | Express middlewares which process the incoming requests before handling them down to the routes  |
-| **src/routes**                  | Contain all express routes, separated by module/area of application                              |
-| **src/models**                  | Models define schemas that will be used in storing and retrieving data from Application database |
-| **src/monitoring**              | Prometheus metrics                                                                               |
-| **src/shared/http/server.ts**   | Entry point to express app                                                                       |
-| package.json                    | Contains npm dependencies as well as [build scripts](#what-if-a-library-isnt-on-definitelytyped) | tsconfig.json | Config settings for compiling source code only written in TypeScript |
-| tslint.json                     | Config settings for TSLint code style checking                                                   |
-
-## Building the project
-
-### Configuring TypeScript compilation
-
-```json
-{
-   "compilerOptions": {
-      "target": "ES2019",
-      "module": "commonjs",
-      "outDir": "./dist",
-      "sourceMap": true,
-      "resolveJsonModule": true
-   }
-}
-```
-
-### Running the build
-
-All the different build steps are orchestrated via [npm scripts](https://docs.npmjs.com/misc/scripts).
-Npm scripts basically allow us to call (and chain) terminal commands via npm.
-
-| Npm Script   | Description                                                                     |
-| ------------ | ------------------------------------------------------------------------------- |
-| `start`      | Runs full build and runs node on dist/index.js. Can be invoked with `npm start` |
-| `build:copy` | copy the \*.yaml file to dist/ folder                                           |
-| `build:live` | Full build. Runs ALL build tasks                                                |
-| `build:dev`  | Full build. Runs ALL build tasks with all watch tasks                           |
-| `dev`        | Runs full build before starting all watch tasks. Can be invoked with `npm dev`  |
-| `test`       | Runs build and run tests using mocha                                            |
-| `lint`       | Runs TSLint on project files                                                    |
-
-### Using the debugger in VS Code
-
-Node.js debugging in VS Code is easy to setup and even easier to use.
-Press `F5` in VS Code, it looks for a top level `.vscode` folder with a `launch.json` file.
-
-```json
-{
-   "version": "0.2.0",
-   "configurations": [
-      {
-         "type": "node",
-         "request": "launch",
-         "name": "Launch Program",
-         "program": "${workspaceFolder}/dist/index.js",
-         "preLaunchTask": "tsc: build - tsconfig.json",
-
-         "outFiles": ["${workspaceFolder}/dist/*js"]
-      },
-
-      {
-         // Name of configuration; appears in the launch configuration drop down menu.
-         "name": "Run mocha",
-         "request": "launch",
-         // Type of configuration. Possible values: "node", "mono".
-         "type": "node",
-         // Workspace relative or absolute path to the program.
-         "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
-
-         // Automatically stop program after launch.
-         "stopOnEntry": false,
-         // Command line arguments passed to the program.
-         "args": [
-            "--no-timeouts",
-            "--compilers",
-            "ts:ts-node/register",
-            "${workspaceRoot}/test/*"
-         ],
-
-         // Workspace relative or absolute path to the working directory of the program being debugged. Default is the current workspace.
-
-         // Workspace relative or absolute path to the runtime executable to be used. Default is the runtime executable on the PATH.
-         "runtimeExecutable": null,
-         // Environment variables passed to the program.
-         "env": { "NODE_ENV": "test" }
-      }
-   ]
-}
-```
-
-## Testing
-
-The tests are written in Mocha and the assertions done using Chai
-
-```
-"mocha": "3.4.2",
-"chai": "4.1.2",
-"chai-http": "3.0.0",
-
-```
-
-### Example application.spec.ts
-
-```
-import chaiHttp = require("chai-http")
-import * as chai from "chai"
-import app from './application'
-
-const expect = chai.expect;
-chai.use(chaiHttp);
-
-
-describe('App', () => {
-  it('works', (done:Function): void => {
-  chai.request(app)
-      .get('/api/hello?greeting=world')
-      .send({})
-      .end((err:Error, res: any): void => {
-
-          expect(res.statusCode).to.be.equal(200);
-          expect(res.body.msg).to.be.equal("hello world");
-          done();
-      });
-
-    });
-});
-```
-
-### Running tests using NPM Scripts
-
-```
-npm run test
-
-```
-
-Test files are created under test folder.
-
-# Swagger
-
-## Specification
-
-The swagger specification file is named as swagger.yaml. The file is located under definition folder.
-Example:
-
-```
-paths:
-  /hello:
-    get:
-      x-swagger-router-controller: helloWorldRoute
-      operationId: helloWorldGet
-      tags:
-        - /hello
-      description: >-
-        Returns the current weather for the requested location using the
-        requested unit.
-      parameters:
-        - name: greeting
-          in: query
-          description: Name of greeting
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Successful request.
-          schema:
-            $ref: '#/definitions/Hello'
-        default:
-          description: Invalid request.
-          schema:
-            $ref: '#/definitions/Error'
-definitions:
-  Hello:
-    properties:
-      msg:
-        type: string
-    required:
-      - msg
-  Error:
-    properties:
-      message:
-        type: string
-    required:
-      - message
-```
-
-## Swagger Middleware
-
-The project is using npm module `swagger-tools` that provides middleware functions for metadata, security, validation and routing, and bundles Swagger UI into Express.
-
-```
-swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
-        // Interpret Swagger resources and attach metadata to request - must be first in swagger-tools middleware chain
-        app.use(middleware.swaggerMetadata());
-
-        // Validate Swagger requests
-        app.use(middleware.swaggerValidator({}));
-
-        // Route validated requests to appropriate controller
-        app.use(middleware.swaggerRouter(options));
-
-        // Serve the Swagger documents and Swagger UI
-        app.use(middleware.swaggerUi());
-        cb();
-
-    })
-```
-
--  Metadata
-
-   Swagger extends the Express request object, so that each route handler has access to incoming parameters that have been parsed based on the spec, as well as additional Swagger-generated information from the client.
-
-   Any incoming parameters for the API call will be available in `req.swagger` regardless of whether they were transmitted using query, body, header, etc.
-
--  Validator
-
-   Validation middleware will only route requests that match paths in Swagger specification exactly in terms of endpoint path, request mime type, required and optional parameters, and their declared types.
-
--  Swagger Router
-
-   The Swagger Router connects the Express route handlers found in the controller files on the path specified, with the paths defined in the Swagger specification (swagger.yaml). The routing looks up the correct controller file and exported function based on parameters added to the Swagger spec for each path.
-
-   Here is an example for a hello world endpoint:
-
-   ```
-   paths:
-   /hello:
-       get:
-       x-swagger-router-controller: helloWorldRoute
-       operationId: helloWorldGet
-       tags:
-         - /hello
-       description: >-
-         Returns the current weather for the requested location using the
-         requested unit.
-       parameters:
-         - name: greeting
-           in: query
-           description: Name of greeting
-           required: true
-           type: string
-       responses:
-         '200':
-           description: Successful request.
-           schema:
-             $ref: '#/definitions/Hello'
-         default:
-           description: Invalid request.
-           schema:
-             $ref: '#/definitions/Error'
-   ```
-
-   The fields `x-swagger-router-controller` will point the middleware to a `helloWorldRoute.ts` file in the route's directory, while the `operationId` names the handler function to be invoked.
-
--  Swagger UI
-
-   The final piece of middleware enables serving of the swagger-ui interface direct from the Express server. It also serves the raw Swagger schema (.json) that clients can consume. Paths for both are configurable.
-   The swagger-ui endpoint is acessible at /docs endpoint.
-
-# TSLint
-
-TSLint is a code linter that helps catch minor code quality and style issues.
-
-## TSLint rules
-
-All rules are configured through `tslint.json`.
-
-## Running TSLint
-
-To run TSLint you can call the main build script or just the TSLint task.
-
-```
-npm run build:live   // runs full build including TSLint
-npm run lint  // runs only TSLint
-```
-
-# Common Issues
+NODEMAILER_SERVICE=gmail
+NODEMAILER_HOST=smtp.gmail.com
+NODEMAILER_PORT=587
+NODEMAILER_USER= <!-- coloque o email da conta g-mail aqui -->
+NODEMAILER_PASS= <!-- coloque a senha da conta g-mail aqui -->

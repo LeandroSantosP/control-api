@@ -7,6 +7,7 @@ export class ResetPassWordController {
    async handle(req: Request): Promise<HTTPRequest<void>> {
       const { resetToken } = req.params;
       const { newPassword } = req.body;
+      console.log(resetToken, newPassword);
 
       const useCase = container.resolve(ResetPasswordUseCase);
       await useCase.execute({

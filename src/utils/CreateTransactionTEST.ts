@@ -1,14 +1,14 @@
 import { prisma } from '@/database/prisma';
 import { Prisma } from '@prisma/client';
-import { formatISO, parse, format, addMonths } from 'date-fns';
+import { addMonths, format, formatISO, parse } from 'date-fns';
 
-const dateFormateWithOneMoreMonth = format(
+const dateFormattedWithOneMoreMonth = format(
    addMonths(new Date(), 1),
    'yyyy-MM-dd'
 );
 
-const dataFormatted = formatISO(
-   parse(dateFormateWithOneMoreMonth as string, 'yyyy-MM-dd', new Date())
+export const dataFormatted = formatISO(
+   parse(dateFormattedWithOneMoreMonth as string, 'yyyy-MM-dd', new Date())
 );
 
 interface ICreateTransactionTEST {
@@ -30,36 +30,32 @@ export default async function CreateTransactionTEST({
    categoryType = 'Investments',
    recurrence = 'daily',
    isSubscription,
-   resolved = false,
-   dueDate = dataFormatted,
+   resolved,
+   dueDate,
    filingDate,
 }: ICreateTransactionTEST) {
-   const useExits = await prisma.transaction.create({
+   const useExists = await prisma.transaction.create({
       data: {
          description: description,
          value: new Prisma.Decimal(value),
-         due_date: !filingDate && dueDate,
+         due_date: !filingDate ? dueDate : undefined,
          recurrence,
          isSubscription,
-         filingDate,
+         filingDate: !dueDate ? filingDate : undefined,
          resolved,
+         type: Number(value) < 0 ? 'expense' : 'revenue',
          author: {
             connect: {
                email,
             },
          },
          category: {
-            connectOrCreate: {
-               create: {
-                  name: categoryType,
-               },
-               where: {
-                  name: categoryType,
-               },
+            create: {
+               name: categoryType,
             },
          },
       },
    });
 
-   return useExits;
+   return useExists;
 }

@@ -1,6 +1,5 @@
 import { CategoryProps } from '../Entity/Category';
-import { Installments } from '../Entity/Installments';
-import { RecurrenceProps } from '../Entity/Recurrence';
+import { Recurrence as RecurrenceProps } from '@prisma/client';
 
 export type CreatePropsDTO = {
    id?: string | undefined;

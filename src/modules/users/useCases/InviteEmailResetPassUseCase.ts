@@ -1,11 +1,11 @@
-import { ISederEmailProvider } from '@/shared/providers/SederEmailProvider/ISederEmailProvider';
-import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
-import { IUserRepository } from '../infra/repository/IUserRepository';
 import { AppError } from '@/shared/infra/middleware/AppError';
-import { inject, injectable } from 'tsyringe';
-import { TokenManege } from '../infra/Entity/Token';
+import { IDateProvider } from '@/shared/providers/DateProvider/IDateProvider';
+import { ISederEmailProvider } from '@/shared/providers/SederEmailProvider/ISederEmailProvider';
 import { randomUUID } from 'crypto';
 import { resolve } from 'path';
+import { inject, injectable } from 'tsyringe';
+import { TokenManege } from '../infra/Entity/Token';
+import { IUserRepository } from '../infra/repository/IUserRepository';
 
 type IResponse = void;
 
@@ -38,13 +38,7 @@ export class InviteEmailResetPassUseCase {
          user_id: user.id,
       });
 
-      const templatePath = resolve(
-         __dirname,
-         '..',
-         'views',
-         'emails',
-         'ForgetPasswordTemplate.hbs'
-      );
+      const templatePath = resolve('public/view/ForgetPasswordTemplate.hbs');
 
       const variables = {
          name: user.name,

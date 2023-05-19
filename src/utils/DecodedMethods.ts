@@ -32,8 +32,6 @@ export class DecodedMethods {
 
       const [email, password] = decoded.split(':');
 
-
-
       return {
          email,
          password,

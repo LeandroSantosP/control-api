@@ -36,7 +36,13 @@ abstract class IUserRepository {
    abstract create({ email, name, password }: IUserDTO): Promise<User>;
    abstract list(): Promise<User[]>;
    abstract GetUserByEmail(email: string): Promise<User | null>;
-   abstract GetUserById(user_id: string): Promise<GetUserByIdOutput>;
+   abstract GetUserById(user_id: string): Promise<
+      | (User & {
+           profile: Profile | null;
+        })
+      | null
+      | null
+   >;
    abstract remove({ email, id }: RemoveInput): Promise<void>;
    abstract update(data: UpdatedInput, user_id: string): Promise<User>;
    abstract userCreateToken(params: UserCreateTokenInput): Promise<void>;

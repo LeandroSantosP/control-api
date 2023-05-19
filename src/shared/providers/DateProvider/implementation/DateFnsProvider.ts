@@ -1,13 +1,15 @@
-import { IDateProvider } from '../IDateProvider';
 import {
+   addDays,
+   addHours,
+   format,
    formatISO,
    parse,
-   addHours,
-   addDays,
 } from 'date-fns'; /* Criar um provider */
+import { formatParams, IDateProvider, parseProps } from '../IDateProvider';
 
 export class DateFnsProvider implements IDateProvider {
    public readonly now: Date = new Date();
+
    addDays(days: number): Date {
       return addDays(this.now, days);
    }
@@ -18,7 +20,11 @@ export class DateFnsProvider implements IDateProvider {
       return formatISO(props);
    }
 
-   parse(props: any): Date {
+   format(params: formatParams): string {
+      return format(params.date, params.format, params.options);
+   }
+
+   parse(props: parseProps): Date {
       return parse(props.dateString, props.DatePatters, props.CurrentDate);
    }
 }

@@ -1,10 +1,10 @@
 import {
+   Category,
    Prisma,
+   Recurrence as RecurrenceProps,
    Transaction,
    TransactionsCategory,
    User,
-   Category,
-   Recurrence as RecurrenceProps,
 } from '@prisma/client';
 import { CategoryProps } from '../Entity/Category';
 import { Model } from '../Entity/Model';
@@ -49,6 +49,19 @@ export interface UpdatedProps {
    category?: Category;
    category_id?: string;
 }
+
+interface pdfOptions {
+   ByRevenue?: boolean;
+   ByExpense?: boolean;
+   BySubscription?: boolean;
+}
+
+export interface GetPDFInfosFromTransaction {
+   user_id: string;
+   start_date?: Date;
+   end_date?: Date;
+   options?: pdfOptions;
+}
 export abstract class ITransactionsRepository extends Model<any, Transaction> {
    abstract create(props: ITransactionsRepositoryProps): Promise<
       Transaction & {
@@ -56,6 +69,12 @@ export abstract class ITransactionsRepository extends Model<any, Transaction> {
             name: Category;
          };
       }
+   >;
+
+   abstract list({ user_id }: { user_id: string }): Promise<
+      (Transaction & {
+         category: TransactionsCategory;
+      })[]
    >;
 
    abstract CreateTransactionInstallments(
@@ -132,4 +151,8 @@ export abstract class ITransactionsRepository extends Model<any, Transaction> {
          category: TransactionsCategory;
       }
    >;
+
+   abstract GetPDFInfosFromTransaction(
+      params: GetPDFInfosFromTransaction
+   ): Promise<Transaction[]>;
 }

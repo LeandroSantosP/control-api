@@ -108,7 +108,7 @@ export class CreateTransactionWIthRecorrenteUseCase {
 
       DataFormate = this.DateFnsProvider.formatISO(
          this.DateFnsProvider.parse({
-            dateString: transaction.due_date?.getValue,
+            dateString: transaction.due_date?.getValue!,
             DatePatters: 'yyyy-MM-dd',
             CurrentDate: new Date(),
          })

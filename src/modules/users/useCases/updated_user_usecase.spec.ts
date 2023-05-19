@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 
 import { prisma } from '@/database/prisma';
-import { UpdatedUserUseCase } from './UpdatedUserUseCase';
-import { UserRepositoryTestDB } from '../infra/repository/test-db/UserRepositoryTestDB';
 import CreateUserTest from '@/utils/CrateUserTEST';
+import { UserRepositoryTestDB } from '../infra/repository/test-db/UserRepositoryTestDB';
+import { UpdatedUserUseCase } from './UpdatedUserUseCase';
 
 let userRepositoryTestDB: UserRepositoryTestDB;
 let updatedUserUseCase: UpdatedUserUseCase;

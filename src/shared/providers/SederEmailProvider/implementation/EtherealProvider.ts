@@ -4,26 +4,35 @@ import Handlebars from 'handlebars';
 import fs from 'fs';
 
 export class EtherealProvider implements ISederEmailProvider {
-   private transporter!: Transporter;
+   private Transporter: Transporter | null = null;
+
    constructor() {
+      this.config();
+   }
+
+   private config() {
       nodemailer.createTestAccount((err, account) => {
          if (err) {
             console.error('Failed to create a testing account. ' + err.message);
             return process.exit(1);
          }
+         const port = Number(process.env.NODEMAILER_PORT) || 587;
+         const host = process.env.NODEMAILER_HOST || 'smtp.gmail.com';
 
          let transporter = nodemailer.createTransport({
-            host: account.smtp.host,
-            port: account.smtp.port,
-            secure: account.smtp.secure,
+            host,
+            port,
+            secure: false,
             auth: {
-               user: account.user,
-               pass: account.pass,
+               user: process.env.NODEMAILER_USER,
+               pass: process.env.NODEMAILER_PASS,
             },
          });
 
-         this.transporter = transporter;
+         this.Transporter = transporter;
       });
+
+      return;
    }
    async sendEmail({
       subject,
@@ -39,11 +48,11 @@ export class EtherealProvider implements ISederEmailProvider {
 
       const templateHTML = templateParse(variables);
 
-      return await new Promise<void>((resolve, reject) => {
-         this.transporter.sendMail(
+      return await new Promise<void>(async (resolve, reject) => {
+         return this.Transporter?.sendMail(
             {
-               from: 'Control <test@test.com.br>',
-               to,
+               from: 'Control <spsconttrol@gmail.com>',
+               to: 'LeandroBuy5@gmail.com',
                subject,
                html: templateHTML,
             },
@@ -59,7 +68,8 @@ export class EtherealProvider implements ISederEmailProvider {
                   'Preview URL: %s',
                   nodemailer.getTestMessageUrl(message)
                );
-               resolve(undefined);
+
+               resolve();
             }
          );
       });

@@ -1,8 +1,8 @@
-import { verify } from 'jsonwebtoken';
-import auth from '@/settings/auth';
-import { AppError } from './AppError';
-import { NextFunction, Request, Response } from 'express';
 import { UserRepository } from '@/modules/users/infra/repository/implementation/UserRepository';
+import auth from '@/settings/auth';
+import { NextFunction, Request, Response } from 'express';
+import { verify } from 'jsonwebtoken';
+import { AppError } from './AppError';
 
 interface IJwtPayload {
    sub: string;
@@ -38,6 +38,7 @@ export async function UserAuthentication(
       const repository = new UserRepository();
 
       const user = await repository.GetUserById(client_id);
+      console.log(user);
 
       if (!user) {
          throw new AppError('User Not Found!', 404);

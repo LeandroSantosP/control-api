@@ -1,4 +1,3 @@
-import { addDays, endOfMonth, startOfMonth, isBefore } from 'date-fns';
 import { prisma } from '@/database/prisma';
 import { AppError } from '@/shared/infra/middleware/AppError';
 import { GetCurrentDate } from '@/utils/GetCurrentDate';
@@ -10,13 +9,16 @@ import {
    TransactionsCategory,
    User,
 } from '@prisma/client';
+import { addDays, endOfMonth, isBefore, startOfMonth } from 'date-fns';
 
 import {
+   GetPDFInfosFromTransaction,
    ICreateTransactionInstallments,
    ITransactionsRepository,
    ITransactionsRepositoryProps,
    ListBYRevenueOrResolvedTransactionsProps,
    ListBySubscription,
+   UpdatedProps,
 } from '../ITransactionsRepository';
 
 export class TransactionsRepository
@@ -30,9 +32,6 @@ export class TransactionsRepository
       this.prisma = prisma;
    }
 
-   updated(props: any): Promise<any> {
-      throw new Error('Method not implemented.');
-   }
    async list({ user_id }: { user_id: string }): Promise<
       (Transaction & {
          category: TransactionsCategory;
@@ -67,6 +66,7 @@ export class TransactionsRepository
       dueDate,
       Category,
       filingDate,
+      resolved,
    }: ITransactionsRepositoryProps): Promise<
       Transaction & {
          category: {
@@ -80,13 +80,8 @@ export class TransactionsRepository
       const newTransaction = await this.prisma.transaction.create({
          data: {
             category: {
-               connectOrCreate: {
-                  where: {
-                     name: Category || 'unknown',
-                  },
-                  create: {
-                     name: Category || 'unknown',
-                  },
+               create: {
+                  name: Category || 'unknown',
                },
             },
             description,
@@ -94,6 +89,7 @@ export class TransactionsRepository
             due_date: dueDate,
             value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
+            resolved,
             author: {
                connect: {
                   email,
@@ -124,33 +120,30 @@ export class TransactionsRepository
    }: ICreateTransactionInstallments): Promise<{
       description: string;
       value: Prisma.Decimal;
+      resolved: boolean;
       recurrence: Recurrence | null;
       installments: number | null;
       isSubscription: boolean | null;
-      due_date: Date | null;
-      resolved: boolean;
       created_at: Date;
       category: any;
+      due_date: Date | null;
+      filingDate: Date | null;
    }> {
       this.verifyFutureDate(dueDate);
 
       const newTransaction = await this.prisma.transaction.create({
          data: {
-            installments,
-            recurrence,
             description,
-            isSubscription,
             due_date: dueDate,
+            installments,
+            isSubscription,
+            recurrence: recurrence,
             value: new Prisma.Decimal(value),
             type: Number(value) < 0 ? 'expense' : 'revenue',
+            resolved: Number(value) > 0 ? true : false,
             category: {
-               connectOrCreate: {
-                  where: {
-                     name: categoryType || 'unknown',
-                  },
-                  create: {
-                     name: categoryType || 'unknown',
-                  },
+               create: {
+                  name: categoryType || 'unknown',
                },
             },
             author: {
@@ -413,5 +406,93 @@ export class TransactionsRepository
       });
 
       return transactions;
+   }
+   async updated({
+      category,
+      description,
+      category_id,
+      transaction_id,
+   }: UpdatedProps): Promise<
+      Transaction & {
+         category: TransactionsCategory;
+      }
+   > {
+      const UpdatedTransaction = await this.prisma.transaction.update({
+         where: {
+            id: transaction_id,
+         },
+         data: {
+            category: {
+               update: {
+                  name: category,
+               },
+            },
+            description,
+         },
+         include: {
+            category: true,
+         },
+      });
+      return UpdatedTransaction;
+   }
+
+   async GetPDFInfosFromTransaction({
+      user_id,
+      options,
+      end_date,
+      start_date,
+   }: GetPDFInfosFromTransaction): Promise<Transaction[]> {
+      let finalOptions = {
+         where: {
+            userId: user_id,
+         },
+         orderBy: {
+            created_at: 'desc',
+         },
+      } as { where: {}; orderBy: {} };
+
+      if (!options) {
+         finalOptions = {
+            ...finalOptions,
+         };
+      } else if (options && options.ByExpense) {
+         finalOptions = {
+            ...finalOptions,
+            where: {
+               ...finalOptions.where,
+               type: 'expense',
+               AND: [
+                  { due_date: { gte: start_date } },
+                  { due_date: { lte: end_date } },
+               ],
+            },
+         };
+      } else if (options && options.ByRevenue) {
+         finalOptions = {
+            ...finalOptions,
+            where: {
+               ...finalOptions.where,
+               type: 'revenue',
+               AND: [
+                  { filingDate: { gte: start_date } },
+                  { filingDate: { lte: end_date } },
+               ],
+            },
+         };
+      } else if (options && options.BySubscription) {
+         finalOptions = {
+            ...finalOptions,
+            where: {
+               ...finalOptions.where,
+               isSubscription: true,
+               AND: [
+                  { filingDate: { gte: start_date } },
+                  { filingDate: { lte: end_date } },
+               ],
+            },
+         };
+      }
+
+      return await prisma.transaction.findMany(finalOptions);
    }
 }
