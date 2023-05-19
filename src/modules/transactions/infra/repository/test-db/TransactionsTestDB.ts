@@ -439,8 +439,6 @@ export class TransactionsRepositoryTestDB
       });
       return UpdatedTransaction;
    }
-<<<<<<< HEAD
-=======
 
    async GetPDFInfosFromTransaction({
       user_id,
@@ -501,5 +499,4 @@ export class TransactionsRepositoryTestDB
 
       return await prisma.transaction.findMany(finalOptions);
    }
->>>>>>> dev
 }
